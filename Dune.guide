@@ -1,0 +1,154 @@
+@database BETA02
+
+@node "Main" "Dune III - Your favorite Dune II clone! :)"
+
+    @{b}Dune III Beta 0.2@{ub} by @{b}Bozo@{ub} - Compiled in @{b}1997@{ub}
+
+    NOTE: This guide is totally useless except for the betanotes... :)
+
+    @{"Introduction " link "ID" 0} - What the heck is this?
+    @{"Installation " link "IN" 0} - Where do I put the files?
+    @{"Instructions " link "IS" 0} - How do I play it?!.
+    @{"Author       " link "AU" 0} - Who's the BOZO!!?
+    @{"History      " link "HI" 0} - What it was like.
+
+    @{"BETA NOTES   " link "BE" 0} - Notes for this betaversion.
+    @{"TECH NOTES   " link "TE" 0} - Info about the code.
+    
+
+    Thanx to Whiz for additional gfx.
+    Thanx to Orgin&Krywes for invaluable coding help.
+
+    Dune III was programmed using Amiga E and a lot of asm. :)
+@endnode
+@node "ID" "Introduction"
+
+    Dune III is another of those Dune II clones.
+
+    Dune III has been tested with the following configurations:
+
+    A1200 030/50Mhz 2Mb Chip 4Mb  Fast
+    A1200 060/50Mhz 2Mb Chip 24Mb Fast
+    A3000 040/25Mhz 1Mb Chip 4Mb  Fast CFX64/3D
+
+    @{b}Requirements@{ub}
+
+    OS3.0+ and the AGA chipset or a graphicsboard.
+    At least 4Mb fastmem.
+
+    @{b}Features@{ub}
+    + AGA/CyberGFX support.
+    + Multitasking.
+    + Resolutions between 320*200 to 800*600
+
+@endnode
+@node "IN" "Installation"
+
+    Just run the mainfile in shell... no dig deal.. :)
+@endnode
+@node "IS" "Instructions"
+
+    These are of course not the controls for the full game.
+
+    Press 1-3 to change block/shade type.
+
+    Press ECS to quit.
+    RMB - Paint block (on both maps).
+    LMB - Move around on small map and paint shade on zoomed map.
+@endnode
+@node "AU" "Author"
+
+    Coding/Graphics/Sound by Bozo.
+
+    My real name is Björn Harrtell and I live in Sweden.
+
+    @{b}E-Mail:@{ub} bhar@hem.passagen.se (English or swedish)
+    @{b}Homepage:@{ub} http://hem.passagen.se/bhar/dune.html (English only)
+
+
+    These are people who helped me in development of this game:
+
+    Orgin&Krywes - Coding advice.
+    Whiz - Additional gfx.
+@endnode
+@node "HI" "History"
+
+    @{b}Dune III Beta 0.2 (1997)@{ub} @{"MORE" link "BE02" 0}
+    - Mapengine
+    - Main GUI base
+
+    @{b}Dune III Beta 0.1 (1996)@{ub} @{"MORE" link "BE01" 0}
+    - Just experimental
+@endnode
+@node "TE" "Technical notes"
+
+    The code uses rtgmaster, and uses native AGA support if there
+    is no graphicsboard availible... that is NO c2p.
+
+    For AGA it uses a fastmem buffer.
+
+    If a graphicsboard is found (a chunky mode) then the fastbuffer
+    is dropped and ONLY direct video RAM access is used.
+
+    Is seems like the rtgmaster screenmode requester fucks up so
+    the modes supported by my gfxcode is:
+
+    Planar - 256 colors
+    Chunky - 256 colors (1 byte per pixel, colormapped mode)
+
+    It should also work in all resolutions, although I made a restriction
+    in the screenmode requester to only allow up to 800*600. Resolutions
+    beyond this would require larger graphics...
+
+    But again the requester seem to fuck up and lots of resolutions get lost.
+@endnode
+@node "BE" "Beta 0.2"
+
+    The goal for Dune III Beta 0.2 is:
+
+    Mapengine
+
+    - For AGA or a graphicsboard
+    - Arbitary resolutions
+    - Fast scrolling
+
+    GUI base
+
+    - Scalable
+
+@endnode
+@node "BE01" "Extended history for beta version 0.1"
+
+    No more info available.
+@endnode
+@node "BE02" "Extended history for beta version 0.2"
+
+    These notes are very.. ahem... :)
+
+    Date     Comment
+
+    970804 - Rewrote mapengine core.
+    970807 - Started work on scalable GUI.
+    970808 - Added dark and shade to chunky displays.
+    970809 - Fixed bug in chunky code.
+    970810 - The bug wasn't fixed.. now it is.. hopefully.
+           - Added spice gfx.
+           - New: Again... bug..
+    970811 - Rewrote chunky gfxroutine
+    970812 - Scalable GUI base finished.
+    970813 - Chunky routine is now at least functioning.
+           - Shaped up exceptionhandler.
+           - New: Fixed inverted dark/shade
+           - New: Dark bug might be gone now :)
+    970814 - Dynamic memory allocation for arrays.
+           - New: Enabled GUI base.
+    970815 - Improved input routine. (RTG-bug workaround on AGA)
+             New: Improved GUI, now uses whole screen at all times.
+    970818 - Beta almost complete... some reports of bugs left in
+             the CGFX code though...
+    970824 - Fixed resoultion thingy with the global map.
+    970827 - Bugs in CGFX code again... hopefully fixed.
+
+    All betas should work on AGA machines. (tested on A1200/030-50)
+
+@endnode
