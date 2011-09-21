@@ -1,0 +1,67 @@
+<html> 
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	<title>Dune 3</title>
+
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu&v2" rel="stylesheet" type='text/css'>
+    
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" type="text/javascript"></script>
+
+	<style type="text/css">
+        body, html {
+            overflow: hidden;
+            font-family: 'Ubuntu', sans-serif;
+            color: #fff;
+            font-size: 11px;
+            background: #010c12;
+        }
+        #title {
+            font-size: 24pt;
+            margin-left: 0px;
+        }
+        #version {
+        }
+        #score {
+            display: none;
+            float: right;
+            margin-top: 20px;
+        }
+        #header {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        #game {
+            position: absolute;
+            width: 500px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            margin-left: -250px;
+            margin-top: -300px;
+        }
+        #board {
+            border: 5px solid #555555;
+            border-radius: 3px;
+            width: 500px;
+            height: 500px;
+        }
+        
+    </style>
+</head>
+<body style="margin: 5px; overflow: hidden">
+    <div id="game">
+        <div id="header">
+            <span id="title">Dune 3</span>
+            <span id="version"></span>
+        </div>
+        <div id="board">
+	        <canvas id="canvas" width=500 height=500></canvas>
+        </div>
+    </div>
+    <script src="lib/dune3.js" type="text/javascript"></script>
+</body>
+</html>
+
