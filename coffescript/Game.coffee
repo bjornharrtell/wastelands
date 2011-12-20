@@ -1,59 +1,15 @@
 class Viper
   constructor: ->
-    @version = "0.5.10"
+    @version = "0.0.1"
     @canvas = $('#canvas')
     @context = @canvas.get(0).getContext '2d'
-    @score = $('#score')
-    @progress = $('#progress')
-    @urls = {}
-    @worms = []
     @gamerunning = false
-    @isTouch = false
-    
-    @sounds =
-      background: new Audio("snd/background.ogg")
-      bounce: new Audio("snd/bounce.ogg")
-      doh: [new Audio("snd/doh1.ogg"), 
-        new Audio("snd/doh2.ogg"),
-        new Audio("snd/doh3.ogg"),
-        new Audio("snd/doh4.ogg"),
-        new Audio("snd/doh5.ogg"),
-        new Audio("snd/doh6.ogg")]
-      gameover: new Audio("snd/gameover.ogg")
-      laugh: new Audio("snd/laugh.ogg")
-      load: new Audio("snd/load.ogg")
-      start: new Audio("snd/start.ogg")
-      thread: new Audio("snd/thread.ogg")
-      wohoo: new Audio("snd/wohoo.ogg")
 
     $('#version').text @version + " by Björn Harrtell"
-  
-    # get root resource
-    $.ajax
-      url: "/"
-      success: @init
 
   init: (response) =>
-    @urls.games = response.games
-    @urls.status = response.status
-    @sessionID = response.sessionID
 
-    @initmenu()
-
-  initmenu: =>
-    @progress.fadeOut()
-    
     @context.clearRect 0, 0, @canvas.width(), @canvas.height()
-  
-    @mainMenu = new MainMenu @
-  
-    # Get server status
-    $.ajax
-      url: "/#{@urls.status}"
-      success: (response) ->
-        #$('#users').text "Users online: #{response.usersCount}"
-        $('#gameswaiting').text "Games waiting for players to join: #{response.gamesWaitingCount}"
-        $('#gamesinprogress').text "Games in progress: #{response.gamesStartedCount}"
   
   create: ->
     $.ajax
@@ -65,51 +21,7 @@ class Viper
     $.ajax
       url: "/#{@urls.games}/random"
       success: @joingame
-          
-  joingame: (response) =>
-    if not response.success
-      @mainMenu.destroy()
-      @progress.text 'No game available, try creating one.'
-      @progress.fadeIn()
-      setTimeout @initmenu, 3000
-      return
-  
-    @gameID = response.gameID
-    if not @socket?
-      @socket = io.connect()
-    
-      @socket.on 'start', @onStart
-      @socket.on 'move', @onMove
-      @socket.on 'gameover', @onGameover
-    
-    @socket.emit 'join',
-      sessionID: @sessionID
-      gameID: @gameID
-    
-    @mainMenu.destroy()
-    @progress.text 'Game joined, now waiting for an opponent to join...'
-    @progress.fadeIn()
-          
-  onMove: (data) =>
-    x = data.x
-    y = data.y
-    hole = data.hole
-
-    if @worms.length is 1
-      worm = new Worm new jsts.geom.Coordinate(x, y), 0
-      @worms.push worm
-    else
-      worm = @worms[1]
-      worm.lastPosition = worm.position.clone()
-      worm.position = new jsts.geom.Coordinate(x, y)
-      segment = new WormSegment worm.lastPosition, worm.position, hole
-      worm.segments.push segment
-      worm.lineSegmentIndex.add segment
-      worm.draw @context, 'red'
-
-  onStart: =>
-    @progress.fadeOut()
-    setTimeout @startgame, 500
+      
     
   onGameover: (data) =>
     clearInterval @intervalID
