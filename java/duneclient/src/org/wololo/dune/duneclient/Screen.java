@@ -15,8 +15,13 @@ public class Screen {
 	
 	int ox = 0;
 	int oy = 0;
+	
+	int mx = 0;
+	int my = 0;
+	
+	Map map;
 
-	Screen() throws IOException {
+	Screen(Map map) throws IOException {
 		TileSetFactory factory = new TileSetFactory();
 
 		desertTile = factory.createTileFromFile(new File(
@@ -25,6 +30,8 @@ public class Screen {
 				"../../resources/tilesets/dunes.png"));
 		tileSets[1] = factory.createTileSetFromFile(new File(
 				"../../resources/tilesets/spice.png"));
+		
+		this.map = map;
 	}
 	
 	void scrollX() {
@@ -38,12 +45,14 @@ public class Screen {
 	void render(Graphics graphics, int w, int h) {
 		for (int y = -1; y < 17; y++) {
 			for (int x = -1; x < 17; x++) {
-				BufferedImage tile = desertTile;
-				if (x < 10) {
-					//tile = tileSets[0][x];
-				}
-				if (x < 5) {
-					//tile = tileSets[1][x];
+				
+				Tile tile = map.getTile(x+1,y+1);
+				int baseType = tile.getBaseType();
+				
+				BufferedImage image = desertTile;
+				
+				if (baseType == Tile.TYPE_DUNES) {
+					image = tileSets[0][0];
 				}
 
 				int dx1 = x * 32 + ox;
@@ -56,7 +65,7 @@ public class Screen {
 				int sx2 = 16;
 				int sy2 = 16;
 
-				graphics.drawImage(tile, dx1, dy1, dx2, dy2, sx1, sy1, sx2,
+				graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2,
 						sy2, null);
 			}
 		}

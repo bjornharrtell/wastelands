@@ -2,16 +2,11 @@ package org.wololo.dune.duneclient;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Client extends Canvas implements Runnable {
@@ -23,6 +18,7 @@ public class Client extends Canvas implements Runnable {
 	boolean running = false;
 	int tickCount = 0;
 	
+	Map map;
 	Screen screen;
 
 	void start() {
@@ -32,7 +28,8 @@ public class Client extends Canvas implements Runnable {
 
 	void init() {
 		try {
-			screen = new Screen();
+			map = new Map();
+			screen = new Screen(map);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,7 +51,7 @@ public class Client extends Canvas implements Runnable {
 			long now = System.nanoTime();
 			unprocessed += (now - lastTime) / nsPerTick;
 			lastTime = now;
-			boolean shouldRender = false;
+			boolean shouldRender = true;
 			while (unprocessed >= 1.0) {
 				ticks++;
 				tick();
