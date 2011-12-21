@@ -22,14 +22,8 @@ public class Client extends Canvas implements Runnable {
 
 	boolean running = false;
 	int tickCount = 0;
-
-	BufferedImage image = new BufferedImage(WIDTH, HEIGHT,
-			BufferedImage.TYPE_INT_RGB);
-	int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer())
-			.getData();
-
-	BufferedImage test;
-	BufferedImage test2;
+	
+	Screen screen;
 
 	void start() {
 		running = true;
@@ -38,8 +32,7 @@ public class Client extends Canvas implements Runnable {
 
 	void init() {
 		try {
-			test = ImageIO.read(new File("../../resources/0Desert.png"));
-			test2 = ImageIO.read(new File("../../resources/0Dunes.png"));
+			screen = new Screen();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,22 +94,10 @@ public class Client extends Canvas implements Runnable {
 			return;
 		}
 
-		for (int i = 0; i < pixels.length; i++) {
-			pixels[i] = i + tickCount;
-		}
-
-		Graphics graphics = image.getGraphics();
-		graphics.setColor(Color.BLACK);
-		graphics.fillRect(0, 0, WIDTH, HEIGHT);
-		graphics.drawImage(test, 0, 0, 32, 32, 0, 0, 16, 16, null);
-		for (int i = 0; i < 16; i++) {
-			graphics.drawImage(test2, 32 + (i * 32), 0, 32 + 32 + (i * 32), 32,
-					1 + (i * 16) + i, 1, 17 + (i * 16) + i, 17, null);
-		}
-		graphics.dispose();
-
-		graphics = bufferStrategy.getDrawGraphics();
-		graphics.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		Graphics graphics = bufferStrategy.getDrawGraphics();
+		
+		screen.render(graphics, WIDTH, HEIGHT);
+		
 		graphics.dispose();
 		bufferStrategy.show();
 	}
