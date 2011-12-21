@@ -4,12 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 
-public class Client extends Canvas implements Runnable {
+public class Client extends Canvas implements Runnable, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	static final int WIDTH = 16 * 2 * 16;
@@ -20,6 +22,9 @@ public class Client extends Canvas implements Runnable {
 
 	Map map;
 	Screen screen;
+	
+	int prevX=0;
+	int prevY=0;
 
 	void start() {
 		running = true;
@@ -27,9 +32,11 @@ public class Client extends Canvas implements Runnable {
 	}
 
 	void init() {
+		this.addMouseMotionListener(this);
+		
 		try {
 			map = new Map();
-			screen = new Screen(map, 32);
+			screen = new Screen(map);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,8 +88,6 @@ public class Client extends Canvas implements Runnable {
 	}
 
 	void tick() {
-		screen.scrollX();
-
 		tickCount++;
 	}
 
@@ -117,5 +122,28 @@ public class Client extends Canvas implements Runnable {
 		frame.setVisible(true);
 
 		client.start();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		
+		int dx = prevX-x;
+		int dy = prevY-y;
+		
+		screen.move(dx, dy);
+		
+		prevX = x;
+		prevY = y;
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		
+		prevX=x;
+		prevY=y;
 	}
 }

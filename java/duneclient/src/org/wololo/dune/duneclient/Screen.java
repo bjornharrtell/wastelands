@@ -10,20 +10,18 @@ public class Screen {
 
 	BufferedImage[][] tileSets = new BufferedImage[4][5 * 18];
 
-	int tileSize;
+	final static int TILESIZE = 32;
+	final static int MAP_SCREEN_WIDTH = Map.WIDTH * TILESIZE;
+	final static int MAP_SCREEN_HEIGHT = Map.HEIGHT * TILESIZE;
 
-	int ox = 0;
-	int oy = 0;
-
-	int mx = 0;
-	int my = 0;
-
+	int sx = 0;
+	int sy = 0;
+	
 	Map map;
 
-	Screen(Map map, int tileSize) throws IOException {
-		this.tileSize = tileSize;
+	Screen(Map map) throws IOException {
 
-		TileSetFactory factory = new TileSetFactory(tileSize);
+		TileSetFactory factory = new TileSetFactory(TILESIZE);
 
 		tileSets[Tile.TYPE_BASE][0] = factory.createTileFromFile(new File(
 				"../../resources/tilesets/desert.png"));
@@ -35,14 +33,9 @@ public class Screen {
 		this.map = map;
 	}
 
-	void scrollX() {
-
-		ox--;
-
-		if (ox < -32) {
-			ox = 0;
-			mx++;
-		}
+	void move(int dx, int dy) {
+		sx+=dx;
+		sy+=dy;
 	}
 
 	/**
@@ -58,6 +51,12 @@ public class Screen {
 	}
 
 	void renderTile(Graphics graphics, int x, int y) {
+		double mxd =  Map.WIDTH * ((double) sx/ MAP_SCREEN_WIDTH );
+		double myd = Map.HEIGHT * ((double) sy/ MAP_SCREEN_HEIGHT );
+		
+		int ox = - (int) (mxd % 1 * TILESIZE);
+		int oy = - (int) (myd % 1 * TILESIZE);
+		
 		int dx1 = x * 32 + ox;
 		int dy1 = y * 32 + oy;
 		int dx2 = x * 32 + 32 + ox;
@@ -65,14 +64,17 @@ public class Screen {
 
 		int sx1 = 0;
 		int sy1 = 0;
-		int sx2 = tileSize;
-		int sy2 = tileSize;
+		int sx2 = TILESIZE;
+		int sy2 = TILESIZE;
 
-		Tile tile = map.getTile(mx + x, y);
+		int mx = (int) mxd;
+		int my = (int) myd;
+		
+		Tile tile = map.getTile(mx + x, my + y);
 
 		if (tile == null) {
 			graphics.setColor(Color.BLACK);
-			graphics.fillRect(dx1, dy2, tileSize, tileSize);
+			graphics.fillRect(dx1, dy2, TILESIZE, TILESIZE);
 			return;
 		}
 
