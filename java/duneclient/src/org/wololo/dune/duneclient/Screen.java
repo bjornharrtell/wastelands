@@ -12,6 +12,9 @@ public class Screen {
 
 	int TILESET_TYPE_DUNES = 0;
 	int TILESET_TYPE_ROCK = 1;
+	
+	int ox = 0;
+	int oy = 0;
 
 	Screen() throws IOException {
 		TileSetFactory factory = new TileSetFactory();
@@ -23,20 +26,38 @@ public class Screen {
 		tileSets[1] = factory.createTileSetFromFile(new File(
 				"../../resources/tilesets/spice.png"));
 	}
+	
+	void scrollX() {
+		
+		ox++;
+		
+		if (ox>32)
+			ox = 0;
+	}
 
 	void render(Graphics graphics, int w, int h) {
-		for (int y = 0; y < 16; y++) {
-			for (int x = 0; x < 16; x++) {
+		for (int y = -1; y < 17; y++) {
+			for (int x = -1; x < 17; x++) {
 				BufferedImage tile = desertTile;
-				if (x<10) {
-					tile = tileSets[0][x];
+				if (x < 10) {
+					//tile = tileSets[0][x];
 				}
-				if (x<5) {
-					tile = tileSets[1][x];
+				if (x < 5) {
+					//tile = tileSets[1][x];
 				}
-				
-				graphics.drawImage(tile, x * 32, y * 32, x * 32 + 32,
-						y * 32 + 32, 0, 0, 16, 16, null);
+
+				int dx1 = x * 32 + ox;
+				int dy1 = y * 32 + oy;
+				int dx2 = x * 32 + 32 + ox;
+				int dy2 = y * 32 + 32 + oy;
+
+				int sx1 = 0;
+				int sy1 = 0;
+				int sx2 = 16;
+				int sy2 = 16;
+
+				graphics.drawImage(tile, dx1, dy1, dx2, dy2, sx1, sy1, sx2,
+						sy2, null);
 			}
 		}
 	}

@@ -84,6 +84,8 @@ public class Client extends Canvas implements Runnable {
 	}
 
 	void tick() {
+		screen.scrollX();
+		
 		tickCount++;
 	}
 
