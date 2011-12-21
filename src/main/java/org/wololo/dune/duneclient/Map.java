@@ -59,6 +59,15 @@ public class Map {
 		return tiles[y * HEIGHT + x];
 	}
 	
+	/**
+	 * Looks at tiles around tile at x,y and calculates a value 0-255 which correspond to the matrix.png asset
+	 * 
+	 * Order of investigation:
+	 * 
+	 * 8 1 2
+	 * 7   3
+	 * 6 5 4
+	 */
 	void makeBorder(int x, int y) {
 		if (x<1 || x>=WIDTH || y<1 || y>=HEIGHT)
 			return;
@@ -67,7 +76,7 @@ public class Map {
 		
 		if (tile.getBaseType() == Tile.TYPE_DUNES) {
 			
-			int val; 
+			int val;
 			val = tiles[(y-1) * WIDTH + x].getBaseType() == Tile.TYPE_DUNES ? 1 : 0;
 			val = tiles[(y-1) * WIDTH + (x+1)].getBaseType() == Tile.TYPE_DUNES ? val | 2 : val;
 			val = tiles[y * WIDTH + (x+1)].getBaseType() == Tile.TYPE_DUNES ? val | 4 : val;
