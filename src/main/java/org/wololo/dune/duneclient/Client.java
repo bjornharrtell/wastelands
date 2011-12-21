@@ -11,11 +11,16 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+/**
+ * Basic game client.
+ * 
+ * NOTE: Based on @notch ludum dare 21 streamed coding session :)
+ */
 public class Client extends Canvas implements Runnable, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
-	static final int WIDTH = 16 * 2 * 16;
-	static final int HEIGHT = 16 * 2 * 16;
+	static final int WIDTH = 32 * 16;
+	static final int HEIGHT = 32 * 16;
 
 	boolean running = false;
 	int tickCount = 0;

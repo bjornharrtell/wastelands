@@ -3,7 +3,6 @@ package org.wololo.dune.duneclient;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -19,28 +18,38 @@ public class Screen {
 
 	int sx = 0;
 	int sy = 0;
-	
+
 	Map map;
 
 	Screen(Map map) throws IOException {
 
 		TileSetFactory factory = new TileSetFactory(TILESIZE);
-		
-		tileSets[Tile.TYPE_BASE][0] = factory.createTileFromFile(getClass().getClassLoader().getResourceAsStream("tilesets/desert.png"));
-		tileSets[Tile.TYPE_DUNES] = factory.createTileSetFromFile(getClass().getClassLoader().getResourceAsStream("tilesets/dunes.png"));
-		tileSets[Tile.TYPE_SPICE] = factory.createTileSetFromFile(getClass().getClassLoader().getResourceAsStream("tilesets/spice.png"));
+
+		tileSets[Tile.TYPE_BASE][0] = factory.createTileFromFile(getClass()
+				.getClassLoader().getResourceAsStream("tilesets/desert.png"));
+		tileSets[Tile.TYPE_DUNES] = factory.createTileSetFromFile(getClass()
+				.getClassLoader().getResourceAsStream("tilesets/dunes.png"));
+		tileSets[Tile.TYPE_ROCK] = factory.createTileSetFromFile(getClass()
+				.getClassLoader().getResourceAsStream("tilesets/rock.png"));
+		tileSets[Tile.TYPE_SPICE] = factory.createTileSetFromFile(getClass()
+				.getClassLoader().getResourceAsStream("tilesets/spice.png"));
 
 		this.map = map;
 	}
 
 	void move(int dx, int dy) {
-		sx+=dx;
-		sy+=dy;
+		sx += dx;
+		sy += dy;
+
+		sx = sx < 0 ? 0 : sx;
+		sx = sx > MAP_SCREEN_WIDTH - (32 * TILESIZE) ? MAP_SCREEN_WIDTH - (32 * TILESIZE): sx;
+		sy = sy < 0 ? 0 : sy;
+		sy = sy > MAP_SCREEN_HEIGHT - (32 * TILESIZE) ? MAP_SCREEN_HEIGHT - (32 * TILESIZE): sy;
 	}
 
 	/**
-	 * Render the map on screen 16x16 tiles plus 1 tile size border
-	 * buffer for scrolling.
+	 * Render the map on screen 16x16 tiles plus 1 tile size border buffer for
+	 * scrolling.
 	 */
 	void render(Graphics graphics, int w, int h) {
 		for (int y = -1; y < 17; y++) {
@@ -54,12 +63,12 @@ public class Screen {
 	 * Render a tile with scrolling offset
 	 */
 	void renderTile(Graphics graphics, int x, int y) {
-		double mxd =  Map.WIDTH * ((double) sx/ MAP_SCREEN_WIDTH );
-		double myd = Map.HEIGHT * ((double) sy/ MAP_SCREEN_HEIGHT );
-		
-		int ox = - (int) (mxd % 1 * TILESIZE);
-		int oy = - (int) (myd % 1 * TILESIZE);
-		
+		double mxd = Map.WIDTH * ((double) sx / MAP_SCREEN_WIDTH);
+		double myd = Map.HEIGHT * ((double) sy / MAP_SCREEN_HEIGHT);
+
+		int ox = -(int) (mxd % 1 * TILESIZE);
+		int oy = -(int) (myd % 1 * TILESIZE);
+
 		int dx1 = x * 32 + ox;
 		int dy1 = y * 32 + oy;
 		int dx2 = x * 32 + 32 + ox;
@@ -72,7 +81,7 @@ public class Screen {
 
 		int mx = (int) mxd;
 		int my = (int) myd;
-		
+
 		Tile tile = map.getTile(mx + x, my + y);
 
 		if (tile == null) {

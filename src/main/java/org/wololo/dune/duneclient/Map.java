@@ -6,6 +6,9 @@ public class Map {
 
 	Tile[] tiles = new Tile[WIDTH * HEIGHT];
 	
+	/**
+	 * Each index corresponds to a position in asset blocks.png and each value is the corresponding tileset image.
+	 */
 	byte[] subDef = { 2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
 			3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,
 			36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16, 40, 56, 40, 79, 14,
@@ -31,6 +34,7 @@ public class Map {
 			}
 		}
 
+		// TODO: test data, replace with serialization and map editor.
 		getTile(0, 0).setBaseType(Tile.TYPE_DUNES);
 		getTile(1, 1).setBaseType(Tile.TYPE_DUNES);
 		
@@ -43,6 +47,21 @@ public class Map {
 		getTile(15, 7).setBaseType(Tile.TYPE_DUNES);
 		getTile(16, 7).setBaseType(Tile.TYPE_DUNES);
 		getTile(17, 7).setBaseType(Tile.TYPE_DUNES);
+		
+		
+		getTile(25, 6).setBaseType(Tile.TYPE_ROCK);
+		getTile(26, 6).setBaseType(Tile.TYPE_ROCK);
+		getTile(27, 6).setBaseType(Tile.TYPE_ROCK);
+		getTile(25, 7).setBaseType(Tile.TYPE_ROCK);
+		getTile(26, 7).setBaseType(Tile.TYPE_ROCK);
+		getTile(27, 7).setBaseType(Tile.TYPE_ROCK);
+		getTile(25, 8).setBaseType(Tile.TYPE_ROCK);
+		getTile(26, 8).setBaseType(Tile.TYPE_ROCK);
+		getTile(27, 8).setBaseType(Tile.TYPE_ROCK);
+		
+		getTile(24, 7).setBaseType(Tile.TYPE_ROCK);
+		getTile(23, 8).setBaseType(Tile.TYPE_ROCK);
+		getTile(24, 8).setBaseType(Tile.TYPE_ROCK);
 		
 		for (int y = 0; y < HEIGHT; y++) {
 			for (int x = 0; x < WIDTH; x++) {
@@ -60,13 +79,7 @@ public class Map {
 	}
 	
 	/**
-	 * Looks at tiles around tile at x,y and calculates a value 0-255 which correspond to the matrix.png asset
-	 * 
-	 * Order of investigation:
-	 * 
-	 * 8 1 2
-	 * 7   3
-	 * 6 5 4
+	 * Calculates subtype for tile if it's suitable
 	 */
 	void makeBorder(int x, int y) {
 		if (x<1 || x>=WIDTH || y<1 || y>=HEIGHT)
@@ -74,19 +87,32 @@ public class Map {
 		
 		Tile tile = tiles[y * WIDTH + x];
 		
-		if (tile.getBaseType() == Tile.TYPE_DUNES) {
-			
-			int val;
-			val = tiles[(y-1) * WIDTH + x].getBaseType() == Tile.TYPE_DUNES ? 1 : 0;
-			val = tiles[(y-1) * WIDTH + (x+1)].getBaseType() == Tile.TYPE_DUNES ? val | 2 : val;
-			val = tiles[y * WIDTH + (x+1)].getBaseType() == Tile.TYPE_DUNES ? val | 4 : val;
-			val = tiles[(y+1) * WIDTH + (x+1)].getBaseType() == Tile.TYPE_DUNES ? val | 8 : val;
-			val = tiles[(y+1) * WIDTH + x].getBaseType() == Tile.TYPE_DUNES ? val | 16 : val;
-			val = tiles[(y+1) * WIDTH + (x-1)].getBaseType() == Tile.TYPE_DUNES ? val | 32 : val;
-			val = tiles[y * WIDTH + (x-1)].getBaseType() == Tile.TYPE_DUNES ? val | 64 : val;
-			val = tiles[(y-1) * WIDTH + (x-1)].getBaseType() == Tile.TYPE_DUNES ? val | 128 : val;
-			
-			tile.setSubType(subDef[val]);
-		}
+		int baseType = tile.getBaseType();
+		
+		if (baseType == Tile.TYPE_BASE) return;
+		
+		tile.setSubType(subDef[calcSubType(tile.getBaseType(), x, y)]-1);
+	}
+	
+	/**
+	 * Looks at tiles around tile at x,y and calculates a value 0-255 which correspond to the matrix.png asset.
+	 * 
+	 * Order of investigation:
+	 * 
+	 * 8 1 2
+	 * 7 * 3
+	 * 6 5 4
+	 */
+	int calcSubType(int baseType, int x, int y) {
+		int subType;
+		subType = tiles[(y-1) * WIDTH + x].getBaseType() == baseType ? 1 : 0;
+		subType = tiles[(y-1) * WIDTH + (x+1)].getBaseType() == baseType ? subType | 2 : subType;
+		subType = tiles[y * WIDTH + (x+1)].getBaseType() ==baseType ? subType | 4 : subType;
+		subType = tiles[(y+1) * WIDTH + (x+1)].getBaseType() == baseType? subType | 8 : subType;
+		subType = tiles[(y+1) * WIDTH + x].getBaseType() == baseType ? subType | 16 : subType;
+		subType = tiles[(y+1) * WIDTH + (x-1)].getBaseType() == baseType ? subType | 32 : subType;
+		subType = tiles[y * WIDTH + (x-1)].getBaseType() == baseType ? subType | 64 : subType;
+		subType = tiles[(y-1) * WIDTH + (x-1)].getBaseType() == baseType ? subType | 128 : subType;
+		return subType;
 	}
 }

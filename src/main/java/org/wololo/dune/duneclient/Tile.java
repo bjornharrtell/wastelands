@@ -10,11 +10,14 @@ public class Tile {
 	/**
 	 * One of the above defined tilesets
 	 */
-	int baseType = 0;
+	int baseType = TYPE_BASE;
 
 	/**
 	 * Calculated subtype for tileset borders or specific tile from the base
-	 * tileset
+	 * tileset.
+	 * 
+	 * Subtypes are a value between 0-255 based on the asset blocks.png table.
+	 * @see Map
 	 */
 	int subType = 0;
 
