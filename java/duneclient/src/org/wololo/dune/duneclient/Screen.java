@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Contains the contents of the game screen with rendering logic.
+ */
 public class Screen {
 
 	BufferedImage[][] tileSets = new BufferedImage[4][5 * 18];
@@ -39,7 +42,7 @@ public class Screen {
 	}
 
 	/**
-	 * Render the map on screen 16x16 tiles double size scaled. 1 tile size
+	 * Render the map on screen 16x16 tiles plus 1 tile size border
 	 * buffer for scrolling.
 	 */
 	void render(Graphics graphics, int w, int h) {
@@ -50,6 +53,9 @@ public class Screen {
 		}
 	}
 
+	/**
+	 * Render a tile with scrolling offset
+	 */
 	void renderTile(Graphics graphics, int x, int y) {
 		double mxd =  Map.WIDTH * ((double) sx/ MAP_SCREEN_WIDTH );
 		double myd = Map.HEIGHT * ((double) sy/ MAP_SCREEN_HEIGHT );
@@ -79,7 +85,8 @@ public class Screen {
 		}
 
 		int baseType = tile.getBaseType();
-		BufferedImage image = tileSets[baseType][0];
+		int subType = tile.getSubType();
+		BufferedImage image = tileSets[baseType][subType];
 
 		graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 	}
