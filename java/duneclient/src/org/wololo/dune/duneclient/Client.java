@@ -17,7 +17,7 @@ public class Client extends Canvas implements Runnable {
 
 	boolean running = false;
 	int tickCount = 0;
-	
+
 	Map map;
 	Screen screen;
 
@@ -29,7 +29,7 @@ public class Client extends Canvas implements Runnable {
 	void init() {
 		try {
 			map = new Map();
-			screen = new Screen(map);
+			screen = new Screen(map, 32);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class Client extends Canvas implements Runnable {
 
 	void tick() {
 		screen.scrollX();
-		
+
 		tickCount++;
 	}
 
@@ -94,9 +94,9 @@ public class Client extends Canvas implements Runnable {
 		}
 
 		Graphics graphics = bufferStrategy.getDrawGraphics();
-		
+
 		screen.render(graphics, WIDTH, HEIGHT);
-		
+
 		graphics.dispose();
 		bufferStrategy.show();
 	}

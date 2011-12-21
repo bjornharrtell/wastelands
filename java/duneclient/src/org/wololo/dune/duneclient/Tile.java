@@ -1,16 +1,21 @@
 package org.wololo.dune.duneclient;
 
-import java.awt.image.BufferedImage;
-
 public class Tile {
 	
-	final static int TYPE_DESERT = 0;
+	final static int TYPE_BASE = 0;
 	final static int TYPE_DUNES = 1;
 	final static int TYPE_ROCK = 2;
 	final static int TYPE_SPICE = 3;
 	
+	/**
+	 * One of the above defined tilesets
+	 */
 	int baseType;
-	private int subType;
+	
+	/**
+	 * Calculated subtype for tileset borders or specific tile from the base tileset
+	 */
+	int subType;
 
 	int getBaseType() {
 		return baseType;

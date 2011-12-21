@@ -11,13 +11,20 @@ import javax.imageio.ImageIO;
  */
 public class TileSetFactory {
 
+	int size;
+
+	TileSetFactory(int size) {
+		this.size = size;
+	}
+
 	BufferedImage createTileFromFile(File file) throws IOException {
 
 		BufferedImage image = ImageIO.read(file);
 
-		BufferedImage tile = new BufferedImage(16, 16,
+		BufferedImage tile = new BufferedImage(size, size,
 				BufferedImage.TYPE_INT_RGB);
-		tile.getGraphics().drawImage(image, 0, 0, 16, 16, 0, 0, 16, 16, null);
+		tile.getGraphics().drawImage(image, 0, 0, size, size, 0, 0, 16, 16,
+				null);
 
 		return tile;
 	}
@@ -32,7 +39,7 @@ public class TileSetFactory {
 
 		for (int y = 0; y < 5; y++) {
 			for (int x = 0; x < 18; x++) {
-				BufferedImage tile = new BufferedImage(16, 16,
+				BufferedImage tile = new BufferedImage(size, size,
 						BufferedImage.TYPE_INT_RGB);
 
 				int sx1 = x * 16 + 1 + x;
@@ -40,7 +47,7 @@ public class TileSetFactory {
 				int sx2 = sx1 + 16;
 				int sy2 = sy1 + 16;
 
-				tile.getGraphics().drawImage(image, 0, 0, 16, 16, sx1, sy1,
+				tile.getGraphics().drawImage(image, 0, 0, size, size, sx1, sy1,
 						sx2, sy2, null);
 
 				tileSet[count++] = tile;
