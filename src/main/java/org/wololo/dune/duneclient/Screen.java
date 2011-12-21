@@ -25,13 +25,10 @@ public class Screen {
 	Screen(Map map) throws IOException {
 
 		TileSetFactory factory = new TileSetFactory(TILESIZE);
-
-		tileSets[Tile.TYPE_BASE][0] = factory.createTileFromFile(new File(
-				"../../resources/tilesets/desert.png"));
-		tileSets[Tile.TYPE_DUNES] = factory.createTileSetFromFile(new File(
-				"../../resources/tilesets/dunes.png"));
-		tileSets[Tile.TYPE_SPICE] = factory.createTileSetFromFile(new File(
-				"../../resources/tilesets/spice.png"));
+		
+		tileSets[Tile.TYPE_BASE][0] = factory.createTileFromFile(getClass().getClassLoader().getResourceAsStream("tilesets/desert.png"));
+		tileSets[Tile.TYPE_DUNES] = factory.createTileSetFromFile(getClass().getClassLoader().getResourceAsStream("tilesets/dunes.png"));
+		tileSets[Tile.TYPE_SPICE] = factory.createTileSetFromFile(getClass().getClassLoader().getResourceAsStream("tilesets/spice.png"));
 
 		this.map = map;
 	}

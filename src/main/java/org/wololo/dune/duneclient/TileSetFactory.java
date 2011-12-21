@@ -3,6 +3,7 @@ package org.wololo.dune.duneclient;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -17,9 +18,9 @@ public class TileSetFactory {
 		this.size = size;
 	}
 
-	BufferedImage createTileFromFile(File file) throws IOException {
+	BufferedImage createTileFromFile(InputStream inputStream) throws IOException {
 
-		BufferedImage image = ImageIO.read(file);
+		BufferedImage image = ImageIO.read(inputStream);
 
 		BufferedImage tile = new BufferedImage(size, size,
 				BufferedImage.TYPE_INT_RGB);
@@ -29,9 +30,9 @@ public class TileSetFactory {
 		return tile;
 	}
 
-	BufferedImage[] createTileSetFromFile(File file) throws IOException {
+	BufferedImage[] createTileSetFromFile(InputStream inputStream) throws IOException {
 
-		BufferedImage image = ImageIO.read(file);
+		BufferedImage image = ImageIO.read(inputStream);
 
 		BufferedImage[] tileSet = new BufferedImage[5 * 18];
 
