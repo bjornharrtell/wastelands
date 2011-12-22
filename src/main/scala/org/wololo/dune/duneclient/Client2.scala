@@ -1,0 +1,122 @@
+package org.wololo.dune.duneclient
+import java.awt.Canvas
+import java.awt.event.MouseMotionListener
+import java.awt.Dimension
+import java.awt.event.MouseEvent
+import javax.swing.JFrame
+import java.awt.BorderLayout
+
+object Client2 extends Canvas with MouseMotionListener with Runnable{
+  val WIDTH = 32 * 16;
+  val HEIGHT = 32 * 16;
+
+  var running = false;
+  var tickCount = 0;
+
+  var map = new org.wololo.dune.dunegame.Map();
+  var screen = new Screen2(map);
+
+  
+
+  var prevX = 0;
+  var prevY = 0;
+
+  def start() {
+    running = true;
+    addMouseMotionListener(this);
+    new Thread(this).start();
+  }
+
+  def run() {
+    var lastTime = System.nanoTime();
+    var unprocessed = 0.0;
+    var nsPerTick = 1000000000.0 / 60.0;
+    var frames = 0;
+    var ticks = 0;
+    var lastTimer1 = System.currentTimeMillis();
+
+    while (running) {
+      var now = System.nanoTime();
+      unprocessed += (now - lastTime) / nsPerTick;
+      lastTime = now;
+      var shouldRender = true;
+      while (unprocessed >= 1.0) {
+        ticks += 1;
+        tick();
+        unprocessed -= 1;
+        shouldRender = true;
+      }
+
+      Thread.sleep(2);
+
+      if (shouldRender) {
+        frames += 1;
+        render();
+      }
+
+      if (System.currentTimeMillis() - lastTimer1 > 1000) {
+        lastTimer1 += 1000;
+        System.out.println(ticks + " ticks, " + frames + " fps");
+        frames = 0;
+        ticks = 0;
+      }
+    }
+  }
+
+  def tick() {
+    tickCount += 1;
+  }
+
+  def render() {
+    val bufferStrategy = getBufferStrategy();
+    if (bufferStrategy == null) {
+      createBufferStrategy(3);
+      return ;
+    }
+
+    val graphics = bufferStrategy.getDrawGraphics();
+
+    screen.render(graphics, WIDTH, HEIGHT);
+
+    graphics.dispose();
+    bufferStrategy.show();
+  }
+
+  def main(args: Array[String]): Unit = {
+    setPreferredSize(new Dimension(WIDTH, HEIGHT));
+    setMaximumSize(new Dimension(WIDTH, HEIGHT));
+    setMinimumSize(new Dimension(WIDTH, HEIGHT));
+
+    val frame = new JFrame();
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setLayout(new BorderLayout());
+    frame.add(this);
+    frame.pack();
+    frame.setLocationRelativeTo(null);
+    frame.setResizable(false);
+    frame.setVisible(true);
+
+    start();
+  }
+
+  override def mouseDragged(e: MouseEvent) {
+    val x = e.getX();
+    val y = e.getY();
+
+    val dx = prevX - x;
+    val dy = prevY - y;
+
+    screen.move(dx, dy);
+
+    prevX = x;
+    prevY = y;
+  }
+
+  override def mouseMoved(e: MouseEvent) {
+    val x = e.getX();
+    val y = e.getY();
+
+    prevX = x;
+    prevY = y;
+  }
+}
