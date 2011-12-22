@@ -18,7 +18,7 @@ class Screen(map: Map) {
   var sx = 0;
   var sy = 0;
 
-  val factory = new TileSetFactory2(TILESIZE);
+  val factory = new TileSetFactory(TILESIZE);
 
   tileSets(TileTypes.TYPE_BASE)(0) = factory.createTileFromFile(getClass()
     .getClassLoader().getResourceAsStream("tilesets/desert.png"));

@@ -3,7 +3,7 @@ import java.io.InputStream
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
-class TileSetFactory2(size: Int) {
+class TileSetFactory(size: Int) {
 
   def createTileFromFile(inputStream: InputStream): BufferedImage = {
 
