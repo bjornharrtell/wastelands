@@ -1,22 +1,21 @@
-package org.wololo.dune.duneclient
+package org.wololo.dune.client
 import java.awt.Canvas
 import java.awt.event.MouseMotionListener
 import java.awt.Dimension
 import java.awt.event.MouseEvent
 import javax.swing.JFrame
 import java.awt.BorderLayout
+import org.wololo.dune.game.Map;
 
-object Client2 extends Canvas with MouseMotionListener with Runnable{
+object Client2 extends Canvas with MouseMotionListener with Runnable {
   val WIDTH = 32 * 16;
   val HEIGHT = 32 * 16;
 
   var running = false;
   var tickCount = 0;
 
-  var map = new org.wololo.dune.dunegame.Map();
-  var screen = new Screen2(map);
-
-  
+  val map = new Map();
+  val screen = new Screen(map);
 
   var prevX = 0;
   var prevY = 0;

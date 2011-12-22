@@ -1,4 +1,4 @@
-package org.wololo.dune.dunegame
+package org.wololo.dune.game
 
 object TileTypes {
   val TYPE_BASE = 0;

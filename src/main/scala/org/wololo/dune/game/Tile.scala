@@ -1,4 +1,4 @@
-package org.wololo.dune.dunegame
+package org.wololo.dune.game
 
 class Tile {
 

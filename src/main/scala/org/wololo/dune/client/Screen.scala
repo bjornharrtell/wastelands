@@ -1,13 +1,14 @@
-package org.wololo.dune.duneclient
+package org.wololo.dune.client
 import java.awt.image.BufferedImage
-import org.wololo.dune.dunegame.TileTypes
+import org.wololo.dune.game.Map
+import org.wololo.dune.game.TileTypes
 import java.awt.Graphics
 import java.awt.Color
 
 /**
  * Contains the contents of the game screen with rendering logic.
  */
-class Screen2(map: org.wololo.dune.dunegame.Map) {
+class Screen(map: Map) {
   val tileSets = Array.ofDim[BufferedImage](4, 5 * 18);
 
   val TILESIZE = 32;
@@ -54,8 +55,8 @@ class Screen2(map: org.wololo.dune.dunegame.Map) {
    * Render a tile with scrolling offset
    */
   def renderTile(graphics: Graphics, x: Int, y: Int) {
-    val mxd : Double = map.WIDTH * (sx.toDouble / MAP_SCREEN_WIDTH);
-    val myd : Double = map.HEIGHT * (sy.toDouble / MAP_SCREEN_HEIGHT);
+    val mxd: Double = map.WIDTH * (sx.toDouble / MAP_SCREEN_WIDTH);
+    val myd: Double = map.HEIGHT * (sy.toDouble / MAP_SCREEN_HEIGHT);
 
     val ox: Int = -(mxd % 1 * TILESIZE).toInt;
     val oy: Int = -(myd % 1 * TILESIZE).toInt;

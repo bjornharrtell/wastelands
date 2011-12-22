@@ -1,4 +1,4 @@
-package org.wololo.dune.dunegame
+package org.wololo.dune.game
 
 class Map {
   val WIDTH = 64;
