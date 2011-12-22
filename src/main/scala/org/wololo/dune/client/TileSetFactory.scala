@@ -14,7 +14,7 @@ class TileSetFactory(size: Int) {
     tile
   }
 
-  def createTileSetFromFile(inputStream: InputStream): Array[BufferedImage] = {
+  def createTileSetFromFile(inputStream: InputStream, imageType: Int): Array[BufferedImage] = {
     val image = ImageIO.read(inputStream)
 
     val tileSet = new Array[BufferedImage](5 * 18)
@@ -25,7 +25,7 @@ class TileSetFactory(size: Int) {
       y <- 0 until 5;
       x <- 0 until 18
     ) {
-      val tile = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB)
+      val tile = new BufferedImage(size, size, imageType)
 
       val sx1 = x * 16 + 1 + x
       val sy1 = y * 16 + 1 + y

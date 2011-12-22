@@ -14,4 +14,8 @@ class Tile {
    * Subtypes are a value between 0-255 based on the asset blocks.png table.
    */
   var subType = 0;
+  
+  var shade = false;
+  
+  var shadeSubType = 0;
 }

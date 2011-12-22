@@ -10,6 +10,7 @@ import java.awt.Color
  */
 class Screen(map: Map) {
   val tileSets = Array.ofDim[BufferedImage](4, 5 * 18)
+  var shadeSet = new Array[BufferedImage](5 * 18);
 
   val TileSize = 32;
   val MapScreenWidth = map.Width * TileSize
@@ -23,11 +24,14 @@ class Screen(map: Map) {
   tileSets(TileTypes.Base)(0) = factory.createTileFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/desert.png"))
   tileSets(TileTypes.Dunes) = factory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/dunes.png"))
+    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BufferedImage.TYPE_INT_RGB)
   tileSets(TileTypes.Rock) = factory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/rock.png"))
+    .getClassLoader.getResourceAsStream("tilesets/rock.png"), BufferedImage.TYPE_INT_RGB)
   tileSets(TileTypes.Spice) = factory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/spice.png"))
+    .getClassLoader.getResourceAsStream("tilesets/spice.png"), BufferedImage.TYPE_INT_RGB)
+
+  shadeSet = factory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/shade.png"),BufferedImage.TYPE_INT_ARGB)
 
   def move(dx: Int, dy: Int) {
     sx += dx
@@ -76,12 +80,12 @@ class Screen(map: Map) {
 
     val tile = map.tiles(mx + x)(my + y)
 
-    if (tile == null) {
-      graphics.setColor(Color.BLACK)
-      graphics.fillRect(dx1, dy2, TileSize, TileSize)
-    } else {
-      val image = tileSets(tile.baseType)(tile.subType)
-      graphics.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
+    val image = tileSets(tile.baseType)(tile.subType)
+    graphics.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
+    
+    if (tile.shade) {
+	    val shadeImage = shadeSet(tile.shadeSubType);
+	    graphics.drawImage(shadeImage, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
     }
   }
 }

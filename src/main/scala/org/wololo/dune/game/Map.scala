@@ -54,6 +54,16 @@ class Map {
   tiles(25)(7).baseType = TileTypes.Rock
   tiles(26)(7).baseType = TileTypes.Rock
   tiles(27)(7).baseType = TileTypes.Rock
+  
+  tiles(25)(8).shade = true
+  tiles(26)(8).shade = true
+  tiles(27)(8).shade = true
+  tiles(25)(9).shade = true
+  tiles(26)(9).shade = true
+  tiles(27)(9).shade = true
+  tiles(25)(10).shade = true
+  tiles(26)(10).shade = true
+  tiles(27)(10).shade = true
 
   tiles(23)(8).baseType = TileTypes.Rock
   tiles(24)(8).baseType = TileTypes.Rock
@@ -64,6 +74,7 @@ class Map {
     x <- 0 until Width
   ) {
     makeBorder(x, y)
+    makeShade(x, y)
   }
 
   /**
@@ -74,7 +85,17 @@ class Map {
       val tile = tiles(x)(y)
 
       if (tile.baseType != TileTypes.Base) {
-        tile.subType = subDef(calcSubType(x, y, tile.baseType)) - 1
+        tile.subType = calcSubType(x, y, tile.baseType)
+      }
+    }
+  }
+  
+  def makeShade(x: Int, y: Int) {
+    if (!(x < 1 || x >= Width || y < 1 || y >= Height)) {
+      val tile = tiles(x)(y)
+
+      if (tile.shade) {
+        tile.shadeSubType = calcShadeSubType(x, y)
       }
     }
   }
@@ -98,6 +119,19 @@ class Map {
     subType = if (tiles(x - 1)(y + 1).baseType == baseType) subType | 32 else subType
     subType = if (tiles(x - 1)(y).baseType == baseType) subType | 64 else subType
     subType = if (tiles(x - 1)(y - 1).baseType == baseType) subType | 128 else subType
-    subType
+    subDef(subType)-1
+  }
+  
+  def calcShadeSubType(x: Int, y: Int): Int = {
+    var subType = 0
+    subType = if (tiles(x)(y - 1).shade) 1 else 0
+    subType = if (tiles(x + 1)(y - 1).shade) subType | 2 else subType
+    subType = if (tiles(x + 1)(y).shade) subType | 4 else subType
+    subType = if (tiles(x + 1)(y + 1).shade) subType | 8 else subType
+    subType = if (tiles(x)(y + 1).shade) subType | 16 else subType
+    subType = if (tiles(x - 1)(y + 1).shade) subType | 32 else subType
+    subType = if (tiles(x - 1)(y).shade) subType | 64 else subType
+    subType = if (tiles(x - 1)(y - 1).shade) subType | 128 else subType
+    subDef(subType)-1
   }
 }
