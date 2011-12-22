@@ -44,10 +44,10 @@ class Screen(map: Map) {
    * scrolling.
    */
   def render(graphics: Graphics, w: Int, h: Int) {
-    for{
+    for {
       y <- -1 to 16
       x <- -1 to 16
-    }{ renderTile(graphics, x, y) }
+    } { renderTile(graphics, x, y) }
   }
 
   /**
@@ -67,11 +67,11 @@ class Screen(map: Map) {
 
     val mx: Int = mxd.toInt
     val my: Int = myd.toInt
-    
+
     val tx = mx + x;
     val ty = my + y;
-    
-    if (tx<0 || tx>map.Width || ty<0 || ty>map.Height)
+
+    if (tx < 0 || tx > map.Width || ty < 0 || ty > map.Height)
       return
 
     val tile = map.tiles(mx + x)(my + y)
