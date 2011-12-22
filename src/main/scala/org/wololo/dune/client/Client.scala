@@ -7,7 +7,7 @@ import javax.swing.JFrame
 import java.awt.BorderLayout
 import org.wololo.dune.game.Map;
 
-object Client2 extends Canvas with MouseMotionListener with Runnable {
+object Client extends Canvas with MouseMotionListener with Runnable {
   val WIDTH = 32 * 16;
   val HEIGHT = 32 * 16;
 
