@@ -67,8 +67,14 @@ class Screen(map: Map) {
 
     val mx: Int = mxd.toInt
     val my: Int = myd.toInt
+    
+    val tx = mx + x;
+    val ty = my + y;
+    
+    if (tx<0 || tx>map.Width || ty<0 || ty>map.Height)
+      return
 
-    val tile = map.tiles(mx + x, my + y)
+    val tile = map.tiles(mx + x)(my + y)
 
     if (tile == null) {
       graphics.setColor(Color.BLACK)
