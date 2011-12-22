@@ -48,7 +48,7 @@
             	<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.wololo.dune.duneclient.Client</mainClass>
+							<mainClass>org.wololo.dune.client.Client</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

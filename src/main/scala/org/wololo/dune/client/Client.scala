@@ -85,7 +85,7 @@ object Client extends Canvas with MouseMotionListener with Runnable {
     setMaximumSize(new Dimension(Width, Height))
     setMinimumSize(new Dimension(Width, Height))
 
-    val frame = new JFrame();
+    val frame = new JFrame()
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     frame.setLayout(new BorderLayout())
     frame.add(this)
