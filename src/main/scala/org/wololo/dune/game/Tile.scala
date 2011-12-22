@@ -5,7 +5,7 @@ class Tile {
   /**
    * The tileset this tile belongs to.
    */
-  var baseType = TileTypes.TYPE_BASE;
+  var baseType = TileTypes.Base;
 
   /**
    * Subtype for tileset borders or specific tile from the base

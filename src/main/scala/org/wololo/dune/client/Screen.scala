@@ -9,34 +9,34 @@ import java.awt.Color
  * Contains the contents of the game screen with rendering logic.
  */
 class Screen(map: Map) {
-  val tileSets = Array.ofDim[BufferedImage](4, 5 * 18);
+  val tileSets = Array.ofDim[BufferedImage](4, 5 * 18)
 
-  val TILESIZE = 32;
-  val MAP_SCREEN_WIDTH = map.WIDTH * TILESIZE;
-  val MAP_SCREEN_HEIGHT = map.HEIGHT * TILESIZE;
+  val TileSize = 32;
+  val MapScreenWidth = map.Width * TileSize
+  val MapScreenHeight = map.Height * TileSize
 
-  var sx = 0;
-  var sy = 0;
+  var sx = 0
+  var sy = 0
 
-  val factory = new TileSetFactory(TILESIZE);
+  val factory = new TileSetFactory(TileSize)
 
-  tileSets(TileTypes.TYPE_BASE)(0) = factory.createTileFromFile(getClass()
-    .getClassLoader().getResourceAsStream("tilesets/desert.png"));
-  tileSets(TileTypes.TYPE_DUNES) = factory.createTileSetFromFile(getClass()
-    .getClassLoader().getResourceAsStream("tilesets/dunes.png"));
-  tileSets(TileTypes.TYPE_ROCK) = factory.createTileSetFromFile(getClass()
-    .getClassLoader().getResourceAsStream("tilesets/rock.png"));
-  tileSets(TileTypes.TYPE_SPICE) = factory.createTileSetFromFile(getClass()
-    .getClassLoader().getResourceAsStream("tilesets/spice.png"));
+  tileSets(TileTypes.Base)(0) = factory.createTileFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/desert.png"))
+  tileSets(TileTypes.Dunes) = factory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/dunes.png"))
+  tileSets(TileTypes.Rock) = factory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/rock.png"))
+  tileSets(TileTypes.Spice) = factory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/spice.png"))
 
   def move(dx: Int, dy: Int) {
-    sx += dx;
-    sy += dy;
+    sx += dx
+    sy += dy
 
-    sx = if (sx < 0) 0 else sx;
-    sx = if (sx > MAP_SCREEN_WIDTH - (32 * TILESIZE)) MAP_SCREEN_WIDTH - (32 * TILESIZE) else sx;
-    sy = if (sy < 0) 0 else sy;
-    sy = if (sy > MAP_SCREEN_HEIGHT - (32 * TILESIZE)) MAP_SCREEN_HEIGHT - (32 * TILESIZE) else sy;
+    sx = if (sx < 0) 0 else sx
+    sx = if (sx > MapScreenWidth - (32 * TileSize)) MapScreenWidth - (32 * TileSize) else sx
+    sy = if (sy < 0) 0 else sy
+    sy = if (sy > MapScreenHeight - (32 * TileSize)) MapScreenHeight - (32 * TileSize) else sy
   }
 
   /**
@@ -44,41 +44,38 @@ class Screen(map: Map) {
    * scrolling.
    */
   def render(graphics: Graphics, w: Int, h: Int) {
-    for (y <- -1 until 17) {
-      for (x <- -1 until 17) {
-        renderTile(graphics, x, y);
-      }
-    }
+    for{
+      y <- -1 to 16
+      x <- -1 to 16
+    }{ renderTile(graphics, x, y) }
   }
 
   /**
    * Render a tile with scrolling offset
    */
   def renderTile(graphics: Graphics, x: Int, y: Int) {
-    val mxd: Double = map.WIDTH * (sx.toDouble / MAP_SCREEN_WIDTH);
-    val myd: Double = map.HEIGHT * (sy.toDouble / MAP_SCREEN_HEIGHT);
+    val mxd: Double = map.Width * (sx.toDouble / MapScreenWidth)
+    val myd: Double = map.Height * (sy.toDouble / MapScreenHeight)
 
-    val ox: Int = -(mxd % 1 * TILESIZE).toInt;
-    val oy: Int = -(myd % 1 * TILESIZE).toInt;
+    val ox: Int = -(mxd % 1 * TileSize).toInt
+    val oy: Int = -(myd % 1 * TileSize).toInt
 
-    val dx1 = x * 32 + ox;
-    val dy1 = y * 32 + oy;
-    val dx2 = x * 32 + 32 + ox;
-    val dy2 = y * 32 + 32 + oy;
+    val dx1 = x * 32 + ox
+    val dy1 = y * 32 + oy
+    val dx2 = x * 32 + 32 + ox
+    val dy2 = y * 32 + 32 + oy
 
-    val mx: Int = mxd.toInt;
-    val my: Int = myd.toInt;
+    val mx: Int = mxd.toInt
+    val my: Int = myd.toInt
 
-    val tile = map.tiles(mx + x, my + y);
+    val tile = map.tiles(mx + x, my + y)
 
     if (tile == null) {
-      graphics.setColor(Color.BLACK);
-      graphics.fillRect(dx1, dy2, TILESIZE, TILESIZE);
-      return ;
+      graphics.setColor(Color.BLACK)
+      graphics.fillRect(dx1, dy2, TileSize, TileSize)
+    } else {
+      val image = tileSets(tile.baseType)(tile.subType)
+      graphics.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
     }
-
-    val image = tileSets(tile.baseType)(tile.subType);
-
-    graphics.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, TILESIZE, TILESIZE, null);
   }
 }
