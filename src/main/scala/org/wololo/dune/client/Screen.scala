@@ -31,7 +31,7 @@ class Screen(map: Map) {
     .getClassLoader.getResourceAsStream("tilesets/spice.png"), BufferedImage.TYPE_INT_RGB)
 
   shadeSet = factory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/shade.png"),BufferedImage.TYPE_INT_ARGB)
+    .getClassLoader.getResourceAsStream("tilesets/shade.png"), BufferedImage.TYPE_INT_ARGB)
 
   def move(dx: Int, dy: Int) {
     sx += dx
@@ -82,10 +82,10 @@ class Screen(map: Map) {
 
     val image = tileSets(tile.baseType)(tile.subType)
     graphics.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
-    
+
     if (tile.shade) {
-	    val shadeImage = shadeSet(tile.shadeSubType);
-	    graphics.drawImage(shadeImage, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
+      val shadeImage = shadeSet(tile.shadeSubType);
+      graphics.drawImage(shadeImage, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize, null)
     }
   }
 }

@@ -54,7 +54,7 @@ class Map {
   tiles(25)(7).baseType = TileTypes.Rock
   tiles(26)(7).baseType = TileTypes.Rock
   tiles(27)(7).baseType = TileTypes.Rock
-  
+
   tiles(25)(8).shade = true
   tiles(26)(8).shade = true
   tiles(27)(8).shade = true
@@ -69,34 +69,35 @@ class Map {
   tiles(24)(8).baseType = TileTypes.Rock
   tiles(24)(7).baseType = TileTypes.Rock
 
-  for (
+  for {
     y <- 0 until Height;
     x <- 0 until Width
-  ) {
+  } {
     makeBorder(x, y)
     makeShade(x, y)
   }
 
   /**
    * Calculates subtype for tile if it's suitable
+   *
+   * NOTE: does not alter
    */
   def makeBorder(x: Int, y: Int) {
-    if (!(x < 1 || x >= Width || y < 1 || y >= Height)) {
-      val tile = tiles(x)(y)
+    val tile = tiles(x)(y)
 
-      if (tile.baseType != TileTypes.Base) {
-        tile.subType = calcSubType(x, y, tile.baseType)
-      }
+    if (tile.baseType != TileTypes.Base) {
+      tile.subType = calcSubType(x, y, tile.baseType)
     }
   }
-  
-  def makeShade(x: Int, y: Int) {
-    if (!(x < 1 || x >= Width || y < 1 || y >= Height)) {
-      val tile = tiles(x)(y)
 
-      if (tile.shade) {
-        tile.shadeSubType = calcShadeSubType(x, y)
-      }
+  /**
+   * Calculates shade (fog of war) for tile
+   */
+  def makeShade(x: Int, y: Int) {
+    val tile = tiles(x)(y)
+
+    if (tile.shade) {
+      tile.shadeSubType = calcShadeSubType(x, y)
     }
   }
 
@@ -110,28 +111,39 @@ class Map {
    * 6 5 4
    */
   def calcSubType(x: Int, y: Int, baseType: Int): Int = {
+    val x1 = if (x<1) 0 else -1
+    val x2 = if (x>Width) 0 else 1
+    val y1 = if (y<1) 0 else -1
+    val y2 = if (y>Height) 0 else 1
+    
     var subType = 0
-    subType = if (tiles(x)(y - 1).baseType == baseType) 1 else 0
-    subType = if (tiles(x + 1)(y - 1).baseType == baseType) subType | 2 else subType
-    subType = if (tiles(x + 1)(y).baseType == baseType) subType | 4 else subType
-    subType = if (tiles(x + 1)(y + 1).baseType == baseType) subType | 8 else subType
-    subType = if (tiles(x)(y + 1).baseType == baseType) subType | 16 else subType
-    subType = if (tiles(x - 1)(y + 1).baseType == baseType) subType | 32 else subType
-    subType = if (tiles(x - 1)(y).baseType == baseType) subType | 64 else subType
-    subType = if (tiles(x - 1)(y - 1).baseType == baseType) subType | 128 else subType
-    subDef(subType)-1
+    subType = if (tiles(x     )(y + y1).baseType == baseType) 1 else 0
+    subType = if (tiles(x + x2)(y + y1).baseType == baseType) subType | 2 else subType
+    subType = if (tiles(x + x2)(y     ).baseType == baseType) subType | 4 else subType
+    subType = if (tiles(x + x2)(y + y2).baseType == baseType) subType | 8 else subType
+    subType = if (tiles(x     )(y + y2).baseType == baseType) subType | 16 else subType
+    subType = if (tiles(x + x1)(y + y2).baseType == baseType) subType | 32 else subType
+    subType = if (tiles(x + x1)(y     ).baseType == baseType) subType | 64 else subType
+    subType = if (tiles(x + x1)(y + y1).baseType == baseType) subType | 128 else subType
+    subDef(subType) - 1
   }
-  
+
+  // TODO: refactor perhaps a closure for the repeated ifs..?
   def calcShadeSubType(x: Int, y: Int): Int = {
+    val x1 = if (x<1) 0 else -1
+    val x2 = if (x>Width) 0 else 1
+    val y1 = if (y<1) 0 else -1
+    val y2 = if (y>Height) 0 else 1
+    
     var subType = 0
-    subType = if (tiles(x)(y - 1).shade) 1 else 0
-    subType = if (tiles(x + 1)(y - 1).shade) subType | 2 else subType
-    subType = if (tiles(x + 1)(y).shade) subType | 4 else subType
-    subType = if (tiles(x + 1)(y + 1).shade) subType | 8 else subType
-    subType = if (tiles(x)(y + 1).shade) subType | 16 else subType
-    subType = if (tiles(x - 1)(y + 1).shade) subType | 32 else subType
-    subType = if (tiles(x - 1)(y).shade) subType | 64 else subType
-    subType = if (tiles(x - 1)(y - 1).shade) subType | 128 else subType
-    subDef(subType)-1
+    subType = if (tiles(x     )(y + y1).shade) 1 else 0
+    subType = if (tiles(x + x2)(y + y1).shade) subType | 2 else subType
+    subType = if (tiles(x + x2)(y     ).shade) subType | 4 else subType
+    subType = if (tiles(x + x2)(y + y2).shade) subType | 8 else subType
+    subType = if (tiles(x     )(y + y2).shade) subType | 16 else subType
+    subType = if (tiles(x + x1)(y + y2).shade) subType | 32 else subType
+    subType = if (tiles(x + x1)(y     ).shade) subType | 64 else subType
+    subType = if (tiles(x + x1)(y + y1).shade) subType | 128 else subType
+    subDef(subType) - 1
   }
 }
