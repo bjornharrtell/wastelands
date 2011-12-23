@@ -1,4 +1,4 @@
-package org.wololo.dune.game
+package org.wololo.dune3.core
 
 class Tile {
 

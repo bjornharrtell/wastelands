@@ -1,4 +1,4 @@
-package org.wololo.dune.client
+package org.wololo.dune3.jvmclient
 import java.io.InputStream
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage

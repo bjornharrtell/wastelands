@@ -1,11 +1,11 @@
-package org.wololo.dune.client
+package org.wololo.dune3.jvmclient
 import java.awt.Canvas
 import java.awt.event.MouseMotionListener
 import java.awt.Dimension
 import java.awt.event.MouseEvent
 import javax.swing.JFrame
 import java.awt.BorderLayout
-import org.wololo.dune.game.Map;
+import org.wololo.dune3.core.Map;
 
 object Client extends Canvas with MouseMotionListener with Runnable {
   val Width = 32 * 16

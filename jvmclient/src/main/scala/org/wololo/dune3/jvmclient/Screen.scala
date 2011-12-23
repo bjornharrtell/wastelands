@@ -1,7 +1,7 @@
-package org.wololo.dune.client
+package org.wololo.dune3.jvmclient
 import java.awt.image.BufferedImage
-import org.wololo.dune.game.Map
-import org.wololo.dune.game.TileTypes
+import org.wololo.dune3.core.Map
+import org.wololo.dune3.core.TileTypes
 import java.awt.Graphics
 import java.awt.Color
 
