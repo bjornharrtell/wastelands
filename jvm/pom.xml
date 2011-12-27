@@ -103,7 +103,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.wololo.dune3.jvmclient.Client</mainClass>
+              <mainClass>org.wololo.dune3.jvm.Client</mainClass>
             </manifest>
           </archive>
         </configuration>
