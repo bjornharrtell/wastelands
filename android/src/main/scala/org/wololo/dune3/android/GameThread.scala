@@ -1,10 +1,11 @@
 package org.wololo.dune3.android
-import android.view.SurfaceHolder
-import android.graphics.Canvas
 import org.wololo.dune3.core.Game
 import org.wololo.dune3.vmlayer.Context
+
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Rect
+import android.view.SurfaceHolder
 
 class GameThread extends Thread with SurfaceHolder.Callback with Context {
 
@@ -13,11 +14,11 @@ class GameThread extends Thread with SurfaceHolder.Callback with Context {
   val game: Game = new Game(new AndroidTileSetFactory(32), this)
 
   var surfaceHolder: SurfaceHolder = null
-  
+
   var canvas: Canvas = null
-  
-  val board = Bitmap.createBitmap(32*16, 32*16, Bitmap.Config.RGB_565)
-  val boardCanvas = new Canvas(board);
+
+  val board = Bitmap.createBitmap(game.Width, game.Height, Bitmap.Config.RGB_565)
+  val boardCanvas = new AndroidCanvas(new Canvas(board))
 
   override def run() {
     game.run()
@@ -47,12 +48,12 @@ class GameThread extends Thread with SurfaceHolder.Callback with Context {
   }
 
   override def getCanvas(): org.wololo.dune3.vmlayer.Canvas = {
-    new AndroidCanvas(boardCanvas)
+    boardCanvas
   }
-  
+
   override def disposeCanvas() {
     canvas = surfaceHolder.lockCanvas(null)
-    canvas.drawBitmap(board, null, new Rect(0,0,32*16,32*16), null)
+    canvas.drawBitmap(board, null, new Rect(0, 0, game.Width, game.Height), null)
     surfaceHolder.unlockCanvasAndPost(canvas)
   }
 }

@@ -1,18 +1,16 @@
 package org.wololo.dune3.core
 
 import java.awt.image.BufferedImage
-import java.awt.Graphics
-import java.awt.Color
-import org.wololo.dune3.vmlayer.TileSetFactory
-import org.wololo.dune3.vmlayer.Image
+
 import org.wololo.dune3.vmlayer.Canvas
+import org.wololo.dune3.vmlayer.TileSetFactory
 
 /**
  * Contains the contents of the game screen with rendering logic.
  */
 class Screen(tileSetFactory: TileSetFactory, map: Map) {
-  val tileSets = Array.ofDim[Image](4, 5 * 18)
-  var shadeSet = new Array[Image](5 * 18);
+  val tileSets = Array.ofDim[Object](4, 5 * 18)
+  var shadeSet = new Array[Object](5 * 18);
 
   val TileSize = 32;
   val MapScreenWidth = map.Width * TileSize

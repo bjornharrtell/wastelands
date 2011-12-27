@@ -3,23 +3,22 @@ import java.io.InputStream
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import org.wololo.dune3.vmlayer.TileSetFactory
-import org.wololo.dune3.vmlayer.Image
 
 class AWTTileSetFactory(size: Int) extends TileSetFactory {
 
-  def createTileFromFile(inputStream: InputStream): Image = {
+  def createTileFromFile(inputStream: InputStream): Object = {
     val image = ImageIO.read(inputStream)
 
     val tile = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB)
     tile.getGraphics.drawImage(image, 0, 0, size, size, 0, 0, 16, 16, null);
 
-    new AWTImage(tile)
+    tile
   }
 
-  def createTileSetFromFile(inputStream: InputStream, imageType: Int): Array[Image] = {
+  def createTileSetFromFile(inputStream: InputStream, imageType: Int): Array[Object] = {
     val image = ImageIO.read(inputStream)
 
-    val tileSet = new Array[Image](5 * 18)
+    val tileSet = new Array[Object](5 * 18)
 
     var count = 0
 
@@ -36,7 +35,7 @@ class AWTTileSetFactory(size: Int) extends TileSetFactory {
 
       tile.getGraphics.drawImage(image, 0, 0, size, size, sx1, sy1, sx2, sy2, null)
 
-      tileSet(count) = new AWTImage(tile)
+      tileSet(count) = tile
       count += 1
     }
 
