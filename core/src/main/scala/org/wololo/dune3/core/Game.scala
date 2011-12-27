@@ -9,7 +9,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
 
   var running = false
   var tickCount = 0
-
+  
   val map = new Map()
   val screen = new Screen(tileSetFactory, map)
   
@@ -27,7 +27,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
       val now = System.nanoTime()
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = true
+      var shouldRender = false
       while (unprocessed >= 1.0) {
         ticks += 1
         tick()
@@ -35,7 +35,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
         shouldRender = true
       }
 
-      Thread.sleep(2)
+      //Thread.sleep(2)
 
       if (shouldRender) {
         frames += 1
@@ -62,6 +62,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
       screen.render(canvas, Width, Height)
       canvas.dispose()
       canvas.show()
+      context.disposeCanvas();
     }
   }
   

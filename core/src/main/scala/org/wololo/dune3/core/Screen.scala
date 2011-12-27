@@ -48,18 +48,22 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
    * scrolling.
    */
   def render(canvas: Canvas, w: Int, h: Int) {
+    val sxt = sx
+    val syt = sy
+    
     for {
       y <- -1 to 16
       x <- -1 to 16
-    } { renderTile(canvas, x, y) }
+    } { renderTile(canvas, x, y, sxt, syt) }
   }
 
   /**
    * Render a tile with scrolling offset
    */
-  def renderTile(canvas: Canvas, x: Int, y: Int) {
-    val mxd: Double = map.Width * (sx.toDouble / MapScreenWidth)
-    val myd: Double = map.Height * (sy.toDouble / MapScreenHeight)
+  def renderTile(canvas: Canvas, x: Int, y: Int, sxt: Int, syt: Int) {
+    
+    val mxd: Double = map.Width * (sxt.toDouble / MapScreenWidth)
+    val myd: Double = map.Height * (syt.toDouble / MapScreenHeight)
 
     val ox: Int = -(mxd % 1 * TileSize).toInt
     val oy: Int = -(myd % 1 * TileSize).toInt
@@ -81,11 +85,11 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
     val tile = map.tiles(mx + x)(my + y)
 
     val image = tileSets(tile.baseType)(tile.subType)
-    canvas.drawImage(image, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize)
+    canvas.drawImage(image, dx1, dy1)
 
     if (tile.shade) {
-      val shadeImage = shadeSet(tile.shadeSubType);
-      canvas.drawImage(shadeImage, dx1, dy1, dx2, dy2, 0, 0, TileSize, TileSize)
+      val shadeImage = shadeSet(tile.shadeSubType)
+      canvas.drawImage(shadeImage, dx1, dy1)
     }
   }
 }
