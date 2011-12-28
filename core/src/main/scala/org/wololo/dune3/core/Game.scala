@@ -27,7 +27,7 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
       val now = System.nanoTime()
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = true
+      var shouldRender = false
       while (unprocessed >= 1.0) {
         ticks += 1
         tick()
@@ -47,13 +47,13 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
         System.out.println(ticks + " ticks, " + frames + " fps")
         frames = 0
         ticks = 0
-        
-        //screen.unit.move(1,0)
       }
     }
   }
 
   def tick() {
+    screen.unit.tick
+    
     tickCount += 1
   }
 

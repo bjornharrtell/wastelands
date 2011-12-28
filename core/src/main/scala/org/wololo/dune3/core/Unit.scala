@@ -1,22 +1,73 @@
 package org.wololo.dune3.core
+import org.wololo.dune3.vmlayer.Canvas
 
-class Unit (map: Map, startX: Int, startY: Int) {
+/**
+ * TODO: probably needs refactoring for more intelligent rendering with other parts
+ */
+class Unit(map: Map, startX: Int, startY: Int) {
 
   var x = startX
   var y = startY
-  
+
   map.removeShade(x, y)
-  
-  def render() {
-    
+  map.removeShade(x, y - 1)
+  map.removeShade(x, y + 1)
+  map.removeShade(x + 1, y)
+  //map.removeShade(x + 1, y - 1)
+  //map.removeShade(x + 1, y + 1)
+  map.removeShade(x - 1, y)
+  //map.removeShade(x - 1, y - 1)
+  //map.removeShade(x - 1, y + 1)
+
+  var mox = 0
+  var moy = 0
+
+  var direction = 0
+
+  var count = 0
+
+  def render(canvas: Canvas, mx: Int, my: Int, ox: Int, oy: Int) {
+    var mdx = x - mx
+    var mdy = y - my
+
+    if (mdx < 0 || mdx > 16 || mdy < 0 || mdy > 16)
+      return
+
+    val sx = mdx * 32 + ox + mox
+    val sy = mdy * 32 + oy + moy
+
+    canvas.drawRect(sx, sy, sx + 32, sy + 32)
   }
-  
-  def move(dx: Int, dy: Int) {
-    if (x>=map.Width-1) return
-    
-    x += dx
-    y += dy
-    
-    map.removeShade(x, y)
+
+  def tick() {
+    // TODO: dirty hack test to simulate move right
+    // TODO: needs logic for 8 directions, velocity
+    if (x >= map.Width - 16)
+      return
+
+    if (mox >= 31) {
+
+    } else {
+      mox += 1
+    }
+
+    if (count > 40) {
+      mox = 0
+      x += 1
+
+      map.removeShade(x, y)
+      map.removeShade(x, y - 1)
+      map.removeShade(x, y + 1)
+      map.removeShade(x + 1, y)
+      //map.removeShade(x + 1, y - 1)
+      //map.removeShade(x + 1, y + 1)
+      map.removeShade(x - 1, y)
+      //map.removeShade(x - 1, y - 1)
+      //map.removeShade(x - 1, y + 1)
+
+      count = 0
+    }
+
+    count += 1
   }
 }

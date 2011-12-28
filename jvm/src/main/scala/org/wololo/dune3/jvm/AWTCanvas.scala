@@ -3,6 +3,7 @@ import org.wololo.dune3.vmlayer.Canvas
 import java.awt.Graphics
 import java.awt.image.BufferStrategy
 import java.awt.image.BufferedImage
+import java.awt.Color
 
 class AWTCanvas(bufferStrategy: BufferStrategy) extends Canvas {
   val graphics = bufferStrategy.getDrawGraphics()
@@ -15,10 +16,16 @@ class AWTCanvas(bufferStrategy: BufferStrategy) extends Canvas {
     graphics.drawImage(image.asInstanceOf[BufferedImage], dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null)
   }
 
+  def drawRect(x1: Int, y1: Int, x2: Int, y2: Int) {
+    graphics.setColor(Color.YELLOW)
+    graphics.drawRect(x1, y1, x2 - x1, y2 - y1)
+  }
+  
   def clearRect(x1: Int, y1: Int, x2: Int, y2: Int) {
+    graphics.setColor(Color.BLACK)
     graphics.fillRect(x1, y1, x2 - x1, y2 - y1)
   }
-
+  
   def show() {
     bufferStrategy.show()
   }

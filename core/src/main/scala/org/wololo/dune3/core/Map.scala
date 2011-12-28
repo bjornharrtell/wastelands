@@ -74,7 +74,7 @@ class Map {
     x <- 0 until Width
   } {
     makeBorder(x, y)
-    //tiles(x)(y).shade = true
+    tiles(x)(y).shade = true
   }
 
   /**

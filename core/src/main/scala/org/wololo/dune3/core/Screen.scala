@@ -35,10 +35,11 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
     sx += dx
     sy += dy
 
+    // TODO: make sure bounds calc is correct... this is a guess (16*TileSize crashed)
     sx = if (sx < 0) 0 else sx
-    sx = if (sx > MapScreenWidth - (32 * TileSize)) MapScreenWidth - (32 * TileSize) else sx
+    sx = if (sx > MapScreenWidth - (17 * TileSize)) MapScreenWidth - (17 * TileSize) else sx
     sy = if (sy < 0) 0 else sy
-    sy = if (sy > MapScreenHeight - (32 * TileSize)) MapScreenHeight - (32 * TileSize) else sy
+    sy = if (sy > MapScreenHeight - (17 * TileSize)) MapScreenHeight - (17 * TileSize) else sy
   }
 
   /**
@@ -69,6 +70,8 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
 
       y += 1
     }
+    
+    unit.render(canvas, mx, my, ox, oy)
   }
 
   /**
@@ -80,8 +83,8 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
     val sy = y * 32 + oy
 
     // map tile coord
-    val tx = mx + x;
-    val ty = my + y;
+    val tx = mx + x
+    val ty = my + y
 
     // bail if out of map bounds
     if (tx < 0 || tx > map.Width || ty < 0 || ty > map.Height)
