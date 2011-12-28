@@ -76,8 +76,8 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
    */
   def renderTile(canvas: Canvas, x: Int, y: Int, mx: Int, my: Int, ox: Int, oy: Int) {
     // screen destination coord
-    val dx1 = x * 32 + ox
-    val dy1 = y * 32 + oy
+    val sx = x * 32 + ox
+    val sy = y * 32 + oy
 
     // map tile coord
     val tx = mx + x;
@@ -89,12 +89,14 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
 
     val tile = map.tiles(tx)(ty)
 
-    val image = tileSets(tile.baseType)(tile.subType)
-    canvas.drawImage(image, dx1, dy1)
+    canvas.drawImage(tileSets(tile.baseType)(tile.subType), sx, sy)
 
     if (tile.shade) {
-      val shadeImage = shadeSet(tile.shadeSubType)
-      canvas.drawImage(shadeImage, dx1, dy1)
+      if (tile.shadeSubType == 0) {
+        canvas.clearRect(sx, sy, sx+32, sy+32)
+      } else {
+        canvas.drawImage(shadeSet(tile.shadeSubType), sx, sy)
+      }
     }
   }
 }

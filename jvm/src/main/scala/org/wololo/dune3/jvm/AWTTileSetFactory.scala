@@ -1,17 +1,17 @@
 package org.wololo.dune3.jvm
-import java.io.InputStream
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-import org.wololo.dune3.vmlayer.TileSetFactory
 import java.awt.GraphicsEnvironment
 import java.awt.Transparency
-import org.wololo.dune3.core.TileTypes
+import java.io.InputStream
+
+import org.wololo.dune3.vmlayer.TileSetFactory
+
+import javax.imageio.ImageIO
 
 class AWTTileSetFactory(size: Int) extends TileSetFactory {
 
-  val ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-  val gs = ge.getDefaultScreenDevice();
-  val gc = gs.getDefaultConfiguration();
+  val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
+  val gs = ge.getDefaultScreenDevice()
+  val gc = gs.getDefaultConfiguration()
 
   def createTileFromFile(inputStream: InputStream): Object = {
     val image = ImageIO.read(inputStream)

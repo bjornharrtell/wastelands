@@ -14,7 +14,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with Context
   val Width = 32 * 16
   val Height = 32 * 16
 
-  val game = new Game(new AWTTileSetFactory(32), this);
+  val game = new Game(new AWTTileSetFactory(32), this)
 
   var prevX = 0
   var prevY = 0
