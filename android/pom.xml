@@ -69,6 +69,12 @@
                             <goal>add-source</goal>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+			              <args>
+			                <arg>-g:none</arg>
+			                <arg>-optimise</arg>
+			              </args>
+			            </configuration>
                     </execution>
                     <execution>
                         <id>scala-test-compile</id>

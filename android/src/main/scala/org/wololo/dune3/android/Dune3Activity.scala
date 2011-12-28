@@ -32,14 +32,14 @@ class Dune3Activity extends Activity with OnTouchListener {
       return true;
     }
 
-    val historySize = motionEvent.getHistorySize();
+    //val historySize = motionEvent.getHistorySize();
 
     // TODO: handle multitouch
     // final int pointerCount = motionEvent.getPointerCount();
 
     val p = 0;
 
-    for (h <- 0 until historySize) {
+    /*for (h <- 0 until historySize) {
       val x = motionEvent.getHistoricalX(p, h).toInt
       val y = motionEvent.getHistoricalY(p, h).toInt
 
@@ -56,7 +56,7 @@ class Dune3Activity extends Activity with OnTouchListener {
       
       prevX = x
       prevY = y
-    }
+    }*/
 
     val x = motionEvent.getX(p).toInt
     val y = motionEvent.getY(p).toInt

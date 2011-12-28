@@ -50,11 +50,11 @@ object Client extends Canvas with MouseMotionListener with Runnable with Context
       return new AWTCanvas(bufferStrategy)
     }
   }
-  
+
   def disposeCanvas() {
-    
+
   }
-  
+
   override def mouseDragged(e: MouseEvent) {
     val x = e.getX
     val y = e.getY

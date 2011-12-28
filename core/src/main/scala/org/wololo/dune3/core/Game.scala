@@ -3,19 +3,19 @@ import org.wololo.dune3.vmlayer.Canvas
 import org.wololo.dune3.vmlayer.TileSetFactory
 import org.wololo.dune3.vmlayer.Context
 
-class Game (tileSetFactory: TileSetFactory, context: Context) {
+class Game(tileSetFactory: TileSetFactory, context: Context) {
   val Width = 32 * 16
   val Height = 32 * 16
 
   var running = false
   var tickCount = 0
-  
+
   val map = new Map()
   val screen = new Screen(tileSetFactory, map)
-  
+
   def run() {
     running = true
-    
+
     var lastTime = System.nanoTime()
     var unprocessed = 0.0
     val nsPerTick = 1000000000.0 / 60.0
@@ -27,7 +27,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
       val now = System.nanoTime()
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = false
+      var shouldRender = true
       while (unprocessed >= 1.0) {
         ticks += 1
         tick()
@@ -57,7 +57,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
 
   def render() {
     val canvas = context.getCanvas();
-    
+
     if (canvas != null) {
       screen.render(canvas, Width, Height)
       canvas.dispose()
@@ -65,7 +65,7 @@ class Game (tileSetFactory: TileSetFactory, context: Context) {
       context.disposeCanvas();
     }
   }
-  
+
   def move(dx: Int, dy: Int) {
     screen.move(dx, dy)
   }

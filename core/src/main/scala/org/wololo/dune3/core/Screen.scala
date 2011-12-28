@@ -1,7 +1,5 @@
 package org.wololo.dune3.core
 
-import java.awt.image.BufferedImage
-
 import org.wololo.dune3.vmlayer.Canvas
 import org.wololo.dune3.vmlayer.TileSetFactory
 
@@ -22,14 +20,14 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
   tileSets(TileTypes.Base)(0) = tileSetFactory.createTileFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/desert.png"))
   tileSets(TileTypes.Dunes) = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BufferedImage.TYPE_INT_RGB)
+    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), false)
   tileSets(TileTypes.Rock) = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/rock.png"), BufferedImage.TYPE_INT_RGB)
+    .getClassLoader.getResourceAsStream("tilesets/rock.png"), false)
   tileSets(TileTypes.Spice) = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/spice.png"), BufferedImage.TYPE_INT_RGB)
+    .getClassLoader.getResourceAsStream("tilesets/spice.png"), false)
 
   shadeSet = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/shade.png"), BufferedImage.TYPE_INT_ARGB)
+    .getClassLoader.getResourceAsStream("tilesets/shade.png"), true)
 
   def move(dx: Int, dy: Int) {
     sx += dx
@@ -48,18 +46,25 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
   def render(canvas: Canvas, w: Int, h: Int) {
     val sxt = sx
     val syt = sy
-    
-    for {
-      y <- -1 to 16
-      x <- -1 to 16
-    } { renderTile(canvas, x, y, sxt, syt) }
+
+    var y = -1
+    var x = -1
+    while (y < 17) {
+      x = -1
+      while (x < 17) {
+        renderTile(canvas, x, y, sxt, syt)
+        x += 1
+      }
+
+      y += 1
+    }
   }
 
   /**
    * Render a tile with scrolling offset
    */
   def renderTile(canvas: Canvas, x: Int, y: Int, sxt: Int, syt: Int) {
-    
+
     val mxd: Double = map.Width * (sxt.toDouble / MapScreenWidth)
     val myd: Double = map.Height * (syt.toDouble / MapScreenHeight)
 

@@ -3,5 +3,5 @@ import java.io.InputStream
 
 trait TileSetFactory {
   def createTileFromFile(inputStream: InputStream): Object
-  def createTileSetFromFile(inputStream: InputStream, imageType: Int): Array[Object]
+  def createTileSetFromFile(inputStream: InputStream, transparent: Boolean): Array[Object]
 }
