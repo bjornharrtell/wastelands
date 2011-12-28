@@ -47,6 +47,8 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
         System.out.println(ticks + " ticks, " + frames + " fps")
         frames = 0
         ticks = 0
+        
+        screen.unit.move(1,0)
       }
     }
   }

@@ -14,6 +14,8 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
 
+  val unit = new Unit(map, 7,7)
+  
   var sx = 0
   var sy = 0
 

@@ -74,13 +74,11 @@ class Map {
     x <- 0 until Width
   } {
     makeBorder(x, y)
-    makeShade(x, y)
+    tiles(x)(y).shade = true
   }
 
   /**
    * Calculates subtype for tile if it's suitable
-   *
-   * NOTE: does not alter
    */
   def makeBorder(x: Int, y: Int) {
     val tile = tiles(x)(y)
@@ -128,7 +126,7 @@ class Map {
     subDef(subType) - 1
   }
 
-  // TODO: refactor perhaps a closure for the repeated ifs..?
+  // TODO: refactor, too similar to above
   def calcShadeSubType(x: Int, y: Int): Int = {
     val x1 = if (x < 1) 0 else -1
     val x2 = if (x > Width) 0 else 1
@@ -145,5 +143,18 @@ class Map {
     subType = if (tiles(x + x1)(y).shade) subType | 64 else subType
     subType = if (tiles(x + x1)(y + y1).shade) subType | 128 else subType
     subDef(subType) - 1
+  }
+
+  def removeShade(x: Int, y: Int) {
+    tiles(x)(y).shade = false
+    
+    makeShade(x,y-1)
+    makeShade(x+1,y-1)
+    makeShade(x+1,y)
+    makeShade(x+1,y+1)
+    makeShade(x,y+1)
+    makeShade(x-1,y+1)
+    makeShade(x-1,y)
+    makeShade(x-1,y-1)
   }
 }
