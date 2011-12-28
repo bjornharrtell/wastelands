@@ -46,15 +46,24 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
    * scrolling.
    */
   def render(canvas: Canvas, w: Int, h: Int) {
-    val sxt = sx
-    val syt = sy
+    // screen coord to map coord conversion
+    val mxd: Double = map.Width * (sx.toDouble / MapScreenWidth)
+    val myd: Double = map.Height * (sy.toDouble / MapScreenHeight)
 
+    val mx: Int = mxd.toInt
+    val my: Int = myd.toInt
+    
+    // tile offset calc (for the scrolling buffer)
+    val ox: Int = -(mxd % 1 * TileSize).toInt
+    val oy: Int = -(myd % 1 * TileSize).toInt
+
+    // NOTE: while loop used for perf
     var y = -1
     var x = -1
     while (y < 17) {
       x = -1
       while (x < 17) {
-        renderTile(canvas, x, y, sxt, syt)
+        renderTile(canvas, x, y, mx, my, ox, oy)
         x += 1
       }
 
@@ -65,29 +74,20 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
   /**
    * Render a tile with scrolling offset
    */
-  def renderTile(canvas: Canvas, x: Int, y: Int, sxt: Int, syt: Int) {
-
-    val mxd: Double = map.Width * (sxt.toDouble / MapScreenWidth)
-    val myd: Double = map.Height * (syt.toDouble / MapScreenHeight)
-
-    val ox: Int = -(mxd % 1 * TileSize).toInt
-    val oy: Int = -(myd % 1 * TileSize).toInt
-
+  def renderTile(canvas: Canvas, x: Int, y: Int, mx: Int, my: Int, ox: Int, oy: Int) {
+    // screen destination coord
     val dx1 = x * 32 + ox
     val dy1 = y * 32 + oy
-    val dx2 = x * 32 + 32 + ox
-    val dy2 = y * 32 + 32 + oy
 
-    val mx: Int = mxd.toInt
-    val my: Int = myd.toInt
-
+    // map tile coord
     val tx = mx + x;
     val ty = my + y;
 
+    // bail if out of map bounds
     if (tx < 0 || tx > map.Width || ty < 0 || ty > map.Height)
       return
 
-    val tile = map.tiles(mx + x)(my + y)
+    val tile = map.tiles(tx)(ty)
 
     val image = tileSets(tile.baseType)(tile.subType)
     canvas.drawImage(image, dx1, dy1)

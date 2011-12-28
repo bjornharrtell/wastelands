@@ -48,7 +48,7 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
         frames = 0
         ticks = 0
         
-        screen.unit.move(1,0)
+        //screen.unit.move(1,0)
       }
     }
   }

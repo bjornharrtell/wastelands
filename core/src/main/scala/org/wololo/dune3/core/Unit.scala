@@ -12,7 +12,7 @@ class Unit (map: Map, startX: Int, startY: Int) {
   }
   
   def move(dx: Int, dy: Int) {
-    if (x>=map.Width) return
+    if (x>=map.Width-1) return
     
     x += dx
     y += dy

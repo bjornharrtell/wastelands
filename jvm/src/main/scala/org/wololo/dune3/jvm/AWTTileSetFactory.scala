@@ -18,7 +18,7 @@ class AWTTileSetFactory(size: Int) extends TileSetFactory {
 
     val tile = gc.createCompatibleImage(size, size, Transparency.OPAQUE)
 
-    tile.getGraphics.drawImage(image, 0, 0, size, size, 0, 0, 16, 16, null);
+    tile.getGraphics.drawImage(image, 0, 0, size, size, 0, 0, 16, 16, null)
 
     tile
   }
