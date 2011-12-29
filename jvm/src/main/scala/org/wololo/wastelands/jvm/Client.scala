@@ -1,13 +1,14 @@
 package org.wololo.wastelands.jvm
-import java.awt.Canvas
-import java.awt.event.MouseMotionListener
-import java.awt.Dimension
 import java.awt.event.MouseEvent
-import javax.swing.JFrame
+import java.awt.event.MouseMotionListener
 import java.awt.BorderLayout
-import org.wololo.dune3.core.Map
-import org.wololo.dune3.core.Game
-import org.wololo.dune3.vmlayer.Context
+import java.awt.Canvas
+import java.awt.Dimension
+
+import org.wololo.wastelands.core.Game
+import org.wololo.wastelands.vmlayer.Context
+
+import javax.swing.JFrame
 
 object Client extends Canvas with MouseMotionListener with Runnable with Context {
 
@@ -41,7 +42,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with Context
     new Thread(this).start()
   }
 
-  def getCanvas(): org.wololo.dune3.vmlayer.Canvas = {
+  def getCanvas(): org.wololo.wastelands.vmlayer.Canvas = {
     val bufferStrategy = getBufferStrategy
     if (bufferStrategy == null) {
       createBufferStrategy(3)

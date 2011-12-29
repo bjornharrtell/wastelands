@@ -1,6 +1,6 @@
 package org.wololo.wastelands.android
-import org.wololo.dune3.core.Game
-import org.wololo.dune3.vmlayer.Context
+import org.wololo.wastelands.core.Game
+import org.wololo.wastelands.vmlayer.Context
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -47,7 +47,7 @@ class GameThread extends Thread with SurfaceHolder.Callback with Context {
     }
   }
 
-  def getCanvas(): org.wololo.dune3.vmlayer.Canvas = {
+  def getCanvas(): org.wololo.wastelands.vmlayer.Canvas = {
     boardCanvas
   }
 

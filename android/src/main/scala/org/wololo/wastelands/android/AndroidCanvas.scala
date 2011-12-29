@@ -1,5 +1,5 @@
 package org.wololo.wastelands.android
-import org.wololo.dune3.vmlayer.Canvas
+import org.wololo.wastelands.vmlayer.Canvas
 import android.graphics.Rect
 import android.graphics.Bitmap
 import android.graphics.Paint

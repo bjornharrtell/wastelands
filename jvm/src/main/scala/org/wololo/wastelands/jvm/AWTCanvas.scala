@@ -1,5 +1,5 @@
 package org.wololo.wastelands.jvm
-import org.wololo.dune3.vmlayer.Canvas
+import org.wololo.wastelands.vmlayer.Canvas
 import java.awt.Graphics
 import java.awt.image.BufferStrategy
 import java.awt.image.BufferedImage

@@ -50,21 +50,24 @@ class Unit(map: Map, startX: Int, startY: Int) {
     } else {
       mox += 1
     }
+    
+    if (count == 32) {
+      val xf = x+1
+      map.removeShade(xf, y)
+      map.removeShade(xf, y - 1)
+      map.removeShade(xf, y + 1)
+      map.removeShade(xf + 1, y)
+      //map.removeShade(x + 1, y - 1)
+      //map.removeShade(x + 1, y + 1)
+      map.removeShade(xf - 1, y)
+      //map.removeShade(x - 1, y - 1)
+      //map.removeShade(x - 1, y + 1)
+    }
 
     if (count > 40) {
       mox = 0
       x += 1
-
-      map.removeShade(x, y)
-      map.removeShade(x, y - 1)
-      map.removeShade(x, y + 1)
-      map.removeShade(x + 1, y)
-      //map.removeShade(x + 1, y - 1)
-      //map.removeShade(x + 1, y + 1)
-      map.removeShade(x - 1, y)
-      //map.removeShade(x - 1, y - 1)
-      //map.removeShade(x - 1, y + 1)
-
+      
       count = 0
     }
 

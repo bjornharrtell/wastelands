@@ -3,7 +3,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Transparency
 import java.io.InputStream
 
-import org.wololo.dune3.vmlayer.TileSetFactory
+import org.wololo.wastelands.vmlayer.TileSetFactory
 
 import javax.imageio.ImageIO
 
