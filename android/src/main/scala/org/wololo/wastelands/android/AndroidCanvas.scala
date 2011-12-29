@@ -1,4 +1,4 @@
-package org.wololo.dune3.android
+package org.wololo.wastelands.android
 import org.wololo.dune3.vmlayer.Canvas
 import android.graphics.Rect
 import android.graphics.Bitmap

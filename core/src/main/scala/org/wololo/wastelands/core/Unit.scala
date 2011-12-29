@@ -1,5 +1,5 @@
-package org.wololo.dune3.core
-import org.wololo.dune3.vmlayer.Canvas
+package org.wololo.wastelands.core
+import org.wololo.wastelands.vmlayer.Canvas
 
 /**
  * TODO: probably needs refactoring for more intelligent rendering with other parts

@@ -1,4 +1,4 @@
-package org.wololo.dune3.jvm
+package org.wololo.wastelands.jvm
 import org.wololo.dune3.vmlayer.Canvas
 import java.awt.Graphics
 import java.awt.image.BufferStrategy

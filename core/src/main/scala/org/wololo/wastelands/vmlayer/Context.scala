@@ -1,4 +1,4 @@
-package org.wololo.dune3.vmlayer
+package org.wololo.wastelands.vmlayer
 
 trait Context {
   def getCanvas(): Canvas

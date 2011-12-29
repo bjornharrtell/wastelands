@@ -1,7 +1,7 @@
-package org.wololo.dune3.core
+package org.wololo.wastelands.core
 
-import org.wololo.dune3.vmlayer.Canvas
-import org.wololo.dune3.vmlayer.TileSetFactory
+import org.wololo.wastelands.vmlayer.Canvas
+import org.wololo.wastelands.vmlayer.TileSetFactory
 
 /**
  * Contains the contents of the game screen with rendering logic.

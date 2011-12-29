@@ -1,4 +1,4 @@
-package org.wololo.dune3.jvm
+package org.wololo.wastelands.jvm
 import java.awt.GraphicsEnvironment
 import java.awt.Transparency
 import java.io.InputStream

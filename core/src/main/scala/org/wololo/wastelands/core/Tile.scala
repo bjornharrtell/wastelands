@@ -1,4 +1,4 @@
-package org.wololo.dune3.core
+package org.wololo.wastelands.core
 
 class Tile {
 

@@ -1,4 +1,4 @@
-package org.wololo.dune3.android
+package org.wololo.wastelands.android
 import org.wololo.dune3.core.Game
 import org.wololo.dune3.vmlayer.Context
 
@@ -47,11 +47,11 @@ class GameThread extends Thread with SurfaceHolder.Callback with Context {
     }
   }
 
-  override def getCanvas(): org.wololo.dune3.vmlayer.Canvas = {
+  def getCanvas(): org.wololo.dune3.vmlayer.Canvas = {
     boardCanvas
   }
 
-  override def disposeCanvas() {
+  def disposeCanvas() {
     canvas = surfaceHolder.lockCanvas(null)
     canvas.drawBitmap(board, null, new Rect(0, 0, game.Width, game.Height), null)
     surfaceHolder.unlockCanvasAndPost(canvas)

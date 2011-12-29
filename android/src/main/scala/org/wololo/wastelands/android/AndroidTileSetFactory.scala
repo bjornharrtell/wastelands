@@ -1,4 +1,4 @@
-package org.wololo.dune3.android
+package org.wololo.wastelands.android
 import java.io.InputStream
 import org.wololo.dune3.vmlayer.TileSetFactory
 import android.graphics.BitmapFactory

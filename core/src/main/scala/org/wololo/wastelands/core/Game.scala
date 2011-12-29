@@ -1,7 +1,7 @@
-package org.wololo.dune3.core
-import org.wololo.dune3.vmlayer.Canvas
-import org.wololo.dune3.vmlayer.TileSetFactory
-import org.wololo.dune3.vmlayer.Context
+package org.wololo.wastelands.core
+import org.wololo.wastelands.vmlayer.Canvas
+import org.wololo.wastelands.vmlayer.TileSetFactory
+import org.wololo.wastelands.vmlayer.Context
 
 class Game(tileSetFactory: TileSetFactory, context: Context) {
   val Width = 32 * 16

@@ -1,4 +1,4 @@
-package org.wololo.dune3.vmlayer
+package org.wololo.wastelands.vmlayer
 
 trait Canvas {
   def drawImage(image: Object, x: Int, y: Int)

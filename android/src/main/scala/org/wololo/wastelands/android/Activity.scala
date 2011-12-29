@@ -1,13 +1,14 @@
-package org.wololo.dune3.android
+package org.wololo.wastelands.android
 
-import android.app.Activity
+import org.wololo.wastelands.android.R
+
 import android.os.Bundle
-import android.view.SurfaceView
 import android.view.View.OnTouchListener
-import android.view.View
 import android.view.MotionEvent
+import android.view.SurfaceView
+import android.view.View
 
-class Dune3Activity extends Activity with OnTouchListener {
+class Activity extends android.app.Activity with OnTouchListener {
   val gameThread = new GameThread()
 
   var prevX = 0
@@ -43,7 +44,6 @@ class Dune3Activity extends Activity with OnTouchListener {
       val x = motionEvent.getHistoricalX(p, h).toInt
       val y = motionEvent.getHistoricalY(p, h).toInt
 
-      // TODO: use historical data
       if (action == MotionEvent.ACTION_DOWN) {
     	  prevX = x
     	  prevY = y

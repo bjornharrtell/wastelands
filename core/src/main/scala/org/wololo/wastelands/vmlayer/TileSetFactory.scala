@@ -1,4 +1,4 @@
-package org.wololo.dune3.vmlayer
+package org.wololo.wastelands.vmlayer
 import java.io.InputStream
 
 trait TileSetFactory {

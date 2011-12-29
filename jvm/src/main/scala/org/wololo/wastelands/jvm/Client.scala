@@ -1,4 +1,4 @@
-package org.wololo.dune3.jvm
+package org.wololo.wastelands.jvm
 import java.awt.Canvas
 import java.awt.event.MouseMotionListener
 import java.awt.Dimension
@@ -55,7 +55,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with Context
 
   }
 
-  override def mouseDragged(e: MouseEvent) {
+  def mouseDragged(e: MouseEvent) {
     val x = e.getX
     val y = e.getY
 
@@ -68,7 +68,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with Context
     prevY = y
   }
 
-  override def mouseMoved(e: MouseEvent) {
+  def mouseMoved(e: MouseEvent) {
     val x = e.getX
     val y = e.getY
 
