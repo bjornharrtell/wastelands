@@ -4,18 +4,17 @@ import java.awt.event.MouseMotionListener
 import java.awt.BorderLayout
 import java.awt.Canvas
 import java.awt.Dimension
-
 import org.wololo.wastelands.core.Game
-import org.wololo.wastelands.vmlayer.Context
-
 import javax.swing.JFrame
+import org.wololo.wastelands.vmlayer.FrameRenderer
+import java.awt.Image
 
-object Client extends Canvas with MouseMotionListener with Runnable with Context {
+object Client extends Canvas with MouseMotionListener with Runnable with FrameRenderer {
 
   val Width = 32 * 16
   val Height = 32 * 16
 
-  val game = new Game(new AWTTileSetFactory(32), this)
+  val game = new Game(this, new AWTBitmapFactory(), new AWTCanvasFactory())
 
   var prevX = 0
   var prevY = 0
@@ -41,19 +40,17 @@ object Client extends Canvas with MouseMotionListener with Runnable with Context
     addMouseMotionListener(this)
     new Thread(this).start()
   }
-
-  def getCanvas(): org.wololo.wastelands.vmlayer.Canvas = {
+  
+  def render(bitmap: Object) {
     val bufferStrategy = getBufferStrategy
     if (bufferStrategy == null) {
       createBufferStrategy(3)
-      return null
     } else {
-      return new AWTCanvas(bufferStrategy)
+      val graphics = bufferStrategy.getDrawGraphics()
+      graphics.drawImage(bitmap.asInstanceOf[Image], 0, 0, null, null)
+      graphics.dispose()
+      bufferStrategy.show()
     }
-  }
-
-  def disposeCanvas() {
-
   }
 
   def mouseDragged(e: MouseEvent) {

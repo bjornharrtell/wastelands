@@ -5,9 +5,7 @@ import java.awt.image.BufferStrategy
 import java.awt.image.BufferedImage
 import java.awt.Color
 
-class AWTCanvas(bufferStrategy: BufferStrategy) extends Canvas {
-  val graphics = bufferStrategy.getDrawGraphics()
-
+class AWTCanvas(graphics: Graphics) extends Canvas {
   def drawImage(image: Object, x: Int, y: Int) {
     graphics.drawImage(image.asInstanceOf[BufferedImage], x, y, null)
   }
@@ -24,13 +22,5 @@ class AWTCanvas(bufferStrategy: BufferStrategy) extends Canvas {
   def clearRect(x1: Int, y1: Int, x2: Int, y2: Int) {
     graphics.setColor(Color.BLACK)
     graphics.fillRect(x1, y1, x2 - x1, y2 - y1)
-  }
-  
-  def show() {
-    bufferStrategy.show()
-  }
-
-  def dispose() {
-    graphics.dispose()
   }
 }

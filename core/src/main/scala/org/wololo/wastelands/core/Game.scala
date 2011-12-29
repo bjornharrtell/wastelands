@@ -1,9 +1,10 @@
 package org.wololo.wastelands.core
 import org.wololo.wastelands.vmlayer.Canvas
-import org.wololo.wastelands.vmlayer.TileSetFactory
-import org.wololo.wastelands.vmlayer.Context
+import org.wololo.wastelands.vmlayer.FrameRenderer
+import org.wololo.wastelands.vmlayer.BitmapFactory
+import org.wololo.wastelands.vmlayer.CanvasFactory
 
-class Game(tileSetFactory: TileSetFactory, context: Context) {
+class Game(frameRenderer: FrameRenderer, bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory) {
   val Width = 32 * 16
   val Height = 32 * 16
 
@@ -11,7 +12,7 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
   var tickCount = 0
 
   val map = new Map()
-  val screen = new Screen(tileSetFactory, map)
+  val screen = new Screen(map, bitmapFactory, canvasFactory)
 
   def run() {
     running = true
@@ -27,7 +28,7 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
       val now = System.nanoTime()
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = false
+      var shouldRender = true
       while (unprocessed >= 1.0) {
         ticks += 1
         tick()
@@ -39,7 +40,8 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
 
       if (shouldRender) {
         frames += 1
-        render()
+        screen.render()
+        frameRenderer.render(screen.bitmap)
       }
 
       if (System.currentTimeMillis() - lastTimer1 > 1000) {
@@ -57,7 +59,9 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
     tickCount += 1
   }
 
-  def render() {
+  /*def render() {
+   
+    
     val canvas = context.getCanvas();
 
     if (canvas != null) {
@@ -66,7 +70,7 @@ class Game(tileSetFactory: TileSetFactory, context: Context) {
       canvas.show()
       context.disposeCanvas();
     }
-  }
+  }*/
 
   def move(dx: Int, dy: Int) {
     screen.move(dx, dy)

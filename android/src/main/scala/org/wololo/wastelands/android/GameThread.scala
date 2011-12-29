@@ -1,27 +1,27 @@
 package org.wololo.wastelands.android
 import org.wololo.wastelands.core.Game
-import org.wololo.wastelands.vmlayer.Context
-
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.SurfaceHolder
+import org.wololo.wastelands.vmlayer.FrameRenderer
 
-class GameThread extends Thread with SurfaceHolder.Callback with Context {
+class GameThread extends Thread with SurfaceHolder.Callback with FrameRenderer {
 
   var running = false
 
-  val game: Game = new Game(new AndroidTileSetFactory(32), this)
+  val game: Game = new Game(this, new AndroidBitmapFactory(), new AndroidCanvasFactory())
 
   var surfaceHolder: SurfaceHolder = null
 
-  var canvas: Canvas = null
-
-  val board = Bitmap.createBitmap(game.Width, game.Height, Bitmap.Config.RGB_565)
-  val boardCanvas = new AndroidCanvas(new Canvas(board))
-
   override def run() {
     game.run()
+  }
+  
+  def render(bitmap: Object) {
+    val canvas = surfaceHolder.lockCanvas(null)
+    canvas.drawBitmap(bitmap.asInstanceOf[Bitmap], 0, 0, null)
+    surfaceHolder.unlockCanvasAndPost(canvas)
   }
 
   def surfaceCreated(holder: SurfaceHolder) {
@@ -45,15 +45,5 @@ class GameThread extends Thread with SurfaceHolder.Callback with Context {
         case e: InterruptedException =>
       }
     }
-  }
-
-  def getCanvas(): org.wololo.wastelands.vmlayer.Canvas = {
-    boardCanvas
-  }
-
-  def disposeCanvas() {
-    canvas = surfaceHolder.lockCanvas(null)
-    canvas.drawBitmap(board, null, new Rect(0, 0, game.Width, game.Height), null)
-    surfaceHolder.unlockCanvasAndPost(canvas)
   }
 }

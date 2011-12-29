@@ -1,52 +1,69 @@
 package org.wololo.wastelands.core
 
+import org.wololo.wastelands.vmlayer.BitmapFactory
+import org.wololo.wastelands.vmlayer.BitmapTypes
 import org.wololo.wastelands.vmlayer.Canvas
-import org.wololo.wastelands.vmlayer.TileSetFactory
+import org.wololo.wastelands.vmlayer.CanvasFactory
 
 /**
  * Contains the contents of the game screen with rendering logic.
  */
-class Screen(tileSetFactory: TileSetFactory, map: Map) {
-  val tileSets = Array.ofDim[Object](4, 5 * 18)
-  var shadeSet = new Array[Object](5 * 18);
-
-  val TileSize = 32;
+class Screen(map: Map, bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory) {
+  
+  val TileSize = 32
+  
+  val TilesWidth = 16
+  val TilesHeight = 16
+  
+  val Width = TileSize * TilesWidth
+  val Height = TileSize * TilesHeight
+    
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
-
+  
+  val bitmap = bitmapFactory.create(Width, Height, BitmapTypes.Opague)
+  val canvas = canvasFactory.create(bitmap)
+  
   val unit = new Unit(map, 7,7)
   
   var sx = 0
   var sy = 0
+  
+  val tileSetFactory = new TileSetFactory(bitmapFactory, canvasFactory)
+  
+  val tileSets = Array.ofDim[Object](4, 5 * 18)
+  var shadeSet = new Array[Object](5 * 18)
 
   tileSets(TileTypes.Base)(0) = tileSetFactory.createTileFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/desert.png"))
   tileSets(TileTypes.Dunes) = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), false)
+    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BitmapTypes.Opague)
   tileSets(TileTypes.Rock) = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/rock.png"), false)
+    .getClassLoader.getResourceAsStream("tilesets/rock.png"), BitmapTypes.Opague)
   tileSets(TileTypes.Spice) = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/spice.png"), false)
+    .getClassLoader.getResourceAsStream("tilesets/spice.png"), BitmapTypes.Opague)
 
   shadeSet = tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/shade.png"), true)
+    .getClassLoader.getResourceAsStream("tilesets/shade.png"), BitmapTypes.Bitmask)
 
   def move(dx: Int, dy: Int) {
     sx += dx
     sy += dy
 
     // TODO: make sure bounds calc is correct... this is a guess (16*TileSize crashed)
+    var maxx = MapScreenWidth - (TilesWidth-1 * TileSize)
+    var maxy = MapScreenHeight - (TilesHeight-1 * TileSize)
     sx = if (sx < 0) 0 else sx
-    sx = if (sx > MapScreenWidth - (17 * TileSize)) MapScreenWidth - (17 * TileSize) else sx
+    sx = if (sx > maxx) maxx else sx
     sy = if (sy < 0) 0 else sy
-    sy = if (sy > MapScreenHeight - (17 * TileSize)) MapScreenHeight - (17 * TileSize) else sy
+    sy = if (sy > maxy) maxy else sy
   }
 
   /**
    * Render the map on screen 16x16 tiles plus 1 tile size border buffer for
    * scrolling.
    */
-  def render(canvas: Canvas, w: Int, h: Int) {
+  def render() {
     // screen coord to map coord conversion
     val mxd: Double = map.Width * (sx.toDouble / MapScreenWidth)
     val myd: Double = map.Height * (sy.toDouble / MapScreenHeight)
@@ -64,7 +81,7 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
     while (y < 17) {
       x = -1
       while (x < 17) {
-        renderTile(canvas, x, y, mx, my, ox, oy)
+        renderTile(x, y, mx, my, ox, oy)
         x += 1
       }
 
@@ -73,11 +90,15 @@ class Screen(tileSetFactory: TileSetFactory, map: Map) {
     
     unit.render(canvas, mx, my, ox, oy)
   }
+  
+  def renderUnit() {
+    
+  }
 
   /**
    * Render a tile with scrolling offset
    */
-  def renderTile(canvas: Canvas, x: Int, y: Int, mx: Int, my: Int, ox: Int, oy: Int) {
+  def renderTile(x: Int, y: Int, mx: Int, my: Int, ox: Int, oy: Int) {
     // screen destination coord
     val sx = x * 32 + ox
     val sy = y * 32 + oy
