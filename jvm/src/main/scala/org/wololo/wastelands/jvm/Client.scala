@@ -47,7 +47,8 @@ object Client extends Canvas with MouseMotionListener with Runnable with FrameRe
       createBufferStrategy(3)
     } else {
       val graphics = bufferStrategy.getDrawGraphics()
-      graphics.drawImage(bitmap.asInstanceOf[Image], 0, 0, null, null)
+      // NOTE: I think this is the fastest drawImage for this purpose
+      graphics.drawImage(bitmap.asInstanceOf[Image], 0, 0, Width, Height, null)
       graphics.dispose()
       bufferStrategy.show()
     }
