@@ -25,6 +25,8 @@ class Unit(map: Map, startX: Int, startY: Int, tileSet: Array[Object]) {
   var direction = 0
 
   var count = 0
+  
+  var tc = 0
 
   def render(canvas: Canvas, mx: Int, my: Int, ox: Int, oy: Int) {
     var mdx = x - mx
@@ -37,7 +39,7 @@ class Unit(map: Map, startX: Int, startY: Int, tileSet: Array[Object]) {
     val sy = mdy * 32 + oy + moy
 
     //canvas.drawRect(sx, sy, sx + 32, sy + 32)
-    canvas.drawImage(tileSet(2), sx, sy)
+    canvas.drawImage(tileSet(tc), sx, sy)
   }
 
   def tick() {
@@ -68,6 +70,8 @@ class Unit(map: Map, startX: Int, startY: Int, tileSet: Array[Object]) {
     if (count > 40) {
       mox = 0
       x += 1
+      tc += 1
+      if (tc>7) tc = 0
       
       count = 0
     }

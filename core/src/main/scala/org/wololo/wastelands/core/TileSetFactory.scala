@@ -25,7 +25,7 @@ class TileSetFactory(bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory)
   }
   
   def createUnitTileSetFromFile(inputStream: InputStream, bitmapType: Int): Array[Object] = {
-    createTileSetFromFile(inputStream, bitmapType, 7, 1)
+    createTileSetFromFile(inputStream, bitmapType, 8, 1)
   }
 
   def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int): Array[Object] = {
