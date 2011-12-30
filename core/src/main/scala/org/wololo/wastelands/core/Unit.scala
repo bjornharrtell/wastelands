@@ -4,7 +4,7 @@ import org.wololo.wastelands.vmlayer.Canvas
 /**
  * TODO: probably needs refactoring for more intelligent rendering with other parts
  */
-class Unit(map: Map, startX: Int, startY: Int) {
+class Unit(map: Map, startX: Int, startY: Int, tileSet: Array[Object]) {
 
   var x = startX
   var y = startY
@@ -36,7 +36,8 @@ class Unit(map: Map, startX: Int, startY: Int) {
     val sx = mdx * 32 + ox + mox
     val sy = mdy * 32 + oy + moy
 
-    canvas.drawRect(sx, sy, sx + 32, sy + 32)
+    //canvas.drawRect(sx, sy, sx + 32, sy + 32)
+    canvas.drawImage(tileSet(2), sx, sy)
   }
 
   def tick() {

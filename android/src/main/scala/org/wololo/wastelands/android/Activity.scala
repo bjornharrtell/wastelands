@@ -1,7 +1,5 @@
 package org.wololo.wastelands.android
 
-import org.wololo.wastelands.android.R
-
 import android.os.Bundle
 import android.view.View.OnTouchListener
 import android.view.MotionEvent

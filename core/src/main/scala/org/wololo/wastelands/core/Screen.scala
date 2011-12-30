@@ -24,26 +24,27 @@ class Screen(map: Map, bitmapFactory: BitmapFactory, canvasFactory: CanvasFactor
   val bitmap = bitmapFactory.create(Width, Height, BitmapTypes.Opague)
   val canvas = canvasFactory.create(bitmap)
   
-  val unit = new Unit(map, 7,7)
-  
   var sx = 0
   var sy = 0
   
   val tileSetFactory = new TileSetFactory(bitmapFactory, canvasFactory)
+  
+  val unit = new Unit(map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent))
   
   val tileSets = Array.ofDim[Object](4, 5 * 18)
   var shadeSet = new Array[Object](5 * 18)
 
   tileSets(TileTypes.Base)(0) = tileSetFactory.createTileFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/desert.png"))
-  tileSets(TileTypes.Dunes) = tileSetFactory.createTileSetFromFile(getClass
+  tileSets(TileTypes.Dunes) = tileSetFactory.createMapTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BitmapTypes.Opague)
-  tileSets(TileTypes.Rock) = tileSetFactory.createTileSetFromFile(getClass
+  tileSets(TileTypes.Rock) = tileSetFactory.createMapTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/rock.png"), BitmapTypes.Opague)
-  tileSets(TileTypes.Spice) = tileSetFactory.createTileSetFromFile(getClass
+  tileSets(TileTypes.Spice) = tileSetFactory.createMapTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/spice.png"), BitmapTypes.Opague)
 
-  shadeSet = tileSetFactory.createTileSetFromFile(getClass
+  shadeSet = tileSetFactory.createMapTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/shade.png"), BitmapTypes.Bitmask)
 
   def move(dx: Int, dy: Int) {

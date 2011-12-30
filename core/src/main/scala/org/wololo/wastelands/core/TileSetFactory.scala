@@ -19,17 +19,25 @@ class TileSetFactory(bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory)
 
     tile
   }
+  
+  def createMapTileSetFromFile(inputStream: InputStream, bitmapType: Int): Array[Object] = {
+    createTileSetFromFile(inputStream, bitmapType, 18, 5)
+  }
+  
+  def createUnitTileSetFromFile(inputStream: InputStream, bitmapType: Int): Array[Object] = {
+    createTileSetFromFile(inputStream, bitmapType, 7, 1)
+  }
 
-  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int): Array[Object] = {
+  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int): Array[Object] = {
     val image = bitmapFactory.create(inputStream)
 
-    val tileSet = new Array[Object](5 * 18)
+    val tileSet = new Array[Object](height * width)
 
     var count = 0
 
     for (
-      y <- 0 until 5;
-      x <- 0 until 18
+      y <- 0 until height;
+      x <- 0 until width
     ) {
       val tile = bitmapFactory.create(size, size, bitmapType)
 
