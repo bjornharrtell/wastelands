@@ -4,7 +4,9 @@ import org.wololo.wastelands.vmlayer.FrameRenderer
 import org.wololo.wastelands.vmlayer.BitmapFactory
 import org.wololo.wastelands.vmlayer.CanvasFactory
 
-class Game(frameRenderer: FrameRenderer, bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory) {
+class Game(frameRenderer: FrameRenderer, val bitmapFactory: BitmapFactory, val canvasFactory: CanvasFactory) {
+  val tileSetFactory = new TileSetFactory(bitmapFactory, canvasFactory)
+
   val Width = 32 * 16
   val Height = 32 * 16
 
@@ -12,7 +14,7 @@ class Game(frameRenderer: FrameRenderer, bitmapFactory: BitmapFactory, canvasFac
   var tickCount = 0
 
   val map = new Map()
-  val screen = new Screen(map, bitmapFactory, canvasFactory)
+  val screen = new Screen(this)
 
   def run() {
     running = true
@@ -54,23 +56,11 @@ class Game(frameRenderer: FrameRenderer, bitmapFactory: BitmapFactory, canvasFac
   }
 
   def tick() {
+
     screen.unit.tick
-    
+
     tickCount += 1
   }
-
-  /*def render() {
-   
-    
-    val canvas = context.getCanvas();
-
-    if (canvas != null) {
-      screen.render(canvas, Width, Height)
-      canvas.dispose()
-      canvas.show()
-      context.disposeCanvas();
-    }
-  }*/
 
   def move(dx: Int, dy: Int) {
     screen.move(dx, dy)

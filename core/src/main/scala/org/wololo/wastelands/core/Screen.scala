@@ -8,7 +8,7 @@ import org.wololo.wastelands.vmlayer.CanvasFactory
 /**
  * Contains the contents of the game screen with rendering logic.
  */
-class Screen(map: Map, bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory) {
+class Screen(game: Game) {
   
   val TileSize = 32
   
@@ -17,17 +17,19 @@ class Screen(map: Map, bitmapFactory: BitmapFactory, canvasFactory: CanvasFactor
   
   val Width = TileSize * TilesWidth
   val Height = TileSize * TilesHeight
+  
+  val map = game.map
     
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
   
-  val bitmap = bitmapFactory.create(Width, Height, BitmapTypes.Opague)
-  val canvas = canvasFactory.create(bitmap)
+  val bitmap = game.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
+  val canvas = game.canvasFactory.create(bitmap)
   
   var sx = 0
   var sy = 0
   
-  val tileSetFactory = new TileSetFactory(bitmapFactory, canvasFactory)
+  val tileSetFactory = game.tileSetFactory
   
   val unit = new Unit(map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent))
