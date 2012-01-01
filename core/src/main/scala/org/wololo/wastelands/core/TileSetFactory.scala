@@ -1,7 +1,6 @@
 package org.wololo.wastelands.core
 import java.io.InputStream
 import java.lang.Object
-
 import org.wololo.wastelands.vmlayer.BitmapFactory
 import org.wololo.wastelands.vmlayer.BitmapTypes
 import org.wololo.wastelands.vmlayer.CanvasFactory
@@ -11,11 +10,11 @@ class TileSetFactory(bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory)
   val size = 32
   
   def createTileFromFile(inputStream: InputStream): Object = {
-    val image = bitmapFactory.create(inputStream)
+    val bitmap = bitmapFactory.create(inputStream)
 
     val tile = bitmapFactory.create(size, size, BitmapTypes.Opague)
 
-    canvasFactory.create(tile).drawImage(image, 0, 0, size, size, 0, 0, 16, 16)
+    canvasFactory.create(tile).drawImage(bitmap, 0, 0, size, size, 0, 0, 16, 16)
 
     tile
   }

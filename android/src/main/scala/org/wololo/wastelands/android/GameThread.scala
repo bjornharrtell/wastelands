@@ -5,12 +5,16 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.SurfaceHolder
 import org.wololo.wastelands.vmlayer.FrameRenderer
+import org.wololo.wastelands.vmlayer.GraphicsContext
 
-class GameThread extends Thread with SurfaceHolder.Callback with FrameRenderer {
+class GameThread extends Thread with SurfaceHolder.Callback with GraphicsContext {
 
+  val bitmapFactory = new AndroidBitmapFactory()
+  val canvasFactory = new AndroidCanvasFactory()
+  
   var running = false
 
-  val game: Game = new Game(this, new AndroidBitmapFactory(), new AndroidCanvasFactory())
+  val game: Game = new Game(this)
 
   var surfaceHolder: SurfaceHolder = null
 

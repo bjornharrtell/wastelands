@@ -3,8 +3,11 @@ import org.wololo.wastelands.vmlayer.Canvas
 import org.wololo.wastelands.vmlayer.FrameRenderer
 import org.wololo.wastelands.vmlayer.BitmapFactory
 import org.wololo.wastelands.vmlayer.CanvasFactory
+import org.wololo.wastelands.vmlayer.GraphicsContext
 
-class Game(frameRenderer: FrameRenderer, val bitmapFactory: BitmapFactory, val canvasFactory: CanvasFactory) {
+class Game(graphicsContext: GraphicsContext) {
+  val bitmapFactory = graphicsContext.bitmapFactory()
+  val canvasFactory = graphicsContext.canvasFactory()
   val tileSetFactory = new TileSetFactory(bitmapFactory, canvasFactory)
 
   val Width = 32 * 16
@@ -43,7 +46,7 @@ class Game(frameRenderer: FrameRenderer, val bitmapFactory: BitmapFactory, val c
       if (shouldRender) {
         frames += 1
         screen.render()
-        frameRenderer.render(screen.bitmap)
+        graphicsContext.render(screen.bitmap)
       }
 
       if (System.currentTimeMillis() - lastTimer1 > 1000) {

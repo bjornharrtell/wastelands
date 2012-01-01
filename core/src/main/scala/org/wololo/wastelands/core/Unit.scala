@@ -45,7 +45,7 @@ class Unit(map: Map, var x: Int, var y: Int, tileSet: Array[Object]) {
     
     if (count == 32) {
       val xf = x+1
-      map.removeShadeAround(x, y)
+      map.removeShadeAround(xf, y)
     }
 
     if (count > 40) {

@@ -8,13 +8,17 @@ import org.wololo.wastelands.core.Game
 import javax.swing.JFrame
 import org.wololo.wastelands.vmlayer.FrameRenderer
 import java.awt.Image
+import org.wololo.wastelands.vmlayer.GraphicsContext
 
-object Client extends Canvas with MouseMotionListener with Runnable with FrameRenderer {
+object Client extends Canvas with MouseMotionListener with Runnable with GraphicsContext {
 
+  val bitmapFactory = new AWTBitmapFactory()
+  val canvasFactory = new AWTCanvasFactory()
+  
   val Width = 32 * 16
   val Height = 32 * 16
 
-  val game = new Game(this, new AWTBitmapFactory(), new AWTCanvasFactory())
+  val game = new Game(this)
 
   var prevX = 0
   var prevY = 0
