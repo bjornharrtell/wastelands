@@ -157,4 +157,12 @@ class Map {
     makeShade(x-1,y)
     makeShade(x-1,y-1)
   }
+  
+  def removeShadeAround(x: Int, y: Int) {
+    removeShade(x, y)
+  removeShade(x, y - 1)
+  removeShade(x, y + 1)
+  removeShade(x + 1, y)
+  removeShade(x - 1, y)
+  }
 }

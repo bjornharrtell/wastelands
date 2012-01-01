@@ -4,20 +4,9 @@ import org.wololo.wastelands.vmlayer.Canvas
 /**
  * TODO: probably needs refactoring for more intelligent rendering with other parts
  */
-class Unit(map: Map, startX: Int, startY: Int, tileSet: Array[Object]) {
+class Unit(map: Map, var x: Int, var y: Int, tileSet: Array[Object]) {
 
-  var x = startX
-  var y = startY
-
-  map.removeShade(x, y)
-  map.removeShade(x, y - 1)
-  map.removeShade(x, y + 1)
-  map.removeShade(x + 1, y)
-  //map.removeShade(x + 1, y - 1)
-  //map.removeShade(x + 1, y + 1)
-  map.removeShade(x - 1, y)
-  //map.removeShade(x - 1, y - 1)
-  //map.removeShade(x - 1, y + 1)
+  map.removeShadeAround(x, y)
 
   var mox = 0
   var moy = 0
@@ -56,15 +45,7 @@ class Unit(map: Map, startX: Int, startY: Int, tileSet: Array[Object]) {
     
     if (count == 32) {
       val xf = x+1
-      map.removeShade(xf, y)
-      map.removeShade(xf, y - 1)
-      map.removeShade(xf, y + 1)
-      map.removeShade(xf + 1, y)
-      //map.removeShade(x + 1, y - 1)
-      //map.removeShade(x + 1, y + 1)
-      map.removeShade(xf - 1, y)
-      //map.removeShade(x - 1, y - 1)
-      //map.removeShade(x - 1, y + 1)
+      map.removeShadeAround(x, y)
     }
 
     if (count > 40) {
