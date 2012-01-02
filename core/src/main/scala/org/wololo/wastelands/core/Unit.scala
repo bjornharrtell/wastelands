@@ -27,7 +27,7 @@ class Unit(map: Map, var x: Int, var y: Int, tileSet: Array[Object]) {
     val sx = mdx * 32 + ox + mox
     val sy = mdy * 32 + oy + moy
 
-    //canvas.drawRect(sx, sy, sx + 32, sy + 32)
+    canvas.drawRect(sx, sy, sx + 32, sy + 32)
     canvas.drawImage(tileSet(tc), sx, sy)
   }
 

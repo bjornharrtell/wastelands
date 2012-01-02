@@ -4,6 +4,7 @@ import org.wololo.wastelands.vmlayer.FrameRenderer
 import org.wololo.wastelands.vmlayer.BitmapFactory
 import org.wololo.wastelands.vmlayer.CanvasFactory
 import org.wololo.wastelands.vmlayer.GraphicsContext
+import org.wololo.wastelands.vmlayer.BitmapTypes
 
 class Game(graphicsContext: GraphicsContext) {
   val bitmapFactory = graphicsContext.bitmapFactory()
@@ -18,6 +19,9 @@ class Game(graphicsContext: GraphicsContext) {
 
   val map = new Map()
   val screen = new Screen(this)
+  
+  val unit = new Unit(map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent))
 
   def run() {
     running = true
@@ -60,7 +64,7 @@ class Game(graphicsContext: GraphicsContext) {
 
   def tick() {
 
-    screen.unit.tick
+    unit.tick
 
     tickCount += 1
   }

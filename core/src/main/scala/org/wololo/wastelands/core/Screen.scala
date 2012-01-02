@@ -31,9 +31,6 @@ class Screen(game: Game) {
   
   val tileSetFactory = game.tileSetFactory
   
-  val unit = new Unit(map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent))
-  
   val tileSets = Array.ofDim[Object](4, 5 * 18)
   var shadeSet = new Array[Object](5 * 18)
 
@@ -91,7 +88,7 @@ class Screen(game: Game) {
       y += 1
     }
     
-    unit.render(canvas, mx, my, ox, oy)
+    game.unit.render(canvas, mx, my, ox, oy)
   }
   
   def renderUnit() {
