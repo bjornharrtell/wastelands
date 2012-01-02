@@ -18,25 +18,25 @@ class Activity extends android.app.Activity with OnTouchListener {
 
     val surfaceView = findViewById(R.id.surfaceView1).asInstanceOf[SurfaceView]
 
-    surfaceView.getHolder().addCallback(gameThread);
+    surfaceView.getHolder().addCallback(gameThread)
 
-    surfaceView.setOnTouchListener(this);
+    surfaceView.setOnTouchListener(this)
   }
 
   def onTouch(view: View, motionEvent: MotionEvent): Boolean = {
 
-    val action = motionEvent.getAction();
+    val action = motionEvent.getAction()
 
     if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
       return true;
     }
 
-    val historySize = motionEvent.getHistorySize();
+    val historySize = motionEvent.getHistorySize()
 
     // TODO: handle multitouch
     // final int pointerCount = motionEvent.getPointerCount();
 
-    val p = 0;
+    val p = 0
 
     for (h <- 0 until historySize) {
       val x = motionEvent.getHistoricalX(p, h).toInt
