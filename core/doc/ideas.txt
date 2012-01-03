@@ -1,0 +1,19 @@
+Small things:
+
+* Building logic
+* Case classes for tile types?
+* Map serializing
+* calc screen stuff in scroll instead of complex math in render
+
+Medium things:
+
+* Pathfinding
+* Unit move logic
+* Unit animation logic
+* Map generator (or predefined maps?)
+* Overview
+
+Big things:
+
+* AI
+* Multiplayer (or AI?

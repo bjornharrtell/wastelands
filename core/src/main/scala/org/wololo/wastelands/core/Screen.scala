@@ -24,8 +24,13 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
   val bitmap = graphicsContext.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
   val canvas = graphicsContext.canvasFactory.create(bitmap)
   
+  // screen pixel scroll offset
   var sx = 0
   var sy = 0
+  
+  // map tile pixel scroll offset
+  var ox = 0
+  var oy = 0
   
   val tileSetFactory = game.tileSetFactory
   
@@ -44,7 +49,7 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
   shadeSet = tileSetFactory.createMapTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/shade.png"), BitmapTypes.Bitmask)
 
-  def move(dx: Int, dy: Int) {
+  def scroll(dx: Int, dy: Int) {
     sx += dx
     sy += dy
 
@@ -70,21 +75,10 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
     val my: Int = myd.toInt
     
     // tile offset calc (for the scrolling buffer)
-    val ox: Int = -(mxd % 1 * TileSize).toInt
-    val oy: Int = -(myd % 1 * TileSize).toInt
+    ox = -(mxd % 1 * TileSize).toInt
+    oy = -(myd % 1 * TileSize).toInt
 
-    // NOTE: while loop used for perf
-    var y = -1
-    var x = -1
-    while (y < 17) {
-      x = -1
-      while (x < 17) {
-        renderTile(x, y, mx, my, ox, oy)
-        x += 1
-      }
-
-      y += 1
-    }
+    TileRenderer.renderTiles(this, mx, my)
     
     game.unit.render(canvas, mx, my, ox, oy)
   }
@@ -97,28 +91,6 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
    * Render a tile with scrolling offset
    */
   def renderTile(x: Int, y: Int, mx: Int, my: Int, ox: Int, oy: Int) {
-    // screen destination coord
-    val sx = x * 32 + ox
-    val sy = y * 32 + oy
-
-    // map tile coord
-    val tx = mx + x
-    val ty = my + y
-
-    // bail if out of map bounds
-    if (tx < 0 || tx > map.Width || ty < 0 || ty > map.Height)
-      return
-
-    val tile = map.tiles(tx)(ty)
-
-    canvas.drawImage(tileSets(tile.baseType)(tile.subType), sx, sy)
-
-    if (tile.shade) {
-      if (tile.shadeSubType == 0) {
-        canvas.clearRect(sx, sy, sx+32, sy+32)
-      } else {
-        canvas.drawImage(shadeSet(tile.shadeSubType), sx, sy)
-      }
-    }
+    
   }
 }

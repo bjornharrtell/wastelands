@@ -64,6 +64,6 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   }
 
   def move(dx: Int, dy: Int) {
-    screen.move(dx, dy)
+    screen.scroll(dx, dy)
   }
 }
