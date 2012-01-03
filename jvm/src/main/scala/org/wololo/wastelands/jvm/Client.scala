@@ -48,7 +48,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
     } else {
       val graphics = bufferStrategy.getDrawGraphics()
       // NOTE: I think this is the fastest drawImage for this purpose
-      graphics.drawImage(bitmap.asInstanceOf[Image], 0, 0, Width, Height, null)
+      graphics.drawImage(bitmap, 0, 0, Width, Height, null)
       graphics.dispose()
       bufferStrategy.show()
     }
