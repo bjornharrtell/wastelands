@@ -4,7 +4,7 @@ import org.wololo.wastelands.vmlayer.Canvas
 /**
  * TODO: probably needs refactoring for more intelligent rendering with other parts
  */
-class Unit(map: Map, var x: Int, var y: Int, tileSet: Array[Object]) {
+class Unit[T](map: GameMap, var x: Int, var y: Int, tileSet: Array[T]) {
 
   map.removeShadeAround(x, y)
 
@@ -17,7 +17,7 @@ class Unit(map: Map, var x: Int, var y: Int, tileSet: Array[Object]) {
   
   var tc = 0
 
-  def render(canvas: Canvas, mx: Int, my: Int, ox: Int, oy: Int) {
+  def render(canvas: Canvas[T], mx: Int, my: Int, ox: Int, oy: Int) {
     var mdx = x - mx
     var mdy = y - my
 

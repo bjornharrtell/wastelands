@@ -6,7 +6,7 @@ import android.graphics.Paint
 import android.graphics.Color
 import android.graphics.Paint.Style
 
-class AndroidCanvas(canvas: android.graphics.Canvas) extends Canvas {
+class AndroidCanvas(canvas: android.graphics.Canvas) extends Canvas[Bitmap] {
 
   val yellowPaint = new Paint()
   yellowPaint.setColor(Color.YELLOW)
@@ -15,11 +15,11 @@ class AndroidCanvas(canvas: android.graphics.Canvas) extends Canvas {
   val blackPaint = new Paint()
   blackPaint.setColor(Color.BLACK)
 
-  def drawImage(image: Object, x: Int, y: Int) {
+  def drawImage(image: Bitmap, x: Int, y: Int) {
     canvas.drawBitmap(image.asInstanceOf[Bitmap], x, y, null)
   }
 
-  def drawImage(image: Object, dx1: Int, dy1: Int, dx2: Int, dy2: Int, sx1: Int, sy1: Int, sx2: Int, sy2: Int) {
+  def drawImage(image: Bitmap, dx1: Int, dy1: Int, dx2: Int, dy2: Int, sx1: Int, sy1: Int, sx2: Int, sy2: Int) {
     canvas.drawBitmap(image.asInstanceOf[Bitmap], new Rect(sx1, sy1, sx2, sy2), new Rect(dx1, dy1, dx2, dy2), null)
   }
   

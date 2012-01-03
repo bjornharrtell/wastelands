@@ -1,20 +1,13 @@
 package org.wololo.wastelands.android
 import org.wololo.wastelands.core.Game
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
 import android.view.SurfaceHolder
-import org.wololo.wastelands.vmlayer.FrameRenderer
-import org.wololo.wastelands.vmlayer.GraphicsContext
 
-class GameThread extends Thread with SurfaceHolder.Callback with GraphicsContext {
-
-  val bitmapFactory = new AndroidBitmapFactory()
-  val canvasFactory = new AndroidCanvasFactory()
+class GameThread extends Thread with SurfaceHolder.Callback with AndroidGraphicsContext {
   
   var running = false
 
-  val game: Game = new Game(this)
+  val game = new Game[Bitmap](this)
 
   var surfaceHolder: SurfaceHolder = null
 
@@ -22,9 +15,9 @@ class GameThread extends Thread with SurfaceHolder.Callback with GraphicsContext
     game.run()
   }
   
-  def render(bitmap: Object) {
+  def render(bitmap: Bitmap) {
     val canvas = surfaceHolder.lockCanvas(null)
-    canvas.drawBitmap(bitmap.asInstanceOf[Bitmap], 0, 0, null)
+    canvas.drawBitmap(bitmap, 0, 0, null)
     surfaceHolder.unlockCanvasAndPost(canvas)
   }
 

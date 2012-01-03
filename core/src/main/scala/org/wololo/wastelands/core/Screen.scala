@@ -1,14 +1,12 @@
 package org.wololo.wastelands.core
 
-import org.wololo.wastelands.vmlayer.BitmapFactory
-import org.wololo.wastelands.vmlayer.BitmapTypes
-import org.wololo.wastelands.vmlayer.Canvas
-import org.wololo.wastelands.vmlayer.CanvasFactory
+import org.wololo.wastelands.vmlayer._
+
 
 /**
  * Contains the contents of the game screen with rendering logic.
  */
-class Screen(game: Game) {
+class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[T]) {
   
   val TileSize = 32
   
@@ -23,16 +21,16 @@ class Screen(game: Game) {
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
   
-  val bitmap = game.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
-  val canvas = game.canvasFactory.create(bitmap)
+  val bitmap = graphicsContext.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
+  val canvas = graphicsContext.canvasFactory.create(bitmap)
   
   var sx = 0
   var sy = 0
   
   val tileSetFactory = game.tileSetFactory
   
-  val tileSets = Array.ofDim[Object](4, 5 * 18)
-  var shadeSet = new Array[Object](5 * 18)
+  val tileSets = Array.ofDim[T](4, 5 * 18)
+  var shadeSet = new Array[T](5 * 18)
 
   tileSets(TileTypes.Base)(0) = tileSetFactory.createTileFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/desert.png"))
@@ -51,8 +49,8 @@ class Screen(game: Game) {
     sy += dy
 
     // TODO: make sure bounds calc is correct... this is a guess (16*TileSize crashed)
-    var maxx = MapScreenWidth - (TilesWidth-1 * TileSize)
-    var maxy = MapScreenHeight - (TilesHeight-1 * TileSize)
+    val maxx = MapScreenWidth - (TilesWidth-1 * TileSize)
+    val maxy = MapScreenHeight - (TilesHeight-1 * TileSize)
     sx = if (sx < 0) 0 else sx
     sx = if (sx > maxx) maxx else sx
     sy = if (sy < 0) 0 else sy

@@ -1,6 +1,6 @@
 package org.wololo.wastelands.core
 
-class Map {
+class GameMap {
   val Width = 64
   val Height = 64
 

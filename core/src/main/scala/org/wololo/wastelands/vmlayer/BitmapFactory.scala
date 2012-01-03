@@ -7,7 +7,7 @@ object BitmapTypes {
   val Translucent = 2
 }
 
-trait BitmapFactory {
-  def create(width: Int, height: Int, bitmapType: Int): Object
-  def create(inputStream: InputStream): Object
+trait BitmapFactory[T] {
+  def create(width: Int, height: Int, bitmapType: Int): T
+  def create(inputStream: InputStream): T
 }

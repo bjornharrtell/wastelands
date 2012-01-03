@@ -1,15 +1,9 @@
 package org.wololo.wastelands.core
-import org.wololo.wastelands.vmlayer.Canvas
-import org.wololo.wastelands.vmlayer.FrameRenderer
-import org.wololo.wastelands.vmlayer.BitmapFactory
-import org.wololo.wastelands.vmlayer.CanvasFactory
 import org.wololo.wastelands.vmlayer.GraphicsContext
 import org.wololo.wastelands.vmlayer.BitmapTypes
 
-class Game(graphicsContext: GraphicsContext) {
-  val bitmapFactory = graphicsContext.bitmapFactory()
-  val canvasFactory = graphicsContext.canvasFactory()
-  val tileSetFactory = new TileSetFactory(bitmapFactory, canvasFactory)
+class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
+  val tileSetFactory = new TileSetFactory[T](graphicsContext)
 
   val Width = 32 * 16
   val Height = 32 * 16
@@ -17,10 +11,10 @@ class Game(graphicsContext: GraphicsContext) {
   var running = false
   var tickCount = 0
 
-  val map = new Map()
-  val screen = new Screen(this)
+  val map = new GameMap()
+  val screen = new Screen[T](this, graphicsContext)
   
-  val unit = new Unit(map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
+  val unit = new Unit[T](map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent))
 
   def run() {

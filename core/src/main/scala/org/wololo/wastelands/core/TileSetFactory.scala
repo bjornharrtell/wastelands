@@ -1,15 +1,15 @@
 package org.wololo.wastelands.core
 import java.io.InputStream
-import java.lang.Object
-import org.wololo.wastelands.vmlayer.BitmapFactory
-import org.wololo.wastelands.vmlayer.BitmapTypes
-import org.wololo.wastelands.vmlayer.CanvasFactory
+import org.wololo.wastelands.vmlayer.{GraphicsContext, BitmapFactory, BitmapTypes, CanvasFactory}
 
-class TileSetFactory(bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory) {
+class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
+
+  val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
+  val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory
 
   val size = 32
   
-  def createTileFromFile(inputStream: InputStream): Object = {
+  def createTileFromFile(inputStream: InputStream): T = {
     val bitmap = bitmapFactory.create(inputStream)
 
     val tile = bitmapFactory.create(size, size, BitmapTypes.Opague)
@@ -19,18 +19,18 @@ class TileSetFactory(bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory)
     tile
   }
   
-  def createMapTileSetFromFile(inputStream: InputStream, bitmapType: Int): Array[Object] = {
-    createTileSetFromFile(inputStream, bitmapType, 18, 5)
+  def createMapTileSetFromFile[T : ClassManifest](inputStream: InputStream, bitmapType: Int): Array[T] = {
+    createTileSetFromFile[T](inputStream, bitmapType, 18, 5)
   }
   
-  def createUnitTileSetFromFile(inputStream: InputStream, bitmapType: Int): Array[Object] = {
-    createTileSetFromFile(inputStream, bitmapType, 8, 1)
+  def createUnitTileSetFromFile[T : ClassManifest](inputStream: InputStream, bitmapType: Int): Array[T] = {
+    createTileSetFromFile[T](inputStream, bitmapType, 8, 1)
   }
 
-  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int): Array[Object] = {
+  def createTileSetFromFile[T : ClassManifest](inputStream: InputStream, bitmapType: Int, width: Int, height: Int): Array[T] = {
     val image = bitmapFactory.create(inputStream)
 
-    val tileSet = new Array[Object](height * width)
+    val tileSet: Array[T] = new Array[T](height * width)
 
     var count = 0
 
@@ -47,7 +47,7 @@ class TileSetFactory(bitmapFactory: BitmapFactory, canvasFactory: CanvasFactory)
 
       canvasFactory.create(tile).drawImage(image, 0, 0, size, size, sx1, sy1, sx2, sy2)
 
-      tileSet(count) = tile
+      tileSet(count) = tile.asInstanceOf[T]
       count += 1
     }
 

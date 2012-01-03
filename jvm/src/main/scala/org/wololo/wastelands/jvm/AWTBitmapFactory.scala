@@ -5,20 +5,21 @@ import javax.imageio.ImageIO
 import java.awt.Transparency
 import java.io.InputStream
 import org.wololo.wastelands.vmlayer.BitmapTypes
+import java.awt.image.BufferedImage
 
-class AWTBitmapFactory extends BitmapFactory {
-  val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
-  val gs = ge.getDefaultScreenDevice()
-  val gc = gs.getDefaultConfiguration()
+object AWTBitmapFactory extends BitmapFactory[BufferedImage] {
+  val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
+  val gs = ge.getDefaultScreenDevice
+  val gc = gs.getDefaultConfiguration
   
-  def create(width: Int, height: Int, bitmapType: Int): Object = {
+  def create(width: Int, height: Int, bitmapType: Int): BufferedImage = {
     gc.createCompatibleImage(width, height, parseBitmapType(bitmapType))
   }
-  def create(inputStream: InputStream): Object = {
+  def create(inputStream: InputStream): BufferedImage = {
     ImageIO.read(inputStream)
   }
   
-  def parseBitmapType(bitmapType: Int) : Int = {
+  private def parseBitmapType(bitmapType: Int) : Int = {
     bitmapType match {
       case BitmapTypes.Opague => Transparency.OPAQUE
       case BitmapTypes.Bitmask => Transparency.BITMASK

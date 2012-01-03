@@ -4,15 +4,15 @@ import android.graphics.Bitmap
 import java.io.InputStream
 import org.wololo.wastelands.vmlayer.BitmapTypes
 
-class AndroidBitmapFactory extends BitmapFactory {
-  def create(width: Int, height: Int, bitmapType: Int): Object = {
+object AndroidBitmapFactory extends BitmapFactory[Bitmap] {
+  def create(width: Int, height: Int, bitmapType: Int): Bitmap = {
     Bitmap.createBitmap(width, height, parseBitmapType(bitmapType))
   }
-  def create(inputStream: InputStream): Object = {
+  def create(inputStream: InputStream): Bitmap = {
     android.graphics.BitmapFactory.decodeStream(inputStream)
   }
   
-  def parseBitmapType(bitmapType: Int) : Bitmap.Config = {
+  private def parseBitmapType(bitmapType: Int) : Bitmap.Config = {
     bitmapType match {
       case BitmapTypes.Opague => Bitmap.Config.RGB_565
       case BitmapTypes.Bitmask => Bitmap.Config.ALPHA_8

@@ -6,19 +6,15 @@ import java.awt.Canvas
 import java.awt.Dimension
 import org.wololo.wastelands.core.Game
 import javax.swing.JFrame
-import org.wololo.wastelands.vmlayer.FrameRenderer
 import java.awt.Image
-import org.wololo.wastelands.vmlayer.GraphicsContext
+import java.awt.image.BufferedImage
 
-object Client extends Canvas with MouseMotionListener with Runnable with GraphicsContext {
-
-  val bitmapFactory = new AWTBitmapFactory()
-  val canvasFactory = new AWTCanvasFactory()
+object Client extends Canvas with MouseMotionListener with Runnable with AWTGraphicsContext {
   
   val Width = 32 * 16
   val Height = 32 * 16
 
-  val game = new Game(this)
+  val game = new Game[BufferedImage](this)
 
   var prevX = 0
   var prevY = 0
@@ -45,7 +41,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with Graphic
     new Thread(this).start()
   }
   
-  def render(bitmap: Object) {
+  def render(bitmap: BufferedImage) {
     val bufferStrategy = getBufferStrategy
     if (bufferStrategy == null) {
       createBufferStrategy(3)
