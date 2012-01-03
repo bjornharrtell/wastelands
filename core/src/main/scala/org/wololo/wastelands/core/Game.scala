@@ -1,6 +1,6 @@
 package org.wololo.wastelands.core
-import org.wololo.wastelands.vmlayer.GraphicsContext
-import org.wololo.wastelands.vmlayer.BitmapTypes
+import org.wololo.wastelands.vmlayer._
+import org.wololo.wastelands.core.gfx._
 
 class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val tileSetFactory = new TileSetFactory[T](graphicsContext)
@@ -14,8 +14,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val map = new GameMap()
   val screen = new Screen[T](this, graphicsContext)
   
-  val unit = new Unit[T](map, 7,7, tileSetFactory.createUnitTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent))
+  val unit = new Unit(map, 7,7)
 
   def run() {
     running = true

@@ -1,10 +1,10 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.gfx
 
 import org.wololo.wastelands.vmlayer._
-
+import org.wololo.wastelands.core._
 
 /**
- * Contains the contents of the game screen with rendering logic.
+ * Contains the state of the game screen.
  */
 class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[T]) {
   
@@ -24,30 +24,22 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
   val bitmap = graphicsContext.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
   val canvas = graphicsContext.canvasFactory.create(bitmap)
   
+  // TODO: Screen/Game probably doesn't need TileSetFactory, try to refactor it into TileRenderer internals
+  val tileSetFactory = game.tileSetFactory
+  val tileRenderer = new TileRenderer[T](this)
+  val unitRenderer = new UnitRenderer[T](this)
+  
   // screen pixel scroll offset
   var sx = 0
   var sy = 0
   
+  // map tile scroll offset
+  var mx = 0
+  var my = 0
+  
   // map tile pixel scroll offset
   var ox = 0
   var oy = 0
-  
-  val tileSetFactory = game.tileSetFactory
-  
-  val tileSets = Array.ofDim[T](4, 5 * 18)
-  var shadeSet = new Array[T](5 * 18)
-
-  tileSets(TileTypes.Base)(0) = tileSetFactory.createTileFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/desert.png"))
-  tileSets(TileTypes.Dunes) = tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BitmapTypes.Opague)
-  tileSets(TileTypes.Rock) = tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/rock.png"), BitmapTypes.Opague)
-  tileSets(TileTypes.Spice) = tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/spice.png"), BitmapTypes.Opague)
-
-  shadeSet = tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/shade.png"), BitmapTypes.Bitmask)
 
   def scroll(dx: Int, dy: Int) {
     sx += dx
@@ -71,26 +63,14 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
     val mxd: Double = map.Width * (sx.toDouble / MapScreenWidth)
     val myd: Double = map.Height * (sy.toDouble / MapScreenHeight)
 
-    val mx: Int = mxd.toInt
-    val my: Int = myd.toInt
+    mx = mxd.toInt
+    my = myd.toInt
     
     // tile offset calc (for the scrolling buffer)
     ox = -(mxd % 1 * TileSize).toInt
     oy = -(myd % 1 * TileSize).toInt
 
-    TileRenderer.renderTiles(this, mx, my)
-    
-    game.unit.render(canvas, mx, my, ox, oy)
-  }
-  
-  def renderUnit() {
-    
-  }
-
-  /**
-   * Render a tile with scrolling offset
-   */
-  def renderTile(x: Int, y: Int, mx: Int, my: Int, ox: Int, oy: Int) {
-    
+    tileRenderer.render()
+    unitRenderer.render(game.unit)
   }
 }

@@ -1,6 +1,6 @@
 package org.wololo.wastelands.core
 import java.io.InputStream
-import org.wololo.wastelands.vmlayer.{GraphicsContext, BitmapFactory, BitmapTypes, CanvasFactory}
+import org.wololo.wastelands.vmlayer._
 
 class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
 
