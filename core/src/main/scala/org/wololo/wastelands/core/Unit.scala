@@ -6,43 +6,72 @@ import org.wololo.wastelands.vmlayer.Canvas
  */
 class Unit(map: GameMap, var x: Int, var y: Int) {
 
-  map.removeShadeAround(x, y)
+  val Velocity = 0.04
+  val MoveStatusIdle = 0
+  val MoveStatusMoving = 1
+  val MoveStatusPausing = 2
 
-  var mox = 0
-  var moy = 0
-
+  var moveDistance = 0.0
   var direction = 0
 
-  var count = 0
-  
-  var tc = 0
+  var moveStatus = MoveStatusIdle
+  val MovePauseTicks = 15
+  var movePauseTicksCounter = MovePauseTicks
+
+  map.removeShadeAround(x, y)
 
   def tick() {
-    // TODO: dirty hack test to simulate move right
-    // TODO: needs logic for 8 directions, velocity
-    if (x >= map.Width - 16)
+    tickMove
+  }
+
+  def startMove() {
+    // TODO: should be able to move to map limit but restricted now since it crashes
+    if (x < 3 || x >= map.Width - 3 || y < 3 || y >= map.Height - 3)
       return
 
-    if (mox >= 31) {
+    // TODO: remove test code
+    direction = (Math.random * 7).toInt
+    moveStatus = MoveStatusMoving
+  }
 
-    } else {
-      mox += 1
-    }
-    
-    if (count == 32) {
-      val xf = x+1
-      map.removeShadeAround(xf, y)
+  def tickMove() {
+    if (moveStatus == MoveStatusMoving) {
+      moveDistance += Velocity
+
+      if (moveDistance >= 1) {
+        moveDistance = 0
+
+        var xf = 0
+        var yf = 0
+        
+        // TODO: refactor with renderer
+        direction match {
+          case 0 => xf = 0; yf = -1
+          case 1 => xf = 1; yf = -1
+          case 2 => xf = 1; yf = 0
+          case 3 => xf = 1; yf = 1
+          case 4 => xf = 0; yf = 1
+          case 5 => xf = -1; yf = 1
+          case 6 => xf = -1; yf = 0
+          case 7 => xf = -1; yf = -1
+        }
+
+        x += xf
+        y += yf
+        
+        map.removeShadeAround(x, y)
+        moveStatus = MoveStatusPausing
+      }
+    } else if (moveStatus == MoveStatusPausing) {
+      movePauseTicksCounter += -1
+
+      if (movePauseTicksCounter == 0) {
+        movePauseTicksCounter = MovePauseTicks
+        moveStatus = MoveStatusIdle
+        // TODO: remove test, should not be initiated here
+        startMove
+      }
     }
 
-    if (count > 40) {
-      mox = 0
-      x += 1
-      tc += 1
-      if (tc>7) tc = 0
-      
-      count = 0
-    }
-
-    count += 1
   }
 }
