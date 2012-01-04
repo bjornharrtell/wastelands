@@ -1,6 +1,7 @@
 package org.wololo.wastelands.core
 import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core.gfx._
+import scala.collection.mutable.ArrayBuffer
 
 class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val tileSetFactory = new TileSetFactory[T](graphicsContext)
@@ -14,10 +15,10 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val map = new GameMap()
   val screen = new Screen(this, graphicsContext)
   
-  val unit = new Unit(map,7,7)
+  val units = ArrayBuffer(new Unit(map,17,5), new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
   
   // TODO: remove test code
-  unit.startMove
+  units.foreach((unit) => unit.startMove)
 
   def run() {
     running = true
@@ -60,7 +61,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
   def tick() {
 
-    unit.tick
+    units.foreach((unit) => unit.tick)
 
     tickCount += 1
   }
