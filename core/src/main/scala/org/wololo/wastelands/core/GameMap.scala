@@ -4,7 +4,7 @@ class GameMap {
   val Width = 64
   val Height = 64
 
-  val tiles = new Array[Tile](Width*Height)
+  val tiles = (0 until Width * Height).toArray.map(_ => new Tile())
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
     3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,
@@ -21,15 +21,6 @@ class GameMap {
     29, 31, 1, 47, 1, 22, 30, 22, 49, 31, 1, 47, 1, 45, 12, 45, 20, 63,
     27, 77, 27, 45, 12, 45, 20, 75, 50, 66, 50, 18, 8, 18, 29, 31, 1,
     47, 1, 22, 30, 22, 49, 31, 1, 47, 1)
-
-  for {
-    y <- 0 until Width;
-    x <- 0 until Height
-  } {
-    val tile = new Tile()
-    tile.baseType = TileTypes.Base
-    tiles(y*Height+x) = tile
-  }
 
   // TODO: test data, replace with serialization and map editor.
   tiles(0,0).baseType = TileTypes.Dunes

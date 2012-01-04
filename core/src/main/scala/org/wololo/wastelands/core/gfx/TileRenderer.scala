@@ -44,14 +44,14 @@ class TileRenderer[T : ClassManifest](screen: Screen[T]) {
   tileSets(TileTypes.Base)(0) = screen.tileSetFactory.createTileFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/desert.png"))
   tileSets(TileTypes.Dunes) = screen.tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BitmapTypes.Opague)
+    .getClassLoader.getResourceAsStream("tilesets/dunes.png"), BitmapTypes.Opague).toArray
   tileSets(TileTypes.Rock) = screen.tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/rock.png"), BitmapTypes.Opague)
+    .getClassLoader.getResourceAsStream("tilesets/rock.png"), BitmapTypes.Opague).toArray
   tileSets(TileTypes.Spice) = screen.tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/spice.png"), BitmapTypes.Opague)
+    .getClassLoader.getResourceAsStream("tilesets/spice.png"), BitmapTypes.Opague).toArray
 
   shadeSet = screen.tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/shade.png"), BitmapTypes.Bitmask)
+    .getClassLoader.getResourceAsStream("tilesets/shade.png"), BitmapTypes.Bitmask).toArray
   
   def render() {
     // NOTE: while loop used for perf

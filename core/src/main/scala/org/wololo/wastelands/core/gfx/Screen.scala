@@ -6,7 +6,7 @@ import org.wololo.wastelands.core._
 /**
  * Contains the state of the game screen.
  */
-class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[T]) {
+class Screen[T: ClassManifest](game: Game[T], graphicsContext: GraphicsContext[T]) {
   
   val TileSize = 32
   
@@ -26,8 +26,8 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
   
   // TODO: Screen/Game probably doesn't need TileSetFactory, try to refactor it into TileRenderer internals
   val tileSetFactory = game.tileSetFactory
-  val tileRenderer = new TileRenderer[T](this)
-  val unitRenderer = new UnitRenderer[T](this)
+  val tileRenderer = new TileRenderer(this)
+  val unitRenderer = new UnitRenderer(this)
   
   // screen pixel scroll offset
   var sx = 0

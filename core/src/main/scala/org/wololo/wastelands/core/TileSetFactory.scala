@@ -1,6 +1,7 @@
 package org.wololo.wastelands.core
 import java.io.InputStream
 import org.wololo.wastelands.vmlayer._
+import scala.collection.mutable.ArrayBuffer
 
 class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
 
@@ -19,26 +20,25 @@ class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
     tile
   }
   
-  def createMapTileSetFromFile[T : ClassManifest](inputStream: InputStream, bitmapType: Int): Array[T] = {
-    createTileSetFromFile[T](inputStream, bitmapType, 18, 5)
+  def createMapTileSetFromFile(inputStream: InputStream, bitmapType: Int): ArrayBuffer[T] = {
+    createTileSetFromFile(inputStream, bitmapType, 18, 5)
   }
   
-  def createUnitTileSetFromFile[T : ClassManifest](inputStream: InputStream, bitmapType: Int): Array[T] = {
-    createTileSetFromFile[T](inputStream, bitmapType, 8, 1)
+  def createUnitTileSetFromFile(inputStream: InputStream, bitmapType: Int): ArrayBuffer[T] = {
+    createTileSetFromFile(inputStream, bitmapType, 8, 1)
   }
 
-  def createTileSetFromFile[T : ClassManifest](inputStream: InputStream, bitmapType: Int, width: Int, height: Int): Array[T] = {
+  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int): ArrayBuffer[T] = {
     val image = bitmapFactory.create(inputStream)
 
-    val tileSet: Array[T] = new Array[T](height * width)
-
+    val tileSet = new ArrayBuffer[T](height * width)
     var count = 0
 
     for (
       y <- 0 until height;
       x <- 0 until width
     ) {
-      val tile = bitmapFactory.create(size, size, bitmapType)
+      val tile: T = bitmapFactory.create(size, size, bitmapType)
 
       val sx1 = x * 16 + 1 + x
       val sy1 = y * 16 + 1 + y
@@ -47,7 +47,7 @@ class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
 
       canvasFactory.create(tile).drawImage(image, 0, 0, size, size, sx1, sy1, sx2, sy2)
 
-      tileSet(count) = tile.asInstanceOf[T]
+      tileSet.insert(count, tile)
       count += 1
     }
 

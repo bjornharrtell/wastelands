@@ -2,14 +2,12 @@ package org.wololo.wastelands.core.gfx
 import org.wololo.wastelands.vmlayer._
 
 class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
-  var tileSet = new Array[T](8)
-
-  tileSet = screen.tileSetFactory.createMapTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent)
+  val tileSet: Array[T] = screen.tileSetFactory.createMapTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent).toArray
 
   def render(unit: org.wololo.wastelands.core.Unit) {
-    var mdx = unit.x - screen.mx
-    var mdy = unit.y - screen.my
+    val mdx = unit.x - screen.mx
+    val mdy = unit.y - screen.my
 
     if (mdx < 0 || mdx > 16 || mdy < 0 || mdy > 16)
       return

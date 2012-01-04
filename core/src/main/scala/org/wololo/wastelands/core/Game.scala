@@ -12,7 +12,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   var tickCount = 0
 
   val map = new GameMap()
-  val screen = new Screen[T](this, graphicsContext)
+  val screen = new Screen(this, graphicsContext)
   
   val unit = new Unit(map, 7,7)
 
