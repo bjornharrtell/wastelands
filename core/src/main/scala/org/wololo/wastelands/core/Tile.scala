@@ -1,5 +1,9 @@
 package org.wololo.wastelands.core
 
+object Tile {
+  val Size = 32
+}
+
 class Tile {
 
   /**

@@ -59,16 +59,15 @@ class Screen[T : ClassManifest](game: Game[T], graphicsContext: GraphicsContext[
    * scrolling.
    */
   def render() {
-    // screen coord to map coord conversion
-    val mxd: Double = map.Width * (sx.toDouble / MapScreenWidth)
-    val myd: Double = map.Height * (sy.toDouble / MapScreenHeight)
+    import TileRenderer._
 
-    mx = mxd.toInt
-    my = myd.toInt
-    
-    // tile offset calc (for the scrolling buffer)
-    ox = -(mxd % 1 * TileSize).toInt
-    oy = -(myd % 1 * TileSize).toInt
+    //calculate the tile index for x and y axis
+    mx = calculateTileIndex(sx,  Tile.Size)
+    my = calculateTileIndex(sy,  Tile.Size)
+
+    //calculate the tile pixel offset for x and y axis
+    ox = calculateTilePixelOffset(sx, mx, Tile.Size)
+    oy = calculateTilePixelOffset(sy, my, Tile.Size)
 
     tileRenderer.render()
     unitRenderer.render(game.unit)

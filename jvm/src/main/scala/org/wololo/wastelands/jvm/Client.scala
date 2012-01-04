@@ -14,7 +14,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
   val Width = 32 * 16
   val Height = 32 * 16
 
-  val game = new Game[BufferedImage](this)
+  val game = new Game(this)
 
   var prevX = 0
   var prevY = 0

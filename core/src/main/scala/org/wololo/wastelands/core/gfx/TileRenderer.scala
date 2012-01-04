@@ -2,6 +2,41 @@ package org.wololo.wastelands.core.gfx
 import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 
+/**
+ * Calculation logic related to tiles and their rendering logic
+ */
+object TileRenderer {
+  /**
+   * Calculates the index of a tile on the map
+   *
+   * @param screenPixelCoord partial coordinate for the first displayed pixel on the screen, if going from top-left
+   * to bottom-right
+   * @param tilePixelSize the size of a tile on the map by pixels
+   * @return index for the first displayed tile on the axis in question
+   */
+  def calculateTileIndex(screenPixelCoord: Int,  tilePixelSize: Int): Int = {
+    screenPixelCoord / tilePixelSize
+  }
+
+  /**
+   * Calculates the offset of a tile in pixels, which occurs because of smooth scrolling.
+   *
+   * @param screenPixelCoord partial coordinate for the first displayed pixel on the screen, if going from top-left
+      * to bottom-right
+   * @param tileIndex index for the first displayed tile on the axis in question
+   * @param tilePixelSize the size of a tile on the map by pixels
+   *
+   * @return the offset in pixels on a tile for the axis in question
+   */
+  def calculateTilePixelOffset(screenPixelCoord: Int,  tileIndex: Int,  tilePixelSize: Int) = {
+    if(screenPixelCoord >= 0){
+      -(screenPixelCoord - (tileIndex * tilePixelSize))
+    }else {
+      (tileIndex * tilePixelSize) - screenPixelCoord
+    }
+  }
+}
+
 class TileRenderer[T : ClassManifest](screen: Screen[T]) {
   val tileSets = Array.ofDim[T](4, 5 * 18)
   var shadeSet = new Array[T](5 * 18)
@@ -34,8 +69,6 @@ class TileRenderer[T : ClassManifest](screen: Screen[T]) {
   }
   
   /**
-   * @param mx map tile coordinate
-   * @param my map tile coordinate
    * @param x screen tile coordinate
    * @param y screen tile coordinate
    */

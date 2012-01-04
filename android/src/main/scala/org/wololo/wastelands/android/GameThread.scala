@@ -7,7 +7,7 @@ class GameThread extends Thread with SurfaceHolder.Callback with AndroidGraphics
   
   var running = false
 
-  val game = new Game[Bitmap](this)
+  val game = new Game(this)
 
   var surfaceHolder: SurfaceHolder = null
 
