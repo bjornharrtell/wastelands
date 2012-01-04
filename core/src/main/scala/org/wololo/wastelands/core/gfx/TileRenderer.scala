@@ -52,7 +52,7 @@ class TileRenderer[T : ClassManifest](screen: Screen[T]) {
     if (tx < 0 || tx > screen.map.Width || ty < 0 || ty > screen.map.Height)
       return
 
-    val tile = screen.map.tiles(tx)(ty)
+    val tile = screen.map.tiles(tx,ty)
 
     screen.canvas.drawImage(tileSets(tile.baseType)(tile.subType), sx, sy)
 

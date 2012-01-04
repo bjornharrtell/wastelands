@@ -8,6 +8,8 @@ import org.wololo.wastelands.core.Game
 import javax.swing.JFrame
 import java.awt.Image
 import java.awt.image.BufferedImage
+import java.awt.ImageCapabilities
+import java.awt.BufferCapabilities
 
 object Client extends Canvas with MouseMotionListener with Runnable with AWTGraphicsContext {
   
@@ -36,6 +38,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
     frame.setLocationRelativeTo(null)
     frame.setResizable(false)
     frame.setVisible(true)
+    frame.setIgnoreRepaint(true)
 
     addMouseMotionListener(this)
     new Thread(this).start()
@@ -44,7 +47,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
   def render(bitmap: BufferedImage) {
     val bufferStrategy = getBufferStrategy
     if (bufferStrategy == null) {
-      createBufferStrategy(3)
+      createBufferStrategy(2)
     } else {
       val graphics = bufferStrategy.getDrawGraphics()
       // NOTE: I think this is the fastest drawImage for this purpose
