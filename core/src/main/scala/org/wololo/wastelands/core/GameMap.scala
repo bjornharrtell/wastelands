@@ -4,7 +4,7 @@ class GameMap {
   val Width = 64
   val Height = 64
 
-  val tiles = Array.ofDim[Tile](Width, Height)
+  val tiles = new Array[Tile](Width*Height)
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
     3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,
@@ -28,60 +28,64 @@ class GameMap {
   } {
     val tile = new Tile()
     tile.baseType = TileTypes.Base
-    tiles(x)(y) = tile
+    tiles(y*Height+x) = tile
   }
 
   // TODO: test data, replace with serialization and map editor.
-  tiles(0)(0).baseType = TileTypes.Dunes
-  tiles(1)(1).baseType = TileTypes.Dunes
+  tiles(0,0).baseType = TileTypes.Dunes
+  tiles(1,1).baseType = TileTypes.Dunes
 
-  tiles(15)(5).baseType = TileTypes.Dunes
-  tiles(16)(5).baseType = TileTypes.Dunes
-  tiles(17)(5).baseType = TileTypes.Dunes
-  tiles(15)(6).baseType = TileTypes.Dunes
-  tiles(16)(6).baseType = TileTypes.Dunes
-  tiles(17)(6).baseType = TileTypes.Dunes
-  tiles(15)(7).baseType = TileTypes.Dunes
-  tiles(16)(7).baseType = TileTypes.Dunes
-  tiles(17)(7).baseType = TileTypes.Dunes
+  tiles(15,5).baseType = TileTypes.Dunes
+  tiles(16,5).baseType = TileTypes.Dunes
+  tiles(17,5).baseType = TileTypes.Dunes
+  tiles(15,6).baseType = TileTypes.Dunes
+  tiles(16,6).baseType = TileTypes.Dunes
+  tiles(17,6).baseType = TileTypes.Dunes
+  tiles(15,7).baseType = TileTypes.Dunes
+  tiles(16,7).baseType = TileTypes.Dunes
+  tiles(17,7).baseType = TileTypes.Dunes
 
-  tiles(25)(5).baseType = TileTypes.Rock
-  tiles(26)(5).baseType = TileTypes.Rock
-  tiles(27)(5).baseType = TileTypes.Rock
-  tiles(25)(6).baseType = TileTypes.Rock
-  tiles(26)(6).baseType = TileTypes.Rock
-  tiles(27)(6).baseType = TileTypes.Rock
-  tiles(25)(7).baseType = TileTypes.Rock
-  tiles(26)(7).baseType = TileTypes.Rock
-  tiles(27)(7).baseType = TileTypes.Rock
+  tiles(25,5).baseType = TileTypes.Rock
+  tiles(26,5).baseType = TileTypes.Rock
+  tiles(27,5).baseType = TileTypes.Rock
+  tiles(25,6).baseType = TileTypes.Rock
+  tiles(26,6).baseType = TileTypes.Rock
+  tiles(27,6).baseType = TileTypes.Rock
+  tiles(25,7).baseType = TileTypes.Rock
+  tiles(26,7).baseType = TileTypes.Rock
+  tiles(27,7).baseType = TileTypes.Rock
 
-  tiles(25)(8).shade = true
-  tiles(26)(8).shade = true
-  tiles(27)(8).shade = true
-  tiles(25)(9).shade = true
-  tiles(26)(9).shade = true
-  tiles(27)(9).shade = true
-  tiles(25)(10).shade = true
-  tiles(26)(10).shade = true
-  tiles(27)(10).shade = true
+  tiles(25,8).shade = true
+  tiles(26,8).shade = true
+  tiles(27,8).shade = true
+  tiles(25,9).shade = true
+  tiles(26,9).shade = true
+  tiles(27,9).shade = true
+  tiles(25,10).shade = true
+  tiles(26,10).shade = true
+  tiles(27,10).shade = true
 
-  tiles(23)(8).baseType = TileTypes.Rock
-  tiles(24)(8).baseType = TileTypes.Rock
-  tiles(24)(7).baseType = TileTypes.Rock
+  tiles(23,8).baseType = TileTypes.Rock
+  tiles(24,8).baseType = TileTypes.Rock
+  tiles(24,7).baseType = TileTypes.Rock
 
   for {
     y <- 0 until Height;
     x <- 0 until Width
   } {
     makeBorder(x, y)
-    tiles(x)(y).shade = true
+    tiles(x,y).shade = true
+  }
+  
+  def tiles(x: Int, y: Int) : Tile = {
+    tiles(y*Height+x)
   }
 
   /**
    * Calculates subtype for tile if it's suitable
    */
   def makeBorder(x: Int, y: Int) {
-    val tile = tiles(x)(y)
+    val tile = tiles(x,y)
 
     if (tile.baseType != TileTypes.Base) {
       tile.subType = calcSubType(x, y, tile.baseType)
@@ -92,7 +96,7 @@ class GameMap {
    * Calculates shade (fog of war) for tile
    */
   def makeShade(x: Int, y: Int) {
-    val tile = tiles(x)(y)
+    val tile = tiles(x,y)
 
     if (tile.shade) {
       tile.shadeSubType = calcShadeSubType(x, y)
@@ -115,14 +119,14 @@ class GameMap {
     val y2 = if (y > Height) 0 else 1
 
     var subType = 0
-    subType = if (tiles(x)(y + y1).baseType == baseType) 1 else 0
-    subType = if (tiles(x + x2)(y + y1).baseType == baseType) subType | 2 else subType
-    subType = if (tiles(x + x2)(y).baseType == baseType) subType | 4 else subType
-    subType = if (tiles(x + x2)(y + y2).baseType == baseType) subType | 8 else subType
-    subType = if (tiles(x)(y + y2).baseType == baseType) subType | 16 else subType
-    subType = if (tiles(x + x1)(y + y2).baseType == baseType) subType | 32 else subType
-    subType = if (tiles(x + x1)(y).baseType == baseType) subType | 64 else subType
-    subType = if (tiles(x + x1)(y + y1).baseType == baseType) subType | 128 else subType
+    subType = if (tiles(x,y + y1).baseType == baseType) 1 else 0
+    subType = if (tiles(x + x2,y + y1).baseType == baseType) subType | 2 else subType
+    subType = if (tiles(x + x2,y).baseType == baseType) subType | 4 else subType
+    subType = if (tiles(x + x2,y + y2).baseType == baseType) subType | 8 else subType
+    subType = if (tiles(x,y + y2).baseType == baseType) subType | 16 else subType
+    subType = if (tiles(x + x1,y + y2).baseType == baseType) subType | 32 else subType
+    subType = if (tiles(x + x1,y).baseType == baseType) subType | 64 else subType
+    subType = if (tiles(x + x1,y + y1).baseType == baseType) subType | 128 else subType
     subDef(subType) - 1
   }
 
@@ -134,19 +138,19 @@ class GameMap {
     val y2 = if (y > Height) 0 else 1
 
     var subType = 0
-    subType = if (tiles(x)(y + y1).shade) 1 else 0
-    subType = if (tiles(x + x2)(y + y1).shade) subType | 2 else subType
-    subType = if (tiles(x + x2)(y).shade) subType | 4 else subType
-    subType = if (tiles(x + x2)(y + y2).shade) subType | 8 else subType
-    subType = if (tiles(x)(y + y2).shade) subType | 16 else subType
-    subType = if (tiles(x + x1)(y + y2).shade) subType | 32 else subType
-    subType = if (tiles(x + x1)(y).shade) subType | 64 else subType
-    subType = if (tiles(x + x1)(y + y1).shade) subType | 128 else subType
+    subType = if (tiles(x,y + y1).shade) 1 else 0
+    subType = if (tiles(x + x2,y + y1).shade) subType | 2 else subType
+    subType = if (tiles(x + x2,y).shade) subType | 4 else subType
+    subType = if (tiles(x + x2,y + y2).shade) subType | 8 else subType
+    subType = if (tiles(x,y + y2).shade) subType | 16 else subType
+    subType = if (tiles(x + x1,y + y2).shade) subType | 32 else subType
+    subType = if (tiles(x + x1,y).shade) subType | 64 else subType
+    subType = if (tiles(x + x1,y + y1).shade) subType | 128 else subType
     subDef(subType) - 1
   }
 
   def removeShade(x: Int, y: Int) {
-    tiles(x)(y).shade = false
+    tiles(x,y).shade = false
     
     makeShade(x,y-1)
     makeShade(x+1,y-1)
