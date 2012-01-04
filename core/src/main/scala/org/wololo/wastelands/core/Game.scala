@@ -14,17 +14,20 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val map = new GameMap()
   val screen = new Screen(this, graphicsContext)
   
-  val unit = new Unit(map, 7,7)
+  val unit = new Unit(map,7,7)
+  
+  // TODO: remove test code
+  unit.startMove
 
   def run() {
     running = true
 
-    var lastTime = System.nanoTime()
+    var lastTime = System.nanoTime
     var unprocessed = 0.0
     val nsPerTick = 1000000000.0 / 60.0
     var frames = 0
     var ticks = 0
-    var lastTimer1 = System.currentTimeMillis()
+    var lastTimer1 = System.currentTimeMillis
 
     while (running) {
       val now = System.nanoTime()
@@ -42,11 +45,11 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
       if (shouldRender) {
         frames += 1
-        screen.render()
+        screen.render
         graphicsContext.render(screen.bitmap)
       }
 
-      if (System.currentTimeMillis() - lastTimer1 > 1000) {
+      if (System.currentTimeMillis - lastTimer1 > 1000) {
         lastTimer1 += 1000
         System.out.println(ticks + " ticks, " + frames + " fps")
         frames = 0
