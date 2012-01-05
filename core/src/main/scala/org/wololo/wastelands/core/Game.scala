@@ -16,14 +16,23 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val screen = new Screen(this, graphicsContext)
   
   def randomPos() = { ((Math.random*(map.Width-6))+3).toInt }
-  def randomUnit() = {
-    val unit = new org.wololo.wastelands.core.Unit(map,randomPos,randomPos)
+  def randomUnit1() = {
+    val unit = new org.wololo.wastelands.core.TestUnit1(map,randomPos,randomPos)
     unit.moveTo(randomPos(),randomPos())
     unit
   }
-  val units = (0 until 10).toArray.map(_ => 
-    randomUnit()
+  def randomUnit2() = {
+    val unit = new org.wololo.wastelands.core.TestUnit2(map,randomPos,randomPos)
+    unit.moveTo(randomPos(),randomPos())
+    unit
+  }
+  val units1 = (0 until 10).toArray.map(_ => 
+    randomUnit1()
   )
+  val units2 = (0 until 10).toArray.map(_ => 
+    randomUnit2()
+  )
+  val units = units1++units2
   
   //val units = ArrayBuffer(, new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
   

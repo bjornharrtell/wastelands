@@ -4,17 +4,19 @@ import org.wololo.wastelands.vmlayer.Canvas
 /**
  * TODO: probably needs refactoring for more intelligent rendering with other parts
  */
-class Unit(map: GameMap, var x: Int, var y: Int) {
+abstract class Unit(map: GameMap, var x: Int, var y: Int) {
 
-  val Velocity = 0.04
+  
   val MoveStatusIdle = 0
   val MoveStatusMoving = 1
   val MoveStatusPausing = 2
 
-  var moveDistance = 0.0
+  var velocity = 0.04
   var direction = 0
   var destX = x
   var destY = y
+  
+  var moveDistance = 0.0
 
   var moveStatus = MoveStatusIdle
   val MovePauseTicks = 15
@@ -72,7 +74,7 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
 
   def tickMove() {
     if (moveStatus == MoveStatusMoving) {
-      moveDistance += Velocity
+      moveDistance += velocity
 
       if (moveDistance >= 1) {
         moveDistance = 0

@@ -1,9 +1,14 @@
 package org.wololo.wastelands.core.gfx
+
+import org.wololo.wastelands.core._
 import org.wololo.wastelands.vmlayer._
 
 class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
-  val tileSet: Array[T] = screen.tileSetFactory.createMapTileSetFromFile(getClass
+  val tileSet1: Array[T] = screen.tileSetFactory.createUnitTileSetFromFile(getClass
     .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent).toArray
+    
+  val tileSet2: Array[T] = screen.tileSetFactory.createUnitTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit2.png"), BitmapTypes.Translucent).toArray
 
   def render(unit: org.wololo.wastelands.core.Unit) {
     val mdx = unit.x - screen.mx
@@ -32,6 +37,11 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
     val sx = mdx * 32 + screen.ox + (screen.TileSize * xf * unit.moveDistance).toInt
     val sy = mdy * 32 + screen.oy + (screen.TileSize * yf * unit.moveDistance).toInt
 
+    val tileSet = unit match {
+      case x:TestUnit1 => tileSet1
+      case x:TestUnit2 => tileSet2
+    }
+    
     //canvas.drawRect(sx, sy, sx + 32, sy + 32)
     screen.canvas.drawImage(tileSet(unit.direction), sx, sy)
   }
