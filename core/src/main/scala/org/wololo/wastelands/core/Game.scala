@@ -15,7 +15,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val map = new GameMap()
   val screen = new Screen(this, graphicsContext)
   
-  def randomPos() = { ((Math.random*(map.Width-6))+3).toInt }
+  def randomPos() = { ((math.random*(map.Width-6))+3).toInt }
   def randomUnit1() = {
     val unit = new org.wololo.wastelands.core.TestUnit1(map,randomPos,randomPos)
     unit.moveTo(randomPos(),randomPos())

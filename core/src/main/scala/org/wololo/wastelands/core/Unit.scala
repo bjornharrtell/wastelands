@@ -50,14 +50,14 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     // destination reached, bail
     if (dx == 0 && dy == 0) {
       // TODO: remove test code
-      def randomPos() = { ((Math.random * (map.Width - 6)) + 3).toInt }
+      def randomPos() = { ((math.random * (map.Width - 6)) + 3).toInt }
       moveTo(randomPos(), randomPos())
 
       return
     }
 
-    dx = Math.signum(dx)
-    dy = Math.signum(dy)
+    dx = math.signum(dx)
+    dy = math.signum(dy)
 
     if (dx == 0 && dy == -1) direction = 0
     else if (dx == 1 && dy == -1) direction = 1
