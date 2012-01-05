@@ -15,7 +15,17 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val map = new GameMap()
   val screen = new Screen(this, graphicsContext)
   
-  val units = ArrayBuffer(new Unit(map,17,5), new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
+  def randomPos() = { ((Math.random*(map.Width-6))+3).toInt }
+  def randomUnit() = {
+    val unit = new org.wololo.wastelands.core.Unit(map,randomPos,randomPos)
+    unit.moveTo(randomPos(),randomPos())
+    unit
+  }
+  val units = (0 until 5).toArray.map(_ => 
+    randomUnit()
+  )
+  
+  //val units = ArrayBuffer(, new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
   
   // TODO: remove test code
   units.foreach((unit) => unit.startMove)

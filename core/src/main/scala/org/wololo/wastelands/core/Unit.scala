@@ -13,6 +13,8 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
 
   var moveDistance = 0.0
   var direction = 0
+  var destX = x
+  var destY = y
 
   var moveStatus = MoveStatusIdle
   val MovePauseTicks = 15
@@ -30,8 +32,36 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
       return
 
     // TODO: remove test code
-    direction = (Math.random * 7).toInt
+    //direction = (Math.random * 7).toInt
     moveStatus = MoveStatusMoving
+  }
+  
+  def moveTo(x: Int, y: Int) {
+    destX = x
+    destY = y
+    calcMove
+  }
+
+  def calcMove() {
+    var dx = destX - x
+    var dy = destY - y
+
+    if (dx == 0 && dy == 0)
+      return
+
+    dx = Math.signum(dx)
+    dy = Math.signum(dy)
+
+    if (dx == 0 && dy == -1) direction = 0
+    if (dx == 1 && dy == -1) direction = 1
+    if (dx == 1 && dy == 0) direction = 2
+    if (dx == 1 && dy == 1) direction = 3
+    if (dx == 0 && dy == 1) direction = 4
+    if (dx == -1 && dy == 1) direction = 5
+    if (dx == -1 && dy == 0) direction = 6
+    if (dx == -1 && dy == -1) direction = 7
+    
+    startMove()
   }
 
   def tickMove() {
@@ -43,7 +73,7 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
 
         var xf = 0
         var yf = 0
-        
+
         // TODO: refactor with renderer
         direction match {
           case 0 => xf = 0; yf = -1
@@ -58,7 +88,7 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
 
         x += xf
         y += yf
-        
+
         map.removeShadeAround(x, y)
         moveStatus = MoveStatusPausing
       }
@@ -69,7 +99,7 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
         movePauseTicksCounter = MovePauseTicks
         moveStatus = MoveStatusIdle
         // TODO: remove test, should not be initiated here
-        startMove
+        calcMove
       }
     }
 
