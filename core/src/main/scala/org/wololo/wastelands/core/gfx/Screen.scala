@@ -46,8 +46,8 @@ class Screen[T: ClassManifest](game: Game[T], graphicsContext: GraphicsContext[T
     sy += dy
 
     // TODO: make sure bounds calc is correct... this is a guess (16*TileSize crashed)
-    val maxx = MapScreenWidth - (TilesWidth-1 * TileSize)
-    val maxy = MapScreenHeight - (TilesHeight-1 * TileSize)
+    val maxx = MapScreenWidth - ((TilesWidth+1) * TileSize)
+    val maxy = MapScreenHeight - ((TilesHeight+1) * TileSize)
     sx = if (sx < 0) 0 else sx
     sx = if (sx > maxx) maxx else sx
     sy = if (sy < 0) 0 else sy
