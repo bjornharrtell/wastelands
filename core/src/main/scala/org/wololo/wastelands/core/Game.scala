@@ -21,7 +21,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
     unit.moveTo(randomPos(),randomPos())
     unit
   }
-  val units = (0 until 5).toArray.map(_ => 
+  val units = (0 until 10).toArray.map(_ => 
     randomUnit()
   )
   

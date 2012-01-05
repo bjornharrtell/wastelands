@@ -45,9 +45,15 @@ class Unit(map: GameMap, var x: Int, var y: Int) {
   def calcMove() {
     var dx = destX - x
     var dy = destY - y
-
-    if (dx == 0 && dy == 0)
+    
+    // destination reached, bail
+    if (dx == 0 && dy == 0) {
+      // TODO: remove test code
+      def randomPos() = { ((Math.random * (map.Width-6))+3).toInt }
+      moveTo(randomPos(),randomPos())
+      
       return
+  	}
 
     dx = Math.signum(dx)
     dy = Math.signum(dy)
