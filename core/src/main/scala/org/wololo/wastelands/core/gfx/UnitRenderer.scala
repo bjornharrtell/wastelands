@@ -11,31 +11,23 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
     .getClassLoader.getResourceAsStream("tilesets/unit2.png"), BitmapTypes.Translucent).toArray
 
   def render(unit: org.wololo.wastelands.core.Unit) {
-    val mdx = unit.x - screen.mx
-    val mdy = unit.y - screen.my
+    val mapDeltaX = unit.x - screen.mx
+    val mapDeltaY = unit.y - screen.my
 
-    if (mdx < 0 || mdx > 16 || mdy < 0 || mdy > 16)
+    if (mapDeltaX < 0 || mapDeltaX > 16 || mapDeltaY < 0 || mapDeltaY > 16)
       return
 
-    var xf = 0
-    var yf = 0
+    var moveOffsetX = 0
+    var moveOffsetY = 0
 
     if (unit.moveStatus == unit.MoveStatusMoving) {
-      // TODO: refactor with unit
-      unit.direction match {
-        case 0 => xf = 0; yf = -1
-        case 1 => xf = 1; yf = -1
-        case 2 => xf = 1; yf = 0
-        case 3 => xf = 1; yf = 1
-        case 4 => xf = 0; yf = 1
-        case 5 => xf = -1; yf = 1
-        case 6 => xf = -1; yf = 0
-        case 7 => xf = -1; yf = -1
-      }
+      var (dx, dy) = unit.mapDelta
+      moveOffsetX = (screen.TileSize * dx * unit.moveDistance).toInt
+      moveOffsetY = (screen.TileSize * dy * unit.moveDistance).toInt
     }
 
-    val sx = mdx * 32 + screen.ox + (screen.TileSize * xf * unit.moveDistance).toInt
-    val sy = mdy * 32 + screen.oy + (screen.TileSize * yf * unit.moveDistance).toInt
+    val sx = mapDeltaX * 32 + screen.ox + moveOffsetX
+    val sy = mapDeltaY * 32 + screen.oy + moveOffsetY
 
     val tileSet = unit match {
       case x:TestUnit1 => tileSet1

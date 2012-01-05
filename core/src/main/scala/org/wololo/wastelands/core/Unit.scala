@@ -6,7 +6,6 @@ import org.wololo.wastelands.vmlayer.Canvas
  */
 abstract class Unit(map: GameMap, var x: Int, var y: Int) {
 
-  
   val MoveStatusIdle = 0
   val MoveStatusMoving = 1
   val MoveStatusPausing = 2
@@ -15,7 +14,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   var direction = 0
   var destX = x
   var destY = y
-  
+
   var moveDistance = 0.0
 
   var moveStatus = MoveStatusIdle
@@ -37,7 +36,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     //direction = (Math.random * 7).toInt
     moveStatus = MoveStatusMoving
   }
-  
+
   def moveTo(x: Int, y: Int) {
     destX = x
     destY = y
@@ -47,29 +46,45 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   def calcMove() {
     var dx = destX - x
     var dy = destY - y
-    
+
     // destination reached, bail
     if (dx == 0 && dy == 0) {
       // TODO: remove test code
-      def randomPos() = { ((Math.random * (map.Width-6))+3).toInt }
-      moveTo(randomPos(),randomPos())
-      
+      def randomPos() = { ((Math.random * (map.Width - 6)) + 3).toInt }
+      moveTo(randomPos(), randomPos())
+
       return
-  	}
+    }
 
     dx = Math.signum(dx)
     dy = Math.signum(dy)
 
     if (dx == 0 && dy == -1) direction = 0
-    if (dx == 1 && dy == -1) direction = 1
-    if (dx == 1 && dy == 0) direction = 2
-    if (dx == 1 && dy == 1) direction = 3
-    if (dx == 0 && dy == 1) direction = 4
-    if (dx == -1 && dy == 1) direction = 5
-    if (dx == -1 && dy == 0) direction = 6
-    if (dx == -1 && dy == -1) direction = 7
-    
+    else if (dx == 1 && dy == -1) direction = 1
+    else if (dx == 1 && dy == 0) direction = 2
+    else if (dx == 1 && dy == 1) direction = 3
+    else if (dx == 0 && dy == 1) direction = 4
+    else if (dx == -1 && dy == 1) direction = 5
+    else if (dx == -1 && dy == 0) direction = 6
+    else if (dx == -1 && dy == -1) direction = 7
+
     startMove()
+  }
+
+  /**
+   * Calculate map tile delta from direction if the unit would move that way
+   */
+  def mapDelta(): (Int, Int) = {
+    direction match {
+      case 0 => (0, -1)
+      case 1 => (1, -1)
+      case 2 => (1, 0)
+      case 3 => (1, 1)
+      case 4 => (0, 1)
+      case 5 => (-1, 1)
+      case 6 => (-1, 0)
+      case 7 => (-1, -1)
+    }
   }
 
   def tickMove() {
@@ -82,20 +97,10 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
         var xf = 0
         var yf = 0
 
-        // TODO: refactor with renderer
-        direction match {
-          case 0 => xf = 0; yf = -1
-          case 1 => xf = 1; yf = -1
-          case 2 => xf = 1; yf = 0
-          case 3 => xf = 1; yf = 1
-          case 4 => xf = 0; yf = 1
-          case 5 => xf = -1; yf = 1
-          case 6 => xf = -1; yf = 0
-          case 7 => xf = -1; yf = -1
-        }
+        val (dx, dy) = mapDelta
 
-        x += xf
-        y += yf
+        x += dx
+        y += dy
 
         map.removeShadeAround(x, y)
         moveStatus = MoveStatusPausing
