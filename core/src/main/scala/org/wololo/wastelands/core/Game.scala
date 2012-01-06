@@ -56,26 +56,26 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   def tick() {
 
-    units.foreach(unit => unit.tick)
+    units.foreach(unit => unit.tick())
 
     tickCount += 1
   }
 
-  def scroll(dx: Int, dy: Int) = {
+  def scroll(dx: Int, dy: Int) {
     screen.scroll(dx, dy)
   }
 
-  def click(x: Int, y: Int) = {
+  def click(x: Int, y: Int) {
     val mx = screen.calculateTileIndex(screen.sx+x)
     val my = screen.calculateTileIndex(screen.sy+y)
     
     val tile = map.tiles(mx,my)
     
     if (tile.unit != null) {
-      if (selectedUnit != null) selectedUnit.unselect
+      if (selectedUnit != null) selectedUnit.unselect()
       
       selectedUnit = tile.unit
-      tile.unit.select
+      tile.unit.select()
     } else if (selectedUnit != null) {
       selectedUnit.moveTo(mx, my)
     }

@@ -96,7 +96,6 @@ class Screen[T: ClassManifest](game: Game[T]) {
    *
    * @param screenPixelCoord partial coordinate for the first displayed pixel on the screen, if going from top-left
    * to bottom-right
-   * @param tilePixelSize the size of a tile on the map by pixels
    * @return index for the first displayed tile on the axis in question
    */
   def calculateTileIndex(screenPixelCoord: Int): Int = {
@@ -109,7 +108,6 @@ class Screen[T: ClassManifest](game: Game[T]) {
    * @param screenPixelCoord partial coordinate for the first displayed pixel on the screen, if going from top-left
    * to bottom-right
    * @param tileIndex index for the first displayed tile on the axis in question
-   * @param tilePixelSize the size of a tile on the map by pixels
    *
    * @return the offset in pixels on a tile for the axis in question
    */

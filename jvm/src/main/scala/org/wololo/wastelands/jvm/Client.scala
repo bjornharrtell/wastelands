@@ -49,7 +49,7 @@ object Client extends Canvas with MouseListener with MouseMotionListener with Ru
     if (bufferStrategy == null) {
       createBufferStrategy(2)
     } else {
-      val graphics = bufferStrategy.getDrawGraphics()
+      val graphics = bufferStrategy.getDrawGraphics
       // NOTE: I think this is the fastest drawImage for this purpose
       graphics.drawImage(bitmap, 0, 0, screenWidth, screenHeight, null)
       graphics.dispose()
@@ -85,8 +85,8 @@ object Client extends Canvas with MouseListener with MouseMotionListener with Ru
     game.click(x, y)
   }
   
-  def mouseEntered(e: MouseEvent) = {}
-  def mouseExited(e: MouseEvent) = {}
-  def mousePressed(e: MouseEvent) = {}
-  def mouseReleased(e: MouseEvent) = {}
+  def mouseEntered(e: MouseEvent) {}
+  def mouseExited(e: MouseEvent) {}
+  def mousePressed(e: MouseEvent) {}
+  def mouseReleased(e: MouseEvent) {}
 }
