@@ -50,9 +50,7 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
       case x:TestUnit2 => tileSet2
     }
     
-    val tileIndex = UnitRenderer.directionToTileIndex(unit.direction)
-    
-    //canvas.drawRect(sx, sy, sx + 32, sy + 32)
-    screen.canvas.drawImage(tileSet(tileIndex), sx, sy)
+    if (unit.selected) screen.canvas.drawRect(sx, sy, sx + 32, sy + 32)
+    screen.canvas.drawImage(tileSet(unit.direction), sx, sy)
   }
 }

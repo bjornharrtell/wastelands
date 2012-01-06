@@ -12,25 +12,12 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   var running = false
   var tickCount = 0
 
-  val map = new GameMap()
+  val map = new GameMap
   val screen = new Screen(this, graphicsContext)
   
-  def randomPos: Int = ((Math.random*(map.Width-6))+3).toInt
- 
-  //create 10 units for each type
-  val units1 = for(i <- (0 until 10).toArray) yield new TestUnit1(map,randomPos,randomPos)
-  val units2 = for(i <- (0 until 10).toArray) yield new TestUnit2(map,randomPos,randomPos)
+  var selectedUnit:Unit = null
 
-  //give all units a destination
-  units1.foreach(_.moveTo(randomPos,randomPos))
-  units2.foreach(_.moveTo(randomPos,randomPos))
-
-  val units = units1++units2
-  
-  //val units = ArrayBuffer(, new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
-  
-  // TODO: remove test code
-  units.foreach(_.startMove())
+  val units = ArrayBuffer(new TestUnit1(map,3,12), new TestUnit2(map,5,4))
 
   def run() {
     running = true
@@ -73,12 +60,29 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
   def tick() {
 
-    units.foreach((unit) => unit.tick())
+    units.foreach((unit) => unit.tick)
 
     tickCount += 1
   }
 
-  def move(dx: Int, dy: Int) {
+  def scroll(dx: Int, dy: Int) = {
     screen.scroll(dx, dy)
+  }
+
+  def click(x: Int, y: Int) = {
+    val mx = TileRenderer.calculateTileIndex(screen.sx+x, Tile.Size)
+    val my = TileRenderer.calculateTileIndex(screen.sy+y, Tile.Size)
+    
+    val tile = map.tiles(mx,my)
+    
+    if (tile.unit != null) {
+      if (selectedUnit != null) selectedUnit.unselect
+      
+      selectedUnit = tile.unit
+      tile.unit.select
+    } else if (selectedUnit != null) {
+      selectedUnit.moveTo(mx, my)
+    }
+    
   }
 }

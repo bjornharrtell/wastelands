@@ -21,6 +21,11 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   val MovePauseTicks = 15
   var movePauseTicksCounter = MovePauseTicks
 
+  var selected = false
+  def select = { selected = true }
+  def unselect = { selected = false }
+  
+  map.tiles(x, y).unit = this
   map.removeShadeAround(x, y)
 
   def tick() {
@@ -32,12 +37,12 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     if (x < 3 || x >= map.Width - 3 || y < 3 || y >= map.Height - 3)
       return
 
-    // TODO: remove test code
-    //direction = (Math.random * 7).toInt
     moveStatus = MoveStatusMoving
   }
 
   def moveTo(x: Int, y: Int) {
+    // TODO: should defer move until ready (after pause)
+    
     destX = x
     destY = y
     calcMove()
@@ -48,26 +53,36 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     var dy = destY - y
 
     // destination reached, bail
-    if (dx == 0 && dy == 0) {
-      // TODO: remove test code
-      def randomPos() = { ((Math.random * (map.Width - 6)) + 3).toInt }
-      moveTo(randomPos(), randomPos())
+    if (dx == 0 && dy == 0) return
+    
+    dx = math.signum(dx)
+    dy = math.signum(dy)
 
-      return
-    }
-
-    dx = Math.signum(dx)
-    dy = Math.signum(dy)
-
-    direction = Direction(dx,  dy)
+    if (dx == 0 && dy == -1) direction = 0
+    else if (dx == 1 && dy == -1) direction = 1
+    else if (dx == 1 && dy == 0) direction = 2
+    else if (dx == 1 && dy == 1) direction = 3
+    else if (dx == 0 && dy == 1) direction = 4
+    else if (dx == -1 && dy == 1) direction = 5
+    else if (dx == -1 && dy == 0) direction = 6
+    else if (dx == -1 && dy == -1) direction = 7
+    
+    if (map.tiles(x+dx,y+dy).isOccupied) return
 
     startMove()
   }
 
   def tickMove() {
     if (moveStatus == MoveStatusMoving) {
+      if (moveDistance==0) {
+        val (dx, dy) = mapDelta
+        
+        map.tiles(x, y).unit = null
+        map.tiles(x+dx, y+dy).unit = this
+      }
+      
       moveDistance += velocity
-
+      
       if (moveDistance >= 1) {
         moveDistance = 0
 
@@ -77,6 +92,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
         y += dy
 
         map.removeShadeAround(x, y)
+        
         moveStatus = MoveStatusPausing
       }
     } else if (moveStatus == MoveStatusPausing) {
@@ -91,4 +107,5 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     }
 
   }
+  
 }
