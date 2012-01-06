@@ -50,7 +50,7 @@ class Activity extends android.app.Activity with OnTouchListener {
       val dx = prevX - x
       val dy = prevY - y
       
-      gameThread.game.move(dx, dy)
+      gameThread.game.scroll(dx, dy)
       
       prevX = x
       prevY = y
@@ -67,7 +67,7 @@ class Activity extends android.app.Activity with OnTouchListener {
     val dx = prevX - x
     val dy = prevY - y
 
-    gameThread.game.move(dx, dy)
+    gameThread.game.scroll(dx, dy)
 
     prevX = x
     prevY = y

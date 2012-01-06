@@ -70,6 +70,6 @@ class Screen[T: ClassManifest](game: Game[T], graphicsContext: GraphicsContext[T
     oy = calculateTilePixelOffset(sy, my, Tile.Size)
 
     tileRenderer.render()
-    game.units.foreach((unit) => unitRenderer.render(unit))
+    game.units.foreach(unitRenderer.render(_))
   }
 }
