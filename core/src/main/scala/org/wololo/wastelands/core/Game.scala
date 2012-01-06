@@ -15,29 +15,22 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   val map = new GameMap()
   val screen = new Screen(this, graphicsContext)
   
-  def randomPos() = { ((Math.random*(map.Width-6))+3).toInt }
-  def randomUnit1() = {
-    val unit = new org.wololo.wastelands.core.TestUnit1(map,randomPos,randomPos)
-    unit.moveTo(randomPos(),randomPos())
-    unit
-  }
-  def randomUnit2() = {
-    val unit = new org.wololo.wastelands.core.TestUnit2(map,randomPos,randomPos)
-    unit.moveTo(randomPos(),randomPos())
-    unit
-  }
-  val units1 = (0 until 10).toArray.map(_ => 
-    randomUnit1()
-  )
-  val units2 = (0 until 10).toArray.map(_ => 
-    randomUnit2()
-  )
+  def randomPos: Int = ((Math.random*(map.Width-6))+3).toInt
+ 
+  //create 10 units for each type
+  val units1 = for(i <- (0 until 10).toArray) yield new TestUnit1(map,randomPos,randomPos)
+  val units2 = for(i <- (0 until 10).toArray) yield new TestUnit2(map,randomPos,randomPos)
+
+  //give all units a destination
+  units1.foreach(_.moveTo(randomPos,randomPos))
+  units2.foreach(_.moveTo(randomPos,randomPos))
+
   val units = units1++units2
   
   //val units = ArrayBuffer(, new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
   
   // TODO: remove test code
-  units.foreach((unit) => unit.startMove)
+  units.foreach(_.startMove())
 
   def run() {
     running = true
@@ -65,7 +58,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
       if (shouldRender) {
         frames += 1
-        screen.render
+        screen.render()
         graphicsContext.render(screen.bitmap)
       }
 
@@ -80,7 +73,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
   def tick() {
 
-    units.foreach((unit) => unit.tick)
+    units.foreach((unit) => unit.tick())
 
     tickCount += 1
   }

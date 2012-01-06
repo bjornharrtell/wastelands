@@ -11,7 +11,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   val MoveStatusPausing = 2
 
   var velocity = 0.04
-  var direction = 0
+  var direction = Direction(0, 0)
   var destX = x
   var destY = y
 
@@ -24,7 +24,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   map.removeShadeAround(x, y)
 
   def tick() {
-    tickMove
+    tickMove()
   }
 
   def startMove() {
@@ -40,7 +40,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   def moveTo(x: Int, y: Int) {
     destX = x
     destY = y
-    calcMove
+    calcMove()
   }
 
   def calcMove() {
@@ -59,32 +59,9 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     dx = Math.signum(dx)
     dy = Math.signum(dy)
 
-    if (dx == 0 && dy == -1) direction = 0
-    else if (dx == 1 && dy == -1) direction = 1
-    else if (dx == 1 && dy == 0) direction = 2
-    else if (dx == 1 && dy == 1) direction = 3
-    else if (dx == 0 && dy == 1) direction = 4
-    else if (dx == -1 && dy == 1) direction = 5
-    else if (dx == -1 && dy == 0) direction = 6
-    else if (dx == -1 && dy == -1) direction = 7
+    direction = Direction(dx,  dy)
 
     startMove()
-  }
-
-  /**
-   * Calculate map tile delta from direction if the unit would move that way
-   */
-  def mapDelta(): (Int, Int) = {
-    direction match {
-      case 0 => (0, -1)
-      case 1 => (1, -1)
-      case 2 => (1, 0)
-      case 3 => (1, 1)
-      case 4 => (0, 1)
-      case 5 => (-1, 1)
-      case 6 => (-1, 0)
-      case 7 => (-1, -1)
-    }
   }
 
   def tickMove() {
@@ -94,10 +71,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
       if (moveDistance >= 1) {
         moveDistance = 0
 
-        var xf = 0
-        var yf = 0
-
-        val (dx, dy) = mapDelta
+        val Direction(dx, dy) = direction
 
         x += dx
         y += dy
@@ -112,7 +86,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
         movePauseTicksCounter = MovePauseTicks
         moveStatus = MoveStatusIdle
         // TODO: remove test, should not be initiated here
-        calcMove
+        calcMove()
       }
     }
 
