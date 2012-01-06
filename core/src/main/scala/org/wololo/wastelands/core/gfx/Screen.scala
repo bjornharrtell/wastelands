@@ -12,11 +12,11 @@ class Screen[T: ClassManifest](game: Game[T]) {
 
   // count iterations with first iteration 0
   var tileSizeCalcIterations = -1
-  // recursive calc from 2^f until less than 17 tiles fits in screen width
+  // recursive calc from 2^f until less than 21 tiles fits in screen width
   def tileSizeCalc(f: Int) : Int = {
     tileSizeCalcIterations += 1
     val tileSize = math.pow(2, f).toInt
-    if (graphicsContext.screenWidth / tileSize < 17) tileSize else tileSizeCalc(f+1)
+    if (graphicsContext.screenWidth / tileSize < 21) tileSize else tileSizeCalc(f+1)
   }
   
   // start calc at tilesize 2^4
