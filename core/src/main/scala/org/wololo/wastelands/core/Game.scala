@@ -12,32 +12,12 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   var running = false
   var tickCount = 0
 
-  val map = new GameMap()
+  val map = new GameMap
   val screen = new Screen(this, graphicsContext)
   
-  def randomPos() = { ((math.random*(map.Width-6))+3).toInt }
-  def randomUnit1() = {
-    val unit = new org.wololo.wastelands.core.TestUnit1(map,randomPos,randomPos)
-    unit.moveTo(randomPos(),randomPos())
-    unit
-  }
-  def randomUnit2() = {
-    val unit = new org.wololo.wastelands.core.TestUnit2(map,randomPos,randomPos)
-    unit.moveTo(randomPos(),randomPos())
-    unit
-  }
-  val units1 = (0 until 10).toArray.map(_ => 
-    randomUnit1()
-  )
-  val units2 = (0 until 10).toArray.map(_ => 
-    randomUnit2()
-  )
-  val units = units1++units2
-  
-  //val units = ArrayBuffer(, new Unit(map,27,7), new Unit(map,7,7), new Unit(map,3,4), new Unit(map,14,5), new Unit(map,8,8))
-  
-  // TODO: remove test code
-  units.foreach((unit) => unit.startMove)
+  var selectedUnit:Unit = null
+
+  val units = ArrayBuffer(new TestUnit1(map,3,12), new TestUnit2(map,5,4))
 
   def run() {
     running = true
@@ -56,7 +36,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
       var shouldRender = true
       while (unprocessed >= 1.0) {
         ticks += 1
-        tick()
+        tick
         unprocessed -= 1
         shouldRender = true
       }
@@ -78,14 +58,30 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
     }
   }
 
-  def tick() {
-
+  def tick = {
     units.foreach((unit) => unit.tick)
 
     tickCount += 1
   }
 
-  def move(dx: Int, dy: Int) {
+  def scroll(dx: Int, dy: Int) = {
     screen.scroll(dx, dy)
+  }
+
+  def click(x: Int, y: Int) = {
+    val mx = TileRenderer.calculateTileIndex(screen.sx+x, Tile.Size)
+    val my = TileRenderer.calculateTileIndex(screen.sy+y, Tile.Size)
+    
+    val tile = map.tiles(mx,my)
+    
+    if (tile.unit != null) {
+      if (selectedUnit != null) selectedUnit.unselect
+      
+      selectedUnit = tile.unit
+      tile.unit.select
+    } else if (selectedUnit != null) {
+      selectedUnit.moveTo(mx, my)
+    }
+    
   }
 }

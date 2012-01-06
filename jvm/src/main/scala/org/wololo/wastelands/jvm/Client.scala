@@ -10,8 +10,9 @@ import java.awt.Image
 import java.awt.image.BufferedImage
 import java.awt.ImageCapabilities
 import java.awt.BufferCapabilities
+import java.awt.event.MouseListener
 
-object Client extends Canvas with MouseMotionListener with Runnable with AWTGraphicsContext {
+object Client extends Canvas with MouseListener with MouseMotionListener with Runnable with AWTGraphicsContext {
   
   val Width = 32 * 16
   val Height = 32 * 16
@@ -40,6 +41,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
     frame.setVisible(true)
     frame.setIgnoreRepaint(true)
 
+    addMouseListener(this)
     addMouseMotionListener(this)
     new Thread(this).start()
   }
@@ -64,7 +66,7 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
     val dx = prevX - x
     val dy = prevY - y
 
-    game.move(dx, dy)
+    game.scroll(dx, dy)
 
     prevX = x
     prevY = y
@@ -77,4 +79,16 @@ object Client extends Canvas with MouseMotionListener with Runnable with AWTGrap
     prevX = x
     prevY = y
   }
+  
+  def mouseClicked(e: MouseEvent) {
+    val x = e.getX
+    val y = e.getY
+    
+    game.click(x, y)
+  }
+  
+  def mouseEntered(e: MouseEvent) = {}
+  def mouseExited(e: MouseEvent) = {}
+  def mousePressed(e: MouseEvent) = {}
+  def mouseReleased(e: MouseEvent) = {}
 }
