@@ -26,8 +26,8 @@ class Activity extends android.app.Activity with OnTouchListener {
   def onTouch(view: View, motionEvent: MotionEvent): Boolean = {
 
     val action = motionEvent.getAction()
-
-    if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+    
+    if (action == MotionEvent.ACTION_CANCEL) {
       return true;
     }
 
@@ -46,6 +46,9 @@ class Activity extends android.app.Activity with OnTouchListener {
     	  prevX = x
     	  prevY = y
       }
+      else if (action == MotionEvent.ACTION_UP) {
+        gameThread.game.click(x, y)
+      }
       
       val dx = prevX - x
       val dy = prevY - y
@@ -62,6 +65,8 @@ class Activity extends android.app.Activity with OnTouchListener {
     if (action == MotionEvent.ACTION_DOWN) {
       prevX = x
       prevY = y
+    } else if (action == MotionEvent.ACTION_UP) {
+      gameThread.game.click(x, y)
     }
 
     val dx = prevX - x
