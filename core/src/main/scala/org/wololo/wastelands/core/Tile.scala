@@ -29,4 +29,8 @@ class Tile {
    * TODO: should be updated by event instead of inside Unit code?
    */
   var unit: Unit = null
+  
+  def isOccupied = {
+    if (unit != null) true else false
+  }
 }

@@ -41,6 +41,8 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   }
 
   def moveTo(x: Int, y: Int) {
+    // TODO: should defer move until ready (after pause)
+    
     destX = x
     destY = y
     calcMove
@@ -64,6 +66,8 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     else if (dx == -1 && dy == 1) direction = 5
     else if (dx == -1 && dy == 0) direction = 6
     else if (dx == -1 && dy == -1) direction = 7
+    
+    if (map.tiles(x+dx,y+dy).isOccupied) return
 
     startMove()
   }
