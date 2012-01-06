@@ -7,6 +7,7 @@ object UnitRenderer {
 
   def directionToTileIndex(direction: Direction): Int = {
     direction match {
+      case Direction(0, 0) => 0
       case Direction(0, -1) => 0
       case Direction(1, -1) => 1
       case Direction(1, 0) => 2
@@ -50,7 +51,9 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
       case x:TestUnit2 => tileSet2
     }
     
+    val tileIndex = UnitRenderer.directionToTileIndex(unit.direction)
+    
     if (unit.selected) screen.canvas.drawRect(sx, sy, sx + 32, sy + 32)
-    screen.canvas.drawImage(tileSet(unit.direction), sx, sy)
+    screen.canvas.drawImage(tileSet(tileIndex), sx, sy)
   }
 }

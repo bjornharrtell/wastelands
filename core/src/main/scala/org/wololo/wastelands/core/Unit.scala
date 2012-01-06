@@ -11,7 +11,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   val MoveStatusPausing = 2
 
   var velocity = 0.04
-  var direction = Direction(0, 0)
+  var direction: Direction = Direction(0, 0)
   var destX = x
   var destY = y
 
@@ -58,14 +58,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     dx = math.signum(dx)
     dy = math.signum(dy)
 
-    if (dx == 0 && dy == -1) direction = 0
-    else if (dx == 1 && dy == -1) direction = 1
-    else if (dx == 1 && dy == 0) direction = 2
-    else if (dx == 1 && dy == 1) direction = 3
-    else if (dx == 0 && dy == 1) direction = 4
-    else if (dx == -1 && dy == 1) direction = 5
-    else if (dx == -1 && dy == 0) direction = 6
-    else if (dx == -1 && dy == -1) direction = 7
+    direction = Direction(dx, dy)
     
     if (map.tiles(x+dx,y+dy).isOccupied) return
 
@@ -75,7 +68,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   def tickMove() {
     if (moveStatus == MoveStatusMoving) {
       if (moveDistance==0) {
-        val (dx, dy) = mapDelta
+        val Direction(dx, dy) = direction
         
         map.tiles(x, y).unit = null
         map.tiles(x+dx, y+dy).unit = this
