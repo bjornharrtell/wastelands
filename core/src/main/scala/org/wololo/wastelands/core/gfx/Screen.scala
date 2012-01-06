@@ -9,26 +9,29 @@ import org.wololo.wastelands.core._
 class Screen[T: ClassManifest](game: Game[T]) {
 
   val graphicsContext = game.graphicsContext
+  
+  val Width = graphicsContext.screenWidth
+  val Height = graphicsContext.screenHeight
 
-  // count iterations with first iteration 0
-  var tileSizeCalcIterations = -1
+  System.out.println("Width:"  + Width + " Height:"  + Height)
+  
+  var tileSizeCalcIterations = 0
   // recursive calc from 2^f until less than 21 tiles fits in largest screen dim
   def tileSizeCalc(f: Int) : Int = {
     tileSizeCalcIterations += 1
     val tileSize = math.pow(2, f).toInt
-    val screenDim = if (graphicsContext.screenHeight > graphicsContext.screenWidth) graphicsContext.screenHeight else graphicsContext.screenWidth
+    val screenDim = if (Height > Width) Height else Width
     if (screenDim / tileSize < 21) tileSize else tileSizeCalc(f+1)
   }
   
-  // start calc at tilesize 2^4
-  val TileSize = tileSizeCalc(4)
-  val TilesWidth = (graphicsContext.screenWidth / TileSize).toInt
-  val TilesHeight = (graphicsContext.screenHeight / TileSize).toInt
+  // start calc at tilesize 2^5
+  val TileSize = tileSizeCalc(5)
+  val TilesWidth = (Width / TileSize).toInt
+  val TilesHeight = (Height / TileSize).toInt
   val PixelSize = math.pow(2, tileSizeCalcIterations).toInt
 
-  val Width = TileSize * TilesWidth
-  val Height = TileSize * TilesHeight
-
+  System.out.println("TileSize:"  + TileSize + " PixelSize:"  + PixelSize)
+  
   val map = game.map
 
   val MapScreenWidth = map.Width * TileSize
