@@ -4,6 +4,6 @@ trait GraphicsContext[T] {
   def render(bitmap: T)
   val bitmapFactory: BitmapFactory[T]
   val canvasFactory: CanvasFactory[T]
-  var screenWidth = 640
-  var screenHeight = 480
+  var screenWidth = 480
+  var screenHeight = 854
 }

@@ -10,30 +10,20 @@ class Screen[T: ClassManifest](game: Game[T]) {
 
   val graphicsContext = game.graphicsContext
 
-  // TODO: try to refactor so that these can be vals
-  var TileSize = 16
-  var TilesWidth = 16
-  var TilesHeight = 16
-  var PixelSize = 2
-
-  // calc pixel&tile size and visible map width/height
-  // TODO: refactor with above
-  if (graphicsContext.screenWidth / 16 < 22) {
-    TileSize = 16
-    TilesWidth = (graphicsContext.screenWidth / 16).toInt
-    TilesHeight = (graphicsContext.screenHeight / 16).toInt
-    PixelSize = 1
-  } else if (graphicsContext.screenWidth / 32 < 22) {
-    TileSize = 32
-    TilesWidth = (graphicsContext.screenWidth / 32).toInt
-    TilesHeight = (graphicsContext.screenHeight / 32).toInt
-    PixelSize = 2
-  } else {
-    TileSize = 64
-    TilesWidth = (graphicsContext.screenWidth / 64).toInt
-    TilesHeight = (graphicsContext.screenHeight / 64).toInt
-    PixelSize = 4
+  // count iterations with first iteration 0
+  var tileSizeCalcIterations = -1
+  // recursive calc from 2^f until less than 17 tiles fits in screen width
+  def tileSizeCalc(f: Int) : Int = {
+    tileSizeCalcIterations += 1
+    val tileSize = math.pow(2, f).toInt
+    if (graphicsContext.screenWidth / tileSize < 17) tileSize else tileSizeCalc(f+1)
   }
+  
+  // start calc at tilesize 2^4
+  val TileSize = tileSizeCalc(4)
+  val TilesWidth = (graphicsContext.screenWidth / TileSize).toInt
+  val TilesHeight = (graphicsContext.screenHeight / TileSize).toInt
+  val PixelSize = math.pow(2, tileSizeCalcIterations).toInt
 
   val Width = TileSize * TilesWidth
   val Height = TileSize * TilesHeight
