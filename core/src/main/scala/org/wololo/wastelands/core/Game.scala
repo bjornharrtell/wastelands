@@ -36,7 +36,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
       var shouldRender = true
       while (unprocessed >= 1.0) {
         ticks += 1
-        tick
+        tick()
         unprocessed -= 1
         shouldRender = true
       }
@@ -45,7 +45,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
       if (shouldRender) {
         frames += 1
-        screen.render
+        screen.render()
         graphicsContext.render(screen.bitmap)
       }
 
@@ -58,7 +58,8 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
     }
   }
 
-  def tick = {
+  def tick() {
+
     units.foreach((unit) => unit.tick)
 
     tickCount += 1

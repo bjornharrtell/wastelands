@@ -1,7 +1,23 @@
 package org.wololo.wastelands.core.gfx
 
-import org.wololo.wastelands.core._
 import org.wololo.wastelands.vmlayer._
+import org.wololo.wastelands.core._
+
+object UnitRenderer {
+
+  def directionToTileIndex(direction: Direction): Int = {
+    direction match {
+      case Direction(0, -1) => 0
+      case Direction(1, -1) => 1
+      case Direction(1, 0) => 2
+      case Direction(1, 1) => 3
+      case Direction(0, 1) => 4
+      case Direction(-1, 1) => 5
+      case Direction(-1, 0) => 6
+      case Direction(-1, -1) => 7
+    }
+  }
+}
 
 class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
   val tileSet1: Array[T] = screen.tileSetFactory.createUnitTileSetFromFile(getClass
@@ -21,7 +37,7 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
     var moveOffsetY = 0
 
     if (unit.moveStatus == unit.MoveStatusMoving) {
-      var (dx, dy) = unit.mapDelta
+      var Direction(dx, dy) = unit.direction
       moveOffsetX = (screen.TileSize * dx * unit.moveDistance).toInt
       moveOffsetY = (screen.TileSize * dy * unit.moveDistance).toInt
     }

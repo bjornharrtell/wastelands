@@ -11,7 +11,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   val MoveStatusPausing = 2
 
   var velocity = 0.04
-  var direction = 0
+  var direction = Direction(0, 0)
   var destX = x
   var destY = y
 
@@ -29,7 +29,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   map.removeShadeAround(x, y)
 
   def tick() {
-    tickMove
+    tickMove()
   }
 
   def startMove() {
@@ -45,7 +45,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     
     destX = x
     destY = y
-    calcMove
+    calcMove()
   }
 
   def calcMove() {
@@ -72,22 +72,6 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
     startMove()
   }
 
-  /**
-   * Calculate map tile delta from direction if the unit would move that way
-   */
-  def mapDelta(): (Int, Int) = {
-    direction match {
-      case 0 => (0, -1)
-      case 1 => (1, -1)
-      case 2 => (1, 0)
-      case 3 => (1, 1)
-      case 4 => (0, 1)
-      case 5 => (-1, 1)
-      case 6 => (-1, 0)
-      case 7 => (-1, -1)
-    }
-  }
-
   def tickMove() {
     if (moveStatus == MoveStatusMoving) {
       if (moveDistance==0) {
@@ -102,7 +86,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
       if (moveDistance >= 1) {
         moveDistance = 0
 
-        val (dx, dy) = mapDelta
+        val Direction(dx, dy) = direction
 
         x += dx
         y += dy
@@ -117,7 +101,8 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
       if (movePauseTicksCounter == 0) {
         movePauseTicksCounter = MovePauseTicks
         moveStatus = MoveStatusIdle
-        calcMove
+        // TODO: remove test, should not be initiated here
+        calcMove()
       }
     }
 
