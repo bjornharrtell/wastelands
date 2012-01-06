@@ -23,8 +23,8 @@ class GameThread extends Thread with SurfaceHolder.Callback with AndroidGraphics
 
   def surfaceCreated(holder: SurfaceHolder) {
     surfaceHolder = holder
-    screenWidth = holder.getSurfaceFrame().width()
-    screenHeight = holder.getSurfaceFrame().height()
+    screenWidth = holder.getSurfaceFrame.width()
+    screenHeight = holder.getSurfaceFrame.height()
     game = new Game(this)
     running = true
     start()

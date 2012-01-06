@@ -22,8 +22,8 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   var movePauseTicksCounter = MovePauseTicks
 
   var selected = false
-  def select = { selected = true }
-  def unselect = { selected = false }
+  def select() { selected = true }
+  def unselect() { selected = false }
   
   map.tiles(x, y).unit = this
   map.removeShadeAround(x, y)
