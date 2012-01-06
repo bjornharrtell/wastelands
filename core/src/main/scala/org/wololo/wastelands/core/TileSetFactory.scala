@@ -3,13 +3,11 @@ import java.io.InputStream
 import org.wololo.wastelands.vmlayer._
 import scala.collection.mutable.ArrayBuffer
 
-class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
+class TileSetFactory[T](graphicsContext: GraphicsContext[T], size: Int) {
 
   val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
   val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory
 
-  val size = 32
-  
   def createTileFromFile(inputStream: InputStream): T = {
     val bitmap = bitmapFactory.create(inputStream)
 

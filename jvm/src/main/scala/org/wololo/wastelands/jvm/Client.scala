@@ -1,23 +1,18 @@
 package org.wololo.wastelands.jvm
 import java.awt.event.MouseEvent
+import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
+import java.awt.image.BufferedImage
 import java.awt.BorderLayout
 import java.awt.Canvas
 import java.awt.Dimension
+
 import org.wololo.wastelands.core.Game
+
 import javax.swing.JFrame
-import java.awt.Image
-import java.awt.image.BufferedImage
-import java.awt.ImageCapabilities
-import java.awt.BufferCapabilities
-import java.awt.event.MouseListener
 
 object Client extends Canvas with MouseListener with MouseMotionListener with Runnable with AWTGraphicsContext {
-  
-  val Width = 32 * 16
-  val Height = 32 * 16
-
-  val game = new Game(this)
+  var game: Game[BufferedImage] = null
 
   var prevX = 0
   var prevY = 0
@@ -27,9 +22,9 @@ object Client extends Canvas with MouseListener with MouseMotionListener with Ru
   }
 
   def main(args: Array[String]) {
-    setPreferredSize(new Dimension(Width, Height))
-    setMaximumSize(new Dimension(Width, Height))
-    setMinimumSize(new Dimension(Width, Height))
+    setPreferredSize(new Dimension(screenWidth, screenHeight))
+    setMaximumSize(new Dimension(screenWidth, screenHeight))
+    setMinimumSize(new Dimension(screenWidth, screenHeight))
 
     val frame = new JFrame()
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
@@ -43,6 +38,9 @@ object Client extends Canvas with MouseListener with MouseMotionListener with Ru
 
     addMouseListener(this)
     addMouseMotionListener(this)
+    
+    game = new Game(this)
+    
     new Thread(this).start()
   }
   
@@ -53,7 +51,7 @@ object Client extends Canvas with MouseListener with MouseMotionListener with Ru
     } else {
       val graphics = bufferStrategy.getDrawGraphics()
       // NOTE: I think this is the fastest drawImage for this purpose
-      graphics.drawImage(bitmap, 0, 0, Width, Height, null)
+      graphics.drawImage(bitmap, 0, 0, screenWidth, screenHeight, null)
       graphics.dispose()
       bufferStrategy.show()
     }

@@ -3,17 +3,13 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 
-class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
-  val tileSetFactory = new TileSetFactory[T](graphicsContext)
-
-  val Width = 32 * 16
-  val Height = 32 * 16
-
+class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
+  
   var running = false
   var tickCount = 0
 
   val map = new GameMap
-  val screen = new Screen(this, graphicsContext)
+  val screen = new Screen(this)
   
   var selectedUnit:Unit = null
 
@@ -60,7 +56,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
   def tick() {
 
-    units.foreach((unit) => unit.tick)
+    units.foreach(unit => unit.tick)
 
     tickCount += 1
   }
@@ -70,8 +66,8 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
   }
 
   def click(x: Int, y: Int) = {
-    val mx = TileRenderer.calculateTileIndex(screen.sx+x, Tile.Size)
-    val my = TileRenderer.calculateTileIndex(screen.sy+y, Tile.Size)
+    val mx = screen.calculateTileIndex(screen.sx+x)
+    val my = screen.calculateTileIndex(screen.sy+y)
     
     val tile = map.tiles(mx,my)
     
