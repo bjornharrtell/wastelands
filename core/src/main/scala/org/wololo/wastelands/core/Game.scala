@@ -11,7 +11,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   val map = new GameMap
   val screen = new Screen(this)
   
-  var selectedUnit:Unit = null
+  var selectedUnit:Option[Unit] = None
 
   val units = ArrayBuffer(new TestUnit1(map,3,12), new TestUnit2(map,5,4))
 
@@ -68,17 +68,30 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   def click(x: Int, y: Int) {
     val mx = screen.calculateTileIndex(screen.sx+x)
     val my = screen.calculateTileIndex(screen.sy+y)
-    
     val tile = map.tiles(mx,my)
-    
-    if (tile.unit != null) {
-      if (selectedUnit != null) selectedUnit.unselect()
-      
-      selectedUnit = tile.unit
-      tile.unit.select()
-    } else if (selectedUnit != null) {
-      selectedUnit.moveTo(mx, my)
+
+    performPossibleUnitAction(tile.unit, mx, my)
+  }
+  
+  private def performPossibleUnitAction(tileUnit:Option[Unit], mx: Int,  my: Int) {
+    (tileUnit, selectedUnit) match {
+      case (None, Some(unit)) => {
+        unit.moveTo(mx, my)
+      }
+      case (Some(newSelection), Some(oldSelection)) if newSelection.coordinate equals oldSelection.coordinate => {
+        oldSelection.unselect()
+        selectedUnit = None
+      }
+      case (Some(newSelection), Some(oldSelection)) => {
+        oldSelection.unselect()
+        selectedUnit = Option(newSelection)
+        newSelection.select()
+      }
+      case (Some(unit), None) => {
+        selectedUnit = Option(unit)
+        unit.select()
+      }
+      case _ =>
     }
-    
   }
 }
