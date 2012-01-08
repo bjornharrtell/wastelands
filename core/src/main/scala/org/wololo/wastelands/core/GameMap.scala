@@ -76,8 +76,8 @@ class GameMap {
    * Calculates subtype for tile if it's suitable
    */
   def makeBorder(x: Int, y: Int) {
-    if (x<0 || x >=Width || y<0 || y >=Height) return
-    
+    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+
     val tile = tiles(x, y)
 
     if (tile.baseType != TileTypes.Base) {
@@ -89,8 +89,8 @@ class GameMap {
    * Calculates shade (fog of war) for tile
    */
   def makeShade(x: Int, y: Int) {
-    if (x<0 || x >=Width || y<0 || y >=Height) return
-    
+    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+
     val tile = tiles(x, y)
 
     if (tile.shade) {
@@ -109,9 +109,9 @@ class GameMap {
    */
   def calcSubType(x: Int, y: Int, baseType: Int): Int = {
     val x1 = if (x < 1) 0 else -1
-    val x2 = if (x > Width-2) 0 else 1
+    val x2 = if (x > Width - 2) 0 else 1
     val y1 = if (y < 1) 0 else -1
-    val y2 = if (y > Height-2) 0 else 1
+    val y2 = if (y > Height - 2) 0 else 1
 
     var subType = 0
     subType = if (tiles(x, y + y1).baseType == baseType) 1 else 0
@@ -128,9 +128,9 @@ class GameMap {
   // TODO: refactor, too similar to above
   def calcShadeSubType(x: Int, y: Int): Int = {
     val x1 = if (x < 1) 0 else -1
-    val x2 = if (x > Width-2) 0 else 1
+    val x2 = if (x > Width - 2) 0 else 1
     val y1 = if (y < 1) 0 else -1
-    val y2 = if (y > Height-2) 0 else 1
+    val y2 = if (y > Height - 2) 0 else 1
 
     var subType = 0
     subType = if (tiles(x, y + y1).shade) 1 else 0
@@ -158,13 +158,13 @@ class GameMap {
   }
 
   def removeShadeAround(x: Int, y: Int) {
-    if (x<0 || x >=Width || y<0 || y >=Height) return
-    
+    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+
     removeShade(x, y)
-    
-    if (x>0) removeShade(x - 1, y)
-    if (x<Width-1) removeShade(x + 1, y)
-    if (y>0) removeShade(x, y - 1)
-    if (y<Height-1) removeShade(x, y + 1)
+
+    if (x > 0) removeShade(x - 1, y)
+    if (x < Width - 1) removeShade(x + 1, y)
+    if (y > 0) removeShade(x, y - 1)
+    if (y < Height - 1) removeShade(x, y + 1)
   }
 }
