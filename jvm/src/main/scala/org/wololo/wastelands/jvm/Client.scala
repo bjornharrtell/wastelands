@@ -58,7 +58,6 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     mainFrame.addKeyListener(this)
     mainFrame.addMouseListener(this)
     mainFrame.addMouseMotionListener(this)
-
   }
 
   def getBestDisplayMode(device: GraphicsDevice): DisplayMode = {
@@ -70,8 +69,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
         return mode
       }
     }
-
-    return null
+    null
   }
 
   def chooseBestDisplayMode(device: GraphicsDevice) = {

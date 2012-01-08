@@ -26,7 +26,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     var lastTimer1 = System.currentTimeMillis
 
     while (running) {
-      val now = System.nanoTime()
+      val now = System.nanoTime
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
       var shouldRender = true

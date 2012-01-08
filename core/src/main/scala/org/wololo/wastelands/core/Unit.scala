@@ -14,6 +14,8 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   var direction: Direction = Direction(0, 0)
   var destX = x
   var destY = y
+  var nextDestX = x
+  var nextDestY = y
 
   var moveDistance = 0.0
 
@@ -24,30 +26,27 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   var selected = false
   def select() { selected = true }
   def unselect() { selected = false }
-  
+
   map.tiles(x, y).unit = Option(this)
   map.removeShadeAround(x, y)
 
   def coordinate = (x, y)
-  
+
   def tick() {
-    tickMove()
+    tickMove
   }
 
   def startMove() {
     // TODO: should be able to move to map limit but restricted now since it crashes
-    if (x < 3 || x >= map.Width - 3 || y < 3 || y >= map.Height - 3)
-      return
+    //if (x < 3 || x >= map.Width - 3 || y < 3 || y >= map.Height - 3)
+    //  return
 
     moveStatus = MoveStatusMoving
   }
 
   def moveTo(x: Int, y: Int) {
-    // TODO: should defer move until ready (after pause)
-    
-    destX = x
-    destY = y
-    calcMove()
+    nextDestX = x
+    nextDestY = y
   }
 
   def calcMove() {
@@ -56,28 +55,28 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
 
     // destination reached, bail
     if (dx == 0 && dy == 0) return
-    
+
     dx = math.signum(dx)
     dy = math.signum(dy)
 
     direction = Direction(dx, dy)
-    
-    if (map.tiles(x+dx,y+dy).isOccupied) return
 
-    startMove()
+    if (map.tiles(x + dx, y + dy).isOccupied) return
+
+    startMove
   }
 
   def tickMove() {
     if (moveStatus == MoveStatusMoving) {
-      if (moveDistance==0) {
+      if (moveDistance == 0) {
         val Direction(dx, dy) = direction
-        
+
         map.tiles(x, y).unit = None
-        map.tiles(x+dx, y+dy).unit = Option(this)
+        map.tiles(x + dx, y + dy).unit = Option(this)
       }
-      
+
       moveDistance += velocity
-      
+
       if (moveDistance >= 1) {
         moveDistance = 0
 
@@ -87,7 +86,7 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
         y += dy
 
         map.removeShadeAround(x, y)
-        
+
         moveStatus = MoveStatusPausing
       }
     } else if (moveStatus == MoveStatusPausing) {
@@ -96,11 +95,17 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
       if (movePauseTicksCounter == 0) {
         movePauseTicksCounter = MovePauseTicks
         moveStatus = MoveStatusIdle
-        // TODO: remove test, should not be initiated here
-        calcMove()
+        destX = nextDestX
+        destY = nextDestY
+        calcMove
+      }
+    } else if (moveStatus == MoveStatusIdle) {
+      if (nextDestX != destX || nextDestY != destY) {
+        destX = nextDestX
+        destY = nextDestY
+        calcMove
       }
     }
-
   }
-  
+
 }
