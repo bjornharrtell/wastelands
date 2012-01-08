@@ -25,9 +25,11 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
   def select() { selected = true }
   def unselect() { selected = false }
   
-  map.tiles(x, y).unit = this
+  map.tiles(x, y).unit = Option(this)
   map.removeShadeAround(x, y)
 
+  def coordinate = (x, y)
+  
   def tick() {
     tickMove()
   }
@@ -70,8 +72,8 @@ abstract class Unit(map: GameMap, var x: Int, var y: Int) {
       if (moveDistance==0) {
         val Direction(dx, dy) = direction
         
-        map.tiles(x, y).unit = null
-        map.tiles(x+dx, y+dy).unit = this
+        map.tiles(x, y).unit = None
+        map.tiles(x+dx, y+dy).unit = Option(this)
       }
       
       moveDistance += velocity
