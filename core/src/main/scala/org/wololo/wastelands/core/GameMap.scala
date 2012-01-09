@@ -4,7 +4,7 @@ class GameMap {
   val Width = 64
   val Height = 64
 
-  val tiles = (0 until Width * Height).toArray.map(_ => new Tile())
+  val tiles = (0 until Width * Height).toArray.map(_ => new Tile)
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
     3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,
@@ -76,6 +76,8 @@ class GameMap {
    * Calculates subtype for tile if it's suitable
    */
   def makeBorder(x: Int, y: Int) {
+    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+
     val tile = tiles(x, y)
 
     if (tile.baseType != TileTypes.Base) {
@@ -87,6 +89,8 @@ class GameMap {
    * Calculates shade (fog of war) for tile
    */
   def makeShade(x: Int, y: Int) {
+    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+
     val tile = tiles(x, y)
 
     if (tile.shade) {
@@ -94,49 +98,40 @@ class GameMap {
     }
   }
 
+  private def calcSubType(x: Int, y: Int, baseType: Int): Int = {
+    calcSubType(x, y, tile => tile.baseType == baseType)
+  }
+
+  private def calcShadeSubType(x: Int, y: Int): Int = {
+    calcSubType(x, y, tile => tile.shade)
+  }
+
   /**
    * Looks at tiles around tile at x,y and calculates a value 0-255 which correspond to the matrix.png asset.
-   *
+
    * Order of investigation:
    *
    * 8 1 2
    * 7 * 3
    * 6 5 4
+   * 
+   * @param comparator Function to evaluate boolean per tile
    */
-  def calcSubType(x: Int, y: Int, baseType: Int): Int = {
+  private def calcSubType(x: Int, y: Int, comparator: Tile => Boolean): Int = {
     val x1 = if (x < 1) 0 else -1
-    val x2 = if (x > Width) 0 else 1
+    val x2 = if (x > Width - 2) 0 else 1
     val y1 = if (y < 1) 0 else -1
-    val y2 = if (y > Height) 0 else 1
+    val y2 = if (y > Height - 2) 0 else 1
 
     var subType = 0
-    subType = if (tiles(x, y + y1).baseType == baseType) 1 else 0
-    subType = if (tiles(x + x2, y + y1).baseType == baseType) subType | 2 else subType
-    subType = if (tiles(x + x2, y).baseType == baseType) subType | 4 else subType
-    subType = if (tiles(x + x2, y + y2).baseType == baseType) subType | 8 else subType
-    subType = if (tiles(x, y + y2).baseType == baseType) subType | 16 else subType
-    subType = if (tiles(x + x1, y + y2).baseType == baseType) subType | 32 else subType
-    subType = if (tiles(x + x1, y).baseType == baseType) subType | 64 else subType
-    subType = if (tiles(x + x1, y + y1).baseType == baseType) subType | 128 else subType
-    subDef(subType) - 1
-  }
-
-  // TODO: refactor, too similar to above
-  def calcShadeSubType(x: Int, y: Int): Int = {
-    val x1 = if (x < 1) 0 else -1
-    val x2 = if (x > Width) 0 else 1
-    val y1 = if (y < 1) 0 else -1
-    val y2 = if (y > Height) 0 else 1
-
-    var subType = 0
-    subType = if (tiles(x, y + y1).shade) 1 else 0
-    subType = if (tiles(x + x2, y + y1).shade) subType | 2 else subType
-    subType = if (tiles(x + x2, y).shade) subType | 4 else subType
-    subType = if (tiles(x + x2, y + y2).shade) subType | 8 else subType
-    subType = if (tiles(x, y + y2).shade) subType | 16 else subType
-    subType = if (tiles(x + x1, y + y2).shade) subType | 32 else subType
-    subType = if (tiles(x + x1, y).shade) subType | 64 else subType
-    subType = if (tiles(x + x1, y + y1).shade) subType | 128 else subType
+    subType = if (comparator(tiles(x, y + y1))) 1 else 0
+    subType = if (comparator(tiles(x + x2, y + y1))) subType | 2 else subType
+    subType = if (comparator(tiles(x + x2, y))) subType | 4 else subType
+    subType = if (comparator(tiles(x + x2, y + y2))) subType | 8 else subType
+    subType = if (comparator(tiles(x, y + y2))) subType | 16 else subType
+    subType = if (comparator(tiles(x + x1, y + y2))) subType | 32 else subType
+    subType = if (comparator(tiles(x + x1, y))) subType | 64 else subType
+    subType = if (comparator(tiles(x + x1, y + y1))) subType | 128 else subType
     subDef(subType) - 1
   }
 
@@ -154,10 +149,13 @@ class GameMap {
   }
 
   def removeShadeAround(x: Int, y: Int) {
+    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+
     removeShade(x, y)
-    removeShade(x, y - 1)
-    removeShade(x, y + 1)
-    removeShade(x + 1, y)
-    removeShade(x - 1, y)
+
+    if (x > 0) removeShade(x - 1, y)
+    if (x < Width - 1) removeShade(x + 1, y)
+    if (y > 0) removeShade(x, y - 1)
+    if (y < Height - 1) removeShade(x, y + 1)
   }
 }

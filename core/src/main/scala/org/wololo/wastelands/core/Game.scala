@@ -3,19 +3,15 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 
-class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
-  val tileSetFactory = new TileSetFactory[T](graphicsContext)
-
-  val Width = 32 * 16
-  val Height = 32 * 16
-
+class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
+  
   var running = false
   var tickCount = 0
 
   val map = new GameMap
-  val screen = new Screen(this, graphicsContext)
+  val screen = new Screen(this)
   
-  var selectedUnit:Unit = null
+  var selectedUnit:Option[Unit] = None
 
   val units = ArrayBuffer(new TestUnit1(map,3,12), new TestUnit2(map,5,4))
 
@@ -30,7 +26,7 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
     var lastTimer1 = System.currentTimeMillis
 
     while (running) {
-      val now = System.nanoTime()
+      val now = System.nanoTime
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
       var shouldRender = true
@@ -60,29 +56,42 @@ class Game[T: ClassManifest](graphicsContext: GraphicsContext[T]) {
 
   def tick() {
 
-    units.foreach((unit) => unit.tick)
+    units.foreach(unit => unit.tick())
 
     tickCount += 1
   }
 
-  def scroll(dx: Int, dy: Int) = {
+  def scroll(dx: Int, dy: Int) {
     screen.scroll(dx, dy)
   }
 
-  def click(x: Int, y: Int) = {
-    val mx = TileRenderer.calculateTileIndex(screen.sx+x, Tile.Size)
-    val my = TileRenderer.calculateTileIndex(screen.sy+y, Tile.Size)
-    
+  def click(x: Int, y: Int) {
+    val mx = screen.calculateTileIndex(screen.sx+x)
+    val my = screen.calculateTileIndex(screen.sy+y)
     val tile = map.tiles(mx,my)
-    
-    if (tile.unit != null) {
-      if (selectedUnit != null) selectedUnit.unselect
-      
-      selectedUnit = tile.unit
-      tile.unit.select
-    } else if (selectedUnit != null) {
-      selectedUnit.moveTo(mx, my)
+
+    performPossibleUnitAction(tile.unit, mx, my)
+  }
+  
+  private def performPossibleUnitAction(tileUnit:Option[Unit], mx: Int,  my: Int) {
+    (tileUnit, selectedUnit) match {
+      case (None, Some(unit)) => {
+        unit.moveTo(mx, my)
+      }
+      case (Some(newSelection), Some(oldSelection)) if newSelection.coordinate equals oldSelection.coordinate => {
+        oldSelection.unselect()
+        selectedUnit = None
+      }
+      case (Some(newSelection), Some(oldSelection)) => {
+        oldSelection.unselect()
+        selectedUnit = Option(newSelection)
+        newSelection.select()
+      }
+      case (Some(unit), None) => {
+        selectedUnit = Option(unit)
+        unit.select()
+      }
+      case _ =>
     }
-    
   }
 }

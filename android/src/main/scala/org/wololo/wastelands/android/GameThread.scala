@@ -7,7 +7,7 @@ class GameThread extends Thread with SurfaceHolder.Callback with AndroidGraphics
   
   var running = false
 
-  val game = new Game(this)
+  var game: Game[Bitmap] = null
 
   var surfaceHolder: SurfaceHolder = null
 
@@ -23,6 +23,9 @@ class GameThread extends Thread with SurfaceHolder.Callback with AndroidGraphics
 
   def surfaceCreated(holder: SurfaceHolder) {
     surfaceHolder = holder
+    screenWidth = holder.getSurfaceFrame.width()
+    screenHeight = holder.getSurfaceFrame.height()
+    game = new Game(this)
     running = true
     start()
   }
