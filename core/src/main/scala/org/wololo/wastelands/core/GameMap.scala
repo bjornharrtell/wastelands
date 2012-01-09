@@ -98,49 +98,40 @@ class GameMap {
     }
   }
 
+  private def calcSubType(x: Int, y: Int, baseType: Int): Int = {
+    calcSubType(x, y, tile => tile.baseType == baseType)
+  }
+
+  private def calcShadeSubType(x: Int, y: Int): Int = {
+    calcSubType(x, y, tile => tile.shade)
+  }
+
   /**
    * Looks at tiles around tile at x,y and calculates a value 0-255 which correspond to the matrix.png asset.
-   *
+
    * Order of investigation:
    *
    * 8 1 2
    * 7 * 3
    * 6 5 4
+   * 
+   * @param comparator Function to evaluate boolean per tile
    */
-  def calcSubType(x: Int, y: Int, baseType: Int): Int = {
+  private def calcSubType(x: Int, y: Int, comparator: Tile => Boolean): Int = {
     val x1 = if (x < 1) 0 else -1
     val x2 = if (x > Width - 2) 0 else 1
     val y1 = if (y < 1) 0 else -1
     val y2 = if (y > Height - 2) 0 else 1
 
     var subType = 0
-    subType = if (tiles(x, y + y1).baseType == baseType) 1 else 0
-    subType = if (tiles(x + x2, y + y1).baseType == baseType) subType | 2 else subType
-    subType = if (tiles(x + x2, y).baseType == baseType) subType | 4 else subType
-    subType = if (tiles(x + x2, y + y2).baseType == baseType) subType | 8 else subType
-    subType = if (tiles(x, y + y2).baseType == baseType) subType | 16 else subType
-    subType = if (tiles(x + x1, y + y2).baseType == baseType) subType | 32 else subType
-    subType = if (tiles(x + x1, y).baseType == baseType) subType | 64 else subType
-    subType = if (tiles(x + x1, y + y1).baseType == baseType) subType | 128 else subType
-    subDef(subType) - 1
-  }
-
-  // TODO: refactor, too similar to above
-  def calcShadeSubType(x: Int, y: Int): Int = {
-    val x1 = if (x < 1) 0 else -1
-    val x2 = if (x > Width - 2) 0 else 1
-    val y1 = if (y < 1) 0 else -1
-    val y2 = if (y > Height - 2) 0 else 1
-
-    var subType = 0
-    subType = if (tiles(x, y + y1).shade) 1 else 0
-    subType = if (tiles(x + x2, y + y1).shade) subType | 2 else subType
-    subType = if (tiles(x + x2, y).shade) subType | 4 else subType
-    subType = if (tiles(x + x2, y + y2).shade) subType | 8 else subType
-    subType = if (tiles(x, y + y2).shade) subType | 16 else subType
-    subType = if (tiles(x + x1, y + y2).shade) subType | 32 else subType
-    subType = if (tiles(x + x1, y).shade) subType | 64 else subType
-    subType = if (tiles(x + x1, y + y1).shade) subType | 128 else subType
+    subType = if (comparator(tiles(x, y + y1))) 1 else 0
+    subType = if (comparator(tiles(x + x2, y + y1))) subType | 2 else subType
+    subType = if (comparator(tiles(x + x2, y))) subType | 4 else subType
+    subType = if (comparator(tiles(x + x2, y + y2))) subType | 8 else subType
+    subType = if (comparator(tiles(x, y + y2))) subType | 16 else subType
+    subType = if (comparator(tiles(x + x1, y + y2))) subType | 32 else subType
+    subType = if (comparator(tiles(x + x1, y))) subType | 64 else subType
+    subType = if (comparator(tiles(x + x1, y + y1))) subType | 128 else subType
     subDef(subType) - 1
   }
 
