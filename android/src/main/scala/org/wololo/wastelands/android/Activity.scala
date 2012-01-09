@@ -12,6 +12,11 @@ class Activity extends android.app.Activity with OnTouchListener {
   var prevX = 0
   var prevY = 0
 
+  var tdx = 0
+  var tdy = 0
+  
+  val ClickTolerance = 3
+
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.main)
@@ -26,7 +31,7 @@ class Activity extends android.app.Activity with OnTouchListener {
   def onTouch(view: View, motionEvent: MotionEvent): Boolean = {
 
     val action = motionEvent.getAction
-    
+
     if (action == MotionEvent.ACTION_CANCEL) {
       return true;
     }
@@ -43,30 +48,40 @@ class Activity extends android.app.Activity with OnTouchListener {
       val y = motionEvent.getHistoricalY(p, h).toInt
 
       if (action == MotionEvent.ACTION_DOWN) {
-    	  prevX = x
-    	  prevY = y
+        prevX = x
+        prevY = y
+        tdx = 0
+        tdy = 0
+      } else if (action == MotionEvent.ACTION_UP) {
+        if (tdx < ClickTolerance && tdy < ClickTolerance) {
+          gameThread.game.click(x, y)
+        }
       }
-      else if (action == MotionEvent.ACTION_UP) {
-        gameThread.game.click(x, y)
-      }
-      
+
       val dx = prevX - x
       val dy = prevY - y
-      
+
+      tdx += dx
+      tdy += dy
+
       gameThread.game.scroll(dx, dy)
-      
+
       prevX = x
       prevY = y
     }
 
     val x = motionEvent.getX(p).toInt
     val y = motionEvent.getY(p).toInt
-    
+
     if (action == MotionEvent.ACTION_DOWN) {
       prevX = x
       prevY = y
+      tdx = 0
+      tdy = 0
     } else if (action == MotionEvent.ACTION_UP) {
-      gameThread.game.click(x, y)
+      if (tdx < ClickTolerance && tdy < ClickTolerance) {
+        gameThread.game.click(x, y)
+      }
     }
 
     val dx = prevX - x
@@ -77,7 +92,8 @@ class Activity extends android.app.Activity with OnTouchListener {
     prevX = x
     prevY = y
 
-    // NOTE: Sleep 16 milliseconds (goal is to get slightly more input events than target FPS which is 60)
+    // sleep 16 milliseconds to avoid too much input CPU processing
+    // goal is to get slightly more input events than target FPS which is 60
     Thread.sleep(16L)
 
     true
