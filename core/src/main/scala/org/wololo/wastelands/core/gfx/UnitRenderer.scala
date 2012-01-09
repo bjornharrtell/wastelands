@@ -38,7 +38,7 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
     var moveOffsetY = 0
 
     if (unit.moveStatus == unit.MoveStatusMoving) {
-      var Direction(dx, dy) = unit.direction
+      val Direction(dx, dy) = unit.direction
       moveOffsetX = (screen.TileSize * dx * unit.moveDistance).toInt
       moveOffsetY = (screen.TileSize * dy * unit.moveDistance).toInt
     }
