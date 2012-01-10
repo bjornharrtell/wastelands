@@ -21,11 +21,15 @@ object UnitRenderer {
 }
 
 class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
-  val tileSet1: Array[T] = screen.tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent, 8, 1).toArray
-    
-  val tileSet2: Array[T] = screen.tileSetFactory.createTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit2.png"), BitmapTypes.Translucent, 8, 1).toArray
+  val tileSet1 = screen.tileSetFactory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent, 8, 1)
+
+  tileSet1.map(tile => tileSet1.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
+
+  val tileSet2 = screen.tileSetFactory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit2.png"), BitmapTypes.Translucent, 8, 1)
+
+  tileSet2.map(tile => tileSet2.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
 
   def render(unit: org.wololo.wastelands.core.Unit) {
     val mapDeltaX = unit.x - screen.mx
@@ -47,12 +51,13 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
     val sy = mapDeltaY * screen.TileSize + screen.oy + moveOffsetY
 
     val tileSet = unit match {
-      case x:TestUnit1 => tileSet1
-      case x:TestUnit2 => tileSet2
+      case x: TestUnit1 => tileSet1
+      case x: TestUnit2 => tileSet2
     }
-    
+
     val tileIndex = UnitRenderer.directionToTileIndex(unit.direction)
-    
+
+    screen.canvas.drawImage(tileSet(tileIndex + 8), sx - 3, sy + 3)
     if (unit.selected) screen.canvas.drawRect(sx, sy, sx + screen.TileSize, sy + screen.TileSize)
     screen.canvas.drawImage(tileSet(tileIndex), sx, sy)
   }

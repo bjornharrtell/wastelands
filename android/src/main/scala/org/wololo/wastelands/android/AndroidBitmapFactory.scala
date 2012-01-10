@@ -11,6 +11,10 @@ object AndroidBitmapFactory extends BitmapFactory[Bitmap] {
   def create(inputStream: InputStream): Bitmap = {
     android.graphics.BitmapFactory.decodeStream(inputStream)
   }
+  def createShadow(bitmap: Bitmap) : Bitmap = {
+    // TODO: do proper, this is fake impl. will produce transparent image
+    Bitmap.createBitmap(bitmap.getWidth, bitmap.getHeight, Bitmap.Config.ARGB_8888)
+  }
   
   private def parseBitmapType(bitmapType: Int) : Bitmap.Config = {
     bitmapType match {
