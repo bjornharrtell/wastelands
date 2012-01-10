@@ -26,8 +26,8 @@ class Screen[T: ClassManifest](game: Game[T]) {
   
   // start calc at tilesize 2^5
   val TileSize = tileSizeCalc(5)
-  val TilesWidth = (Width / TileSize).toInt
-  val TilesHeight = (Height / TileSize).toInt
+  val TilesWidth = (Width / TileSize).toInt+1
+  val TilesHeight = (Height / TileSize).toInt+1
   val PixelSize = math.pow(2, tileSizeCalcIterations).toInt
 
   System.out.println("TileSize:"  + TileSize + " PixelSize:"  + PixelSize)
