@@ -99,11 +99,11 @@ class GameMap {
   }
 
   private def calcSubType(x: Int, y: Int, baseType: Int): Int = {
-    calcSubType(x, y, tile => tile.baseType == baseType)
+    calcSubType(x, y, _.baseType == baseType)
   }
 
   private def calcShadeSubType(x: Int, y: Int): Int = {
-    calcSubType(x, y, tile => tile.shade)
+    calcSubType(x, y, _.shade)
   }
 
   /**
