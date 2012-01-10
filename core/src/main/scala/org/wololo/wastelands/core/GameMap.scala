@@ -118,6 +118,7 @@ class GameMap {
    * @param comparator Function to evaluate boolean per tile
    */
   private def calcSubType(x: Int, y: Int, comparator: Tile => Boolean): Int = {
+    // modify tiles to calc when at border of map
     val x1 = if (x < 1) 0 else -1
     val x2 = if (x > Width - 2) 0 else 1
     val y1 = if (y < 1) 0 else -1
@@ -153,6 +154,7 @@ class GameMap {
 
     removeShade(x, y)
 
+    // out of map bounds checks are needed
     if (x > 0) removeShade(x - 1, y)
     if (x < Width - 1) removeShade(x + 1, y)
     if (y > 0) removeShade(x, y - 1)

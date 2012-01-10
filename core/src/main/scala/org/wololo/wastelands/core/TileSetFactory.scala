@@ -8,24 +8,6 @@ class TileSetFactory[T](graphicsContext: GraphicsContext[T], size: Int) {
   val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
   val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory
 
-  def createTileFromFile(inputStream: InputStream): T = {
-    val bitmap = bitmapFactory.create(inputStream)
-
-    val tile = bitmapFactory.create(size, size, BitmapTypes.Opague)
-
-    canvasFactory.create(tile).drawImage(bitmap, 0, 0, size, size, 0, 0, 16, 16)
-
-    tile
-  }
-  
-  def createMapTileSetFromFile(inputStream: InputStream, bitmapType: Int): ArrayBuffer[T] = {
-    createTileSetFromFile(inputStream, bitmapType, 18, 5)
-  }
-  
-  def createUnitTileSetFromFile(inputStream: InputStream, bitmapType: Int): ArrayBuffer[T] = {
-    createTileSetFromFile(inputStream, bitmapType, 8, 1)
-  }
-
   def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int): ArrayBuffer[T] = {
     val image = bitmapFactory.create(inputStream)
 

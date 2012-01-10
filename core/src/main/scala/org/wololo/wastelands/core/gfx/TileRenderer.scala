@@ -3,12 +3,12 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 
 class TileRenderer[T : ClassManifest](val screen: Screen[T]) extends TileReader[T] {
-  val shadeSet = fileToTiles("tilesets/shade.png", BitmapTypes.Bitmask)
+  val shadeSet = fileToTiles("tilesets/shade.png", BitmapTypes.Bitmask, 18, 5)
   val tileSets = Array.ofDim[T](4, 5 * 18)
-  tileSets(TileTypes.Base)(0) = fileToTile("tilesets/desert.png")
-  tileSets(TileTypes.Dunes) = fileToTiles("tilesets/dunes.png", BitmapTypes.Opague).toArray
-  tileSets(TileTypes.Rock) = fileToTiles("tilesets/rock.png", BitmapTypes.Opague).toArray
-  tileSets(TileTypes.Spice) = fileToTiles("tilesets/spice.png", BitmapTypes.Opague).toArray
+  tileSets(TileTypes.Base)(0) = fileToTiles("tilesets/desert.png", BitmapTypes.Opague, 1, 1)(0)
+  tileSets(TileTypes.Dunes) = fileToTiles("tilesets/dunes.png", BitmapTypes.Opague, 18, 5).toArray
+  tileSets(TileTypes.Rock) = fileToTiles("tilesets/rock.png", BitmapTypes.Opague, 18, 5).toArray
+  tileSets(TileTypes.Spice) = fileToTiles("tilesets/spice.png", BitmapTypes.Opague, 18, 5).toArray
 
   /**
    * Main tile render loop.
@@ -25,7 +25,6 @@ class TileRenderer[T : ClassManifest](val screen: Screen[T]) extends TileReader[
         renderTile(x, y)
         x += 1
       }
-
       y += 1
     }
   }

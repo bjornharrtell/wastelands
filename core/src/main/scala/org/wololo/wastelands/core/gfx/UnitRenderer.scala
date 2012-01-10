@@ -21,11 +21,11 @@ object UnitRenderer {
 }
 
 class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
-  val tileSet1: Array[T] = screen.tileSetFactory.createUnitTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent).toArray
+  val tileSet1: Array[T] = screen.tileSetFactory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit.png"), BitmapTypes.Translucent, 8, 1).toArray
     
-  val tileSet2: Array[T] = screen.tileSetFactory.createUnitTileSetFromFile(getClass
-    .getClassLoader.getResourceAsStream("tilesets/unit2.png"), BitmapTypes.Translucent).toArray
+  val tileSet2: Array[T] = screen.tileSetFactory.createTileSetFromFile(getClass
+    .getClassLoader.getResourceAsStream("tilesets/unit2.png"), BitmapTypes.Translucent, 8, 1).toArray
 
   def render(unit: org.wololo.wastelands.core.Unit) {
     val mapDeltaX = unit.x - screen.mx
