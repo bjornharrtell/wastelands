@@ -69,12 +69,14 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
     // filter out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => {
-      unit match {
-        case unit: Selectable => doClickedSelectableAction(unit, x, y)
+    units.filter(
+      unit => unit.visible && unit.ScreenBounds.contains(x, y)
+    ).foreach{
+      case unit: Selectable => {
+          doClickedSelectableAction(unit, x, y)
+          clickedUnit = true
       }
-      clickedUnit = true
-    })
+    }
     
     // if no unit was clicked but we have a selected unit and it's movable then move it to new dest
     if (!clickedUnit && selectedUnit.isDefined) {
