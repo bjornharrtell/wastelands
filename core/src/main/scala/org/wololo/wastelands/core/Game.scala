@@ -69,7 +69,12 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   def click(x: Int, y: Int) {
     var clickedUnit = false
 
-    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => { doClickedUnitAction(unit, x, y); clickedUnit = true })
+    // filter out visible and clicked units
+    // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
+    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => { 
+      doClickedUnitAction(unit, x, y)
+      clickedUnit = true
+    })
 
     if (!clickedUnit && selectedUnit.isDefined) {
       selectedUnit.get match {
