@@ -5,16 +5,16 @@ import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 
 class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
-  
+
   var running = false
   var tickCount = 0
 
   val map = new GameMap
   val screen = new Screen(this)
-  
-  var selectedUnit:Option[Unit] = None
 
-  val units = ArrayBuffer(new TestUnit1(map,(3,12)), new TestUnit2(map,(5,4)))
+  var selectedUnit: Option[Selectable] = None
+
+  val units = ArrayBuffer(new TestUnit1(map, (3, 12)), new TestUnit2(map, (5, 4)))
 
   def run() {
     running = true
@@ -67,40 +67,34 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   }
 
   def click(x: Int, y: Int) {
-    val mx = screen.calculateTileIndex(screen.screenOffset.x+x)
-    val my = screen.calculateTileIndex(screen.screenOffset.y+y)
-    val tile = map.tiles(mx,my)
+    var clickedUnit = false
 
-    performPossibleUnitAction(tile.unit, mx, my)
+    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => { doClickedUnitAction(unit, x, y); clickedUnit = true })
+
+    if (!clickedUnit && selectedUnit.isDefined) {
+      selectedUnit.get match {
+        case unit: Movable => {
+          val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
+          val my = screen.calculateTileIndex(screen.screenOffset.y + y)
+          unit.moveTo(mx, my)
+        }
+      }
+    }
   }
-  
-  // TODO: should probably implement these per unit behavior to reduce match depth... ?
-  private def performPossibleUnitAction(tileUnit:Option[Unit], mx: Int,  my: Int) {
-    (tileUnit, selectedUnit) match {
-      case (None, Some(unit)) => {
-        unit match { case movableUnit: Movable => movableUnit.moveTo(mx, my) }
+
+  private def doClickedUnitAction(unit: Unit, x: Int, y: Int) {
+
+    if (selectedUnit.isDefined) {
+      if (unit == selectedUnit) {
+        return
+      } //else if (unit.player != player) {
+      //  // attack?
+      //}
+      else {
+        unit match { case unit: Selectable => selectedUnit.get.unselect; unit.select; selectedUnit = Option(unit) }
       }
-      case (Some(newSelection), Some(oldSelection)) if newSelection.position == oldSelection.position => {
-        (newSelection, oldSelection) match {
-          case (newSelection: Selectable, oldSelection: Selectable) => oldSelection.unselect(); selectedUnit = None
-        }
-      }
-      case (Some(newSelection), Some(oldSelection)) => {
-        (newSelection, oldSelection) match {
-          case (newSelection: Selectable, oldSelection: Selectable) =>
-          	oldSelection.unselect()
-          	selectedUnit = Option(newSelection)
-          	newSelection.select()
-        }
-      }
-      case (Some(unit), None) => {
-        unit match {
-          case unit: Selectable =>
-            selectedUnit = Option(unit)
-            unit.select()
-        }
-      }
-      case _ =>
+    } else {
+      unit match { case unit: Selectable => unit.select; selectedUnit = Option(unit) }
     }
   }
 }
