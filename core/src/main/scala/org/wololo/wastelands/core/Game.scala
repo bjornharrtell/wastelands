@@ -70,7 +70,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     // filter out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
     units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => {
-      doClickedSelectableAction(unit, x, y)
+      doClickedUnitAction(unit, x, y)
       clickedUnit = true
     })
 
@@ -86,13 +86,14 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + y)
       selectedUnit.get.moveTo(mx, my)
+
     }
   }
 
   /**
    * Do appropriate actions when a selectable unit has been clicked
    */
-  private def doClickedSelectableAction(unit: Unit, x: Int, y: Int) {
+  private def doClickedUnitAction(unit: Unit, x: Int, y: Int) {
     if (selectedUnit.isDefined) {
       if (unit == selectedUnit) {
         return
