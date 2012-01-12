@@ -14,8 +14,10 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   var selectedUnit: Option[Unit] = None
 
-  val units = ArrayBuffer[Unit](new TestUnit1(map, (3, 12)), new TestUnit2(map, (5, 4)))
-
+  var player = 0
+  
+  val units = ArrayBuffer[Unit](new TestUnit1(map, 1, (3, 12)), new TestUnit2(map, player, (5, 4)))
+  
   def run() {
     running = true
 
@@ -86,7 +88,6 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + y)
       selectedUnit.get.moveTo(mx, my)
-
     }
   }
 
@@ -97,12 +98,16 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     if (selectedUnit.isDefined) {
       if (unit == selectedUnit) {
         return
-      } else {
+      } 
+      else if (unit.player != player) {
+        //selectedUnit.attack(unit)
+      }
+      else {
         selectedUnit.get.unselect
         unit.select
         selectedUnit = Option(unit)
       }
-    } else {
+    } else if (unit.player == player) {
       unit.select
       selectedUnit = Option(unit)
     }
