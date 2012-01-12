@@ -1,5 +1,6 @@
 package org.wololo.wastelands.core
 import org.wololo.wastelands.vmlayer._
+import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 
@@ -76,7 +77,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   private def performPossibleUnitAction(tileUnit:Option[Unit], mx: Int,  my: Int) {
     (tileUnit, selectedUnit) match {
       case (None, Some(unit)) => {
-        unit.moveTo(mx, my)
+        unit match { case movableUnit: Movable => movableUnit.moveTo(mx, my) }
       }
       case (Some(newSelection), Some(oldSelection)) if newSelection.position == oldSelection.position => {
         oldSelection.unselect()

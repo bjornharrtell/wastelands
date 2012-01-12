@@ -18,6 +18,11 @@ class Coordinate(var x: Int, var y: Int) {
     y = coordinate.y
   }
   
+  def setTo(x: Int, y: Int) = {
+    this.x = x
+    this.y = y
+  }
+  
   override def clone: Coordinate = (x, y)
 
   private def offset(dx: Int, dy: Int) {

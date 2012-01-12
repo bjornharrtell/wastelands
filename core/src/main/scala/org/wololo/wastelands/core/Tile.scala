@@ -1,5 +1,7 @@
 package org.wololo.wastelands.core
 
+import org.wololo.wastelands.core.unit._
+
 object Tile {
   val Size = 32
 }
