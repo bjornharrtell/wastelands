@@ -2,7 +2,7 @@ package org.wololo.wastelands.core.gfx
 import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 
-class TileRenderer[T : ClassManifest](val screen: Screen[T]) extends TileReader[T] {
+class TileRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T] {
   val shadeSet = fileToTiles("tilesets/shade.png", BitmapTypes.Bitmask, 18, 5)
   val tileSets = Array.ofDim[T](4, 5 * 18)
   tileSets(TileTypes.Base)(0) = fileToTiles("tilesets/desert.png", BitmapTypes.Opague, 1, 1)(0)
@@ -12,28 +12,28 @@ class TileRenderer[T : ClassManifest](val screen: Screen[T]) extends TileReader[
 
   /**
    * Main tile render loop.
-   * 
+   *
    * NOTE: plus 1 tile size border buffer for scrolling
    */
-  def render() {
+  def render(shade: Boolean) {
     // NOTE: while loop used for perf
     var y = -1
     var x = -1
     while (y <= screen.TilesHeight) {
       x = -1
       while (x <= screen.TilesWidth) {
-        renderTile(x, y)
+        renderTile(x, y, shade)
         x += 1
       }
       y += 1
     }
   }
-  
+
   /**
    * @param x screen tile coordinate
    * @param y screen tile coordinate
    */
-  private def renderTile(x: Int, y: Int) {
+  private def renderTile(x: Int, y: Int, shade: Boolean) {
     // screen destination coord
     val sx = x * screen.TileSize + screen.mapPixelOffset.x
     val sy = y * screen.TileSize + screen.mapPixelOffset.y
@@ -46,16 +46,19 @@ class TileRenderer[T : ClassManifest](val screen: Screen[T]) extends TileReader[
     if (tx < 0 || tx > screen.map.Width || ty < 0 || ty > screen.map.Height)
       return
 
-    val tile = screen.map.tiles(tx,ty)
+    val tile = screen.map.tiles(tx, ty)
 
-    screen.canvas.drawImage(tileSets(tile.baseType)(tile.subType), sx, sy)
-
-    if (tile.shade) {
-      if (tile.shadeSubType == 0) {
-        screen.canvas.clearRect(sx, sy, sx + screen.TileSize, sy + screen.TileSize)
-      } else {
-        screen.canvas.drawImage(shadeSet(tile.shadeSubType), sx, sy)
+    if (!shade && (!tile.shade || tile.shadeSubType > 0)) {
+      screen.canvas.drawImage(tileSets(tile.baseType)(tile.subType), sx, sy)
+    } else {
+      if (tile.shade) {
+        if (tile.shadeSubType == 0) {
+          screen.canvas.clearRect(sx, sy, sx + screen.TileSize, sy + screen.TileSize)
+        } else {
+          screen.canvas.drawImage(shadeSet(tile.shadeSubType), sx, sy)
+        }
       }
     }
+
   }
 }

@@ -79,8 +79,9 @@ class Screen[T: ClassManifest](game: Game[T]) {
     mapPixelOffset.x = calculateTilePixelOffset(screenOffset.x, mapOffset.x)
     mapPixelOffset.y = calculateTilePixelOffset(screenOffset.y, mapOffset.y)
 
-    tileRenderer.render()
+    tileRenderer.render(false)
     game.units.foreach(unitRenderer.render(_))
+    tileRenderer.render(true)
   }
 
   /**

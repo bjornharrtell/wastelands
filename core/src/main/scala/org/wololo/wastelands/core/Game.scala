@@ -16,7 +16,13 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   var player = 0
   
-  val units = ArrayBuffer[Unit](new TestUnit1(map, 1, (3, 12)), new TestUnit2(map, player, (5, 4)))
+  val units = ArrayBuffer[Unit](
+      new TestUnit1(map, 1, (3, 10)),
+      new TestUnit2(map, player, (5, 4)),
+      new TestUnit2(map, player, (6, 6))
+  )
+  
+  units.filter(unit => unit.player == player).foreach(unit => map.removeShadeAround(unit.position))
   
   def run() {
     running = true
