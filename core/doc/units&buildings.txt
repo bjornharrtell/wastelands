@@ -1,0 +1,24 @@
+Units
+-----
+
+* Mobile base
+* Harvester
+* Light military unit (medium speed, weak attack, short range, weak hp, low cost)
+* Fast military unit (fast speed, weak attack, medium range, medium hp, medium cost)
+* Strong military unit (medium speed, medium attack, medium range, medium hp, high cost)
+* Ranged military unit (medium speed, strong attack, long range, weak hp, medium cost)
+
+Buildings
+---------
+
+* Concrete slab
+* Headquarters (needed to create other buildings)
+* Wind power plant
+* Barracks (create light units) 
+* Mech shop (create other units)
+
+Ideas
+-----
+
+* Workshop (upgrades)
+* Nuke silo (end game building)

@@ -19,4 +19,4 @@ Medium things:
 Big things:
 
 * AI
-* Multiplayer (or AI?
+* Multiplayer (or AI?)
