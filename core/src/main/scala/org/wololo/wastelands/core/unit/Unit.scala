@@ -2,7 +2,7 @@ package org.wololo.wastelands.core.unit
 
 import org.wololo.wastelands.core._
 
-abstract class Unit(val map: GameMap, val position: Coordinate) {
+abstract class Unit(val map: GameMap, val position: Coordinate) extends Movable with Selectable {
   var visible = false
   val ScreenBounds: Rect = (0,0,0,0)
   
@@ -10,6 +10,4 @@ abstract class Unit(val map: GameMap, val position: Coordinate) {
   
   map.tiles(position).unit = Option(this)
   map.removeShadeAround(position)
-  
-  def tick()
 }

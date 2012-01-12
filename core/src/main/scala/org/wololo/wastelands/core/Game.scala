@@ -12,7 +12,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   val map = new GameMap
   val screen = new Screen(this)
 
-  var selectedUnit: Option[Selectable] = None
+  var selectedUnit: Option[Unit] = None
 
   val units = ArrayBuffer[Unit](new TestUnit1(map, (3, 12)), new TestUnit2(map, (5, 4)))
 
@@ -70,28 +70,29 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     // filter out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
     units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => {
-      unit match {
-        case unit: Selectable => doClickedSelectableAction(unit, x, y)
-      }
+      doClickedSelectableAction(unit, x, y)
       clickedUnit = true
     })
-    
-    // if no unit was clicked but we have a selected unit and it's movable then move it to new dest
-    if (!clickedUnit && selectedUnit.isDefined) {
-      selectedUnit.get match {
-        case unit: Movable => {
-          val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
-          val my = screen.calculateTileIndex(screen.screenOffset.y + y)
-          unit.moveTo(mx, my)
-        }
-      }
+
+    // no unit was clicked
+    if (!clickedUnit) doClickedMapTileAction(x, y)
+  }
+
+  /**
+   * Do appropriate actions when a map tile has been clicked
+   */
+  private def doClickedMapTileAction(x: Int, y: Int) {
+    if (selectedUnit.isDefined) {
+      val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
+      val my = screen.calculateTileIndex(screen.screenOffset.y + y)
+      selectedUnit.get.moveTo(mx, my)
     }
   }
 
   /**
    * Do appropriate actions when a selectable unit has been clicked
    */
-  private def doClickedSelectableAction(unit: Selectable, x: Int, y: Int) {
+  private def doClickedSelectableAction(unit: Unit, x: Int, y: Int) {
     if (selectedUnit.isDefined) {
       if (unit == selectedUnit) {
         return
