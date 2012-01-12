@@ -47,7 +47,10 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
     }
 
     screen.canvas.drawImage(tileSet(tileIndex + 8), offset.x - 3, offset.y + 3)
-    if (unit.selected) screen.canvas.drawRect(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
+    unit match {
+      case unit: Selectable =>
+        if (unit.selected) screen.canvas.drawRect(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
+    }
     screen.canvas.drawImage(tileSet(tileIndex), offset.x, offset.y)
   }
 }

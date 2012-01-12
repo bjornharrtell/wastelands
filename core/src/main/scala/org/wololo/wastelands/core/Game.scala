@@ -74,23 +74,31 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     performPossibleUnitAction(tile.unit, mx, my)
   }
   
+  // TODO: should probably implement these per unit behavior to reduce match depth... ?
   private def performPossibleUnitAction(tileUnit:Option[Unit], mx: Int,  my: Int) {
     (tileUnit, selectedUnit) match {
       case (None, Some(unit)) => {
         unit match { case movableUnit: Movable => movableUnit.moveTo(mx, my) }
       }
       case (Some(newSelection), Some(oldSelection)) if newSelection.position == oldSelection.position => {
-        oldSelection.unselect()
-        selectedUnit = None
+        (newSelection, oldSelection) match {
+          case (newSelection: Selectable, oldSelection: Selectable) => oldSelection.unselect(); selectedUnit = None
+        }
       }
       case (Some(newSelection), Some(oldSelection)) => {
-        oldSelection.unselect()
-        selectedUnit = Option(newSelection)
-        newSelection.select()
+        (newSelection, oldSelection) match {
+          case (newSelection: Selectable, oldSelection: Selectable) =>
+          	oldSelection.unselect()
+          	selectedUnit = Option(newSelection)
+          	newSelection.select()
+        }
       }
       case (Some(unit), None) => {
-        selectedUnit = Option(unit)
-        unit.select()
+        unit match {
+          case unit: Selectable =>
+            selectedUnit = Option(unit)
+            unit.select()
+        }
       }
       case _ =>
     }

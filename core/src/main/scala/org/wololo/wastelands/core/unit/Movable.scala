@@ -11,19 +11,18 @@ object Movable {
 trait Movable {
   self: Unit =>
   
-  // TODO: explain why this is needed
+  // TODO: why is this needed? I want an explanation :)
   import Movable._
 
   val Velocity = 0.04
   val MovePauseTicks = 15
   
-  var destination = position.clone
-  var nextDestination = destination.clone
-
   var moveDistance = 0.0
-
   var moveStatus = MoveStatusIdling
-  var movePauseTicksCounter = MovePauseTicks
+  
+  private var destination = position.clone
+  private var nextDestination = destination.clone
+  private var movePauseTicksCounter = MovePauseTicks
 
   def tick() {
     moveStatus match {
