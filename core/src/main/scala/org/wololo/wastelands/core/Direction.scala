@@ -1,7 +1,6 @@
 package org.wololo.wastelands.core
 
-
-case class Direction(x: Int,  y: Int) {
-  require(x >= -1 && x < 2)
-  require(y >= -1 && y < 2)
+case class Direction(dx: Int, dy: Int) extends Coordinate(dx,dy) {
+  require(dx >= -1 && dx < 2)
+  require(dy >= -1 && dy < 2)
 }

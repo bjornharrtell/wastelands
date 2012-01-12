@@ -4,7 +4,6 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 
 object UnitRenderer {
-
   def directionToTileIndex(direction: Direction): Int = {
     direction match {
       case Direction(0, 0) => 0
@@ -32,23 +31,20 @@ class UnitRenderer[T: ClassManifest](screen: Screen[T]) {
   tileSet2.map(tile => tileSet2.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
 
   def render(unit: org.wololo.wastelands.core.Unit) {
-    val mapDeltaX = unit.x - screen.mx
-    val mapDeltaY = unit.y - screen.my
-
-    if (mapDeltaX < 0 || mapDeltaX > screen.TilesWidth || mapDeltaY < 0 || mapDeltaY > screen.TilesHeight)
-      return
+    var mapOffset = unit.position - screen.mapOffset
+    
+    if (!screen.MapBounds.contains(mapOffset)) return
 
     var moveOffsetX = 0
     var moveOffsetY = 0
 
     if (unit.moveStatus == unit.MoveStatusMoving) {
-      val Direction(dx, dy) = unit.direction
-      moveOffsetX = (screen.TileSize * dx * unit.moveDistance).toInt
-      moveOffsetY = (screen.TileSize * dy * unit.moveDistance).toInt
+      moveOffsetX = (screen.TileSize * unit.direction.x * unit.moveDistance).toInt
+      moveOffsetY = (screen.TileSize * unit.direction.y * unit.moveDistance).toInt
     }
 
-    val sx = mapDeltaX * screen.TileSize + screen.ox + moveOffsetX
-    val sy = mapDeltaY * screen.TileSize + screen.oy + moveOffsetY
+    val sx = mapOffset.x * screen.TileSize + screen.mapPixelOffset.x + moveOffsetX
+    val sy = mapOffset.y * screen.TileSize + screen.mapPixelOffset.y + moveOffsetY
 
     val tileSet = unit match {
       case x: TestUnit1 => tileSet1

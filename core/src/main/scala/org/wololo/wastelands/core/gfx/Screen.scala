@@ -9,29 +9,32 @@ import org.wololo.wastelands.core._
 class Screen[T: ClassManifest](game: Game[T]) {
 
   val graphicsContext = game.graphicsContext
-  
+
   val Width = graphicsContext.screenWidth
   val Height = graphicsContext.screenHeight
+  val Bounds: Rect = (0, 0, Width, Height)
 
-  System.out.println("Width:"  + Width + " Height:"  + Height)
-  
+  System.out.println("Width:" + Width + " Height:" + Height)
+
   var tileSizeCalcIterations = 0
   // recursive calc from 2^f until less than 21 tiles fits in largest screen dim
-  def tileSizeCalc(f: Int) : Int = {
+  def tileSizeCalc(f: Int): Int = {
     tileSizeCalcIterations += 1
     val tileSize = math.pow(2, f).toInt
     val screenDim = if (Height > Width) Height else Width
-    if (screenDim / tileSize < 21) tileSize else tileSizeCalc(f+1)
+    if (screenDim / tileSize < 21) tileSize else tileSizeCalc(f + 1)
   }
-  
+
   // start calc at tilesize 2^5
   val TileSize = tileSizeCalc(5)
-  val TilesWidth = (Width / TileSize).toInt+1
-  val TilesHeight = (Height / TileSize).toInt+1
+  val TilesWidth = (Width / TileSize).toInt + 1
+  val TilesHeight = (Height / TileSize).toInt + 1
   val PixelSize = math.pow(2, tileSizeCalcIterations).toInt
 
-  System.out.println("TileSize:"  + TileSize + " PixelSize:"  + PixelSize)
-  
+  val MapBounds: Rect = (-1, -1, TilesWidth, TilesHeight)
+
+  System.out.println("TileSize:" + TileSize + " PixelSize:" + PixelSize)
+
   val map = game.map
 
   val MapScreenWidth = map.Width * TileSize
@@ -45,28 +48,23 @@ class Screen[T: ClassManifest](game: Game[T]) {
   val unitRenderer = new UnitRenderer(this)
 
   // screen pixel scroll offset
-  var sx = 0
-  var sy = 0
+  var screenOffset: Coordinate = (0, 0)
 
   // map tile scroll offset
-  var mx = 0
-  var my = 0
+  var mapOffset: Coordinate = (0, 0)
 
   // map tile pixel scroll offset
-  var ox = 0
-  var oy = 0
+  var mapPixelOffset: Coordinate = (0, 0)
 
-  def scroll(dx: Int, dy: Int) {
-    sx += dx
-    sy += dy
+  def scroll(delta: Coordinate) {
+    screenOffset += delta
 
-    // TODO: make sure bounds calc is correct... this is a guess (16*TileSize crashed)
     val maxx = MapScreenWidth - ((TilesWidth + 1) * TileSize)
     val maxy = MapScreenHeight - ((TilesHeight + 1) * TileSize)
-    sx = if (sx < 0) 0 else sx
-    sx = if (sx > maxx) maxx else sx
-    sy = if (sy < 0) 0 else sy
-    sy = if (sy > maxy) maxy else sy
+    screenOffset.x = if (screenOffset.x < 0) 0 else screenOffset.x
+    screenOffset.x = if (screenOffset.x > maxx) maxx else screenOffset.x
+    screenOffset.y = if (screenOffset.y < 0) 0 else screenOffset.y
+    screenOffset.y = if (screenOffset.y > maxy) maxy else screenOffset.y
   }
 
   /**
@@ -74,12 +72,12 @@ class Screen[T: ClassManifest](game: Game[T]) {
    */
   def render() {
     //calculate the tile index for x and y axis
-    mx = calculateTileIndex(sx)
-    my = calculateTileIndex(sy)
+    mapOffset.x = calculateTileIndex(screenOffset.x)
+    mapOffset.y = calculateTileIndex(screenOffset.y)
 
     //calculate the tile pixel offset for x and y axis
-    ox = calculateTilePixelOffset(sx, mx)
-    oy = calculateTilePixelOffset(sy, my)
+    mapPixelOffset.x = calculateTilePixelOffset(screenOffset.x, mapOffset.x)
+    mapPixelOffset.y = calculateTilePixelOffset(screenOffset.y, mapOffset.y)
 
     tileRenderer.render()
     game.units.foreach(unitRenderer.render(_))

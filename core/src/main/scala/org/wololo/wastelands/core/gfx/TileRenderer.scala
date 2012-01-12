@@ -35,12 +35,12 @@ class TileRenderer[T : ClassManifest](val screen: Screen[T]) extends TileReader[
    */
   private def renderTile(x: Int, y: Int) {
     // screen destination coord
-    val sx = x * screen.TileSize + screen.ox
-    val sy = y * screen.TileSize + screen.oy
+    val sx = x * screen.TileSize + screen.mapPixelOffset.x
+    val sy = y * screen.TileSize + screen.mapPixelOffset.y
 
     // map tile coord
-    val tx = screen.mx + x
-    val ty = screen.my + y
+    val tx = screen.mapOffset.x + x
+    val ty = screen.mapOffset.y + y
 
     // bail if out of map bounds
     if (tx < 0 || tx > screen.map.Width || ty < 0 || ty > screen.map.Height)

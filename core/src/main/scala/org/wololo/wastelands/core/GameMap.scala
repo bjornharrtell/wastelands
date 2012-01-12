@@ -4,6 +4,8 @@ class GameMap {
   val Width = 64
   val Height = 64
 
+  val Bounds: Rect = (0, 0, Width, Height)
+
   val tiles = (0 until Width * Height).toArray.map(_ => new Tile)
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
@@ -64,8 +66,12 @@ class GameMap {
     y <- 0 until Height;
     x <- 0 until Width
   } {
-    makeBorder(x, y)
-    tiles(x, y).shade = true
+    makeBorder((x, y))
+    tiles((x, y)).shade=true
+  }
+
+  def tiles(coordinate: Coordinate): Tile = {
+    tiles(coordinate.y * Height + coordinate.x)
   }
 
   def tiles(x: Int, y: Int): Tile = {
@@ -75,49 +81,52 @@ class GameMap {
   /**
    * Calculates subtype for tile if it's suitable
    */
-  def makeBorder(x: Int, y: Int) {
-    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+  def makeBorder(coordinate: Coordinate) {
+    if (Bounds.contains(coordinate) == false) return
 
-    val tile = tiles(x, y)
+    val tile = tiles(coordinate)
 
     if (tile.baseType != TileTypes.Base) {
-      tile.subType = calcSubType(x, y, tile.baseType)
+      tile.subType = calcSubType(coordinate, tile.baseType)
     }
   }
 
   /**
    * Calculates shade (fog of war) for tile
    */
-  def makeShade(x: Int, y: Int) {
-    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+  def makeShade(coordinate: Coordinate) {
+    if (Bounds.contains(coordinate) == false) return
 
-    val tile = tiles(x, y)
+    val tile = tiles(coordinate)
 
     if (tile.shade) {
-      tile.shadeSubType = calcShadeSubType(x, y)
+      tile.shadeSubType = calcShadeSubType(coordinate)
     }
   }
 
-  private def calcSubType(x: Int, y: Int, baseType: Int): Int = {
-    calcSubType(x, y, _.baseType == baseType)
+  private def calcSubType(coordinate: Coordinate, baseType: Int): Int = {
+    calcSubType(coordinate, _.baseType == baseType)
   }
 
-  private def calcShadeSubType(x: Int, y: Int): Int = {
-    calcSubType(x, y, _.shade)
+  private def calcShadeSubType(coordinate: Coordinate): Int = {
+    calcSubType(coordinate, _.shade)
   }
 
   /**
    * Looks at tiles around tile at x,y and calculates a value 0-255 which correspond to the matrix.png asset.
-
+   *
    * Order of investigation:
    *
    * 8 1 2
    * 7 * 3
    * 6 5 4
-   * 
+   *
    * @param comparator Function to evaluate boolean per tile
    */
-  private def calcSubType(x: Int, y: Int, comparator: Tile => Boolean): Int = {
+  private def calcSubType(coordinate: Coordinate, comparator: Tile => Boolean): Int = {
+    var x = coordinate.x
+    var y = coordinate.y
+
     // modify tiles to calc when at border of map
     val x1 = if (x < 1) 0 else -1
     val x2 = if (x > Width - 2) 0 else 1
@@ -136,28 +145,34 @@ class GameMap {
     subDef(subType) - 1
   }
 
-  def removeShade(x: Int, y: Int) {
-    tiles(x, y).shade = false
+  def removeShade(coordinate: Coordinate) {
+    tiles(coordinate).shade = false
+    
+    var x = coordinate.x
+    var y = coordinate.y
 
-    makeShade(x, y - 1)
-    makeShade(x + 1, y - 1)
-    makeShade(x + 1, y)
-    makeShade(x + 1, y + 1)
-    makeShade(x, y + 1)
-    makeShade(x - 1, y + 1)
-    makeShade(x - 1, y)
-    makeShade(x - 1, y - 1)
+    makeShade((x, y - 1))
+    makeShade((x + 1, y - 1))
+    makeShade((x + 1, y))
+    makeShade((x + 1, y + 1))
+    makeShade((x, y + 1))
+    makeShade((x - 1, y + 1))
+    makeShade((x - 1, y))
+    makeShade((x - 1, y - 1))
   }
 
-  def removeShadeAround(x: Int, y: Int) {
-    if (x < 0 || x >= Width || y < 0 || y >= Height) return
+  def removeShadeAround(coordinate: Coordinate) {
+    if (Bounds.contains(coordinate) == false) return
 
-    removeShade(x, y)
+    removeShade(coordinate)
+
+    var x = coordinate.x
+    var y = coordinate.y
 
     // out of map bounds checks are needed
-    if (x > 0) removeShade(x - 1, y)
-    if (x < Width - 1) removeShade(x + 1, y)
-    if (y > 0) removeShade(x, y - 1)
-    if (y < Height - 1) removeShade(x, y + 1)
+    if (x > 0) removeShade((x - 1, y))
+    if (x < Width - 1) removeShade((x + 1, y))
+    if (y > 0) removeShade((x, y - 1))
+    if (y < Height - 1) removeShade((x, y + 1))
   }
 }
