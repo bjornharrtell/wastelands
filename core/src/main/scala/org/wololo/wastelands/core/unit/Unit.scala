@@ -10,4 +10,6 @@ abstract class Unit(val map: GameMap, val position: Coordinate) {
   
   map.tiles(position).unit = Option(this)
   map.removeShadeAround(position)
+  
+  def tick()
 }

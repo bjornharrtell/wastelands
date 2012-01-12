@@ -14,7 +14,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   var selectedUnit: Option[Selectable] = None
 
-  val units = ArrayBuffer(new TestUnit1(map, (3, 12)), new TestUnit2(map, (5, 4)))
+  val units = ArrayBuffer[Unit](new TestUnit1(map, (3, 12)), new TestUnit2(map, (5, 4)))
 
   def run() {
     running = true
@@ -56,9 +56,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   }
 
   def tick() {
-
-    units.foreach(unit => unit.tick())
-
+    units.foreach(unit => unit.tick)
     tickCount += 1
   }
 
@@ -71,11 +69,14 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
     // filter out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => { 
-      doClickedUnitAction(unit, x, y)
+    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => {
+      unit match {
+        case unit: Selectable => doClickedSelectableAction(unit, x, y)
+      }
       clickedUnit = true
     })
-
+    
+    // if no unit was clicked but we have a selected unit and it's movable then move it to new dest
     if (!clickedUnit && selectedUnit.isDefined) {
       selectedUnit.get match {
         case unit: Movable => {
@@ -87,19 +88,21 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     }
   }
 
-  private def doClickedUnitAction(unit: Unit, x: Int, y: Int) {
-
+  /**
+   * Do appropriate actions when a selectable unit has been clicked
+   */
+  private def doClickedSelectableAction(unit: Selectable, x: Int, y: Int) {
     if (selectedUnit.isDefined) {
       if (unit == selectedUnit) {
         return
-      } //else if (unit.player != player) {
-      //  // attack?
-      //}
-      else {
-        unit match { case unit: Selectable => selectedUnit.get.unselect; unit.select; selectedUnit = Option(unit) }
+      } else {
+        selectedUnit.get.unselect
+        unit.select
+        selectedUnit = Option(unit)
       }
     } else {
-      unit match { case unit: Selectable => unit.select; selectedUnit = Option(unit) }
+      unit.select
+      selectedUnit = Option(unit)
     }
   }
 }
