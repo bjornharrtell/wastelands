@@ -15,17 +15,16 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   var selectedUnit: Option[Unit] = None
 
   var player = 0
-  
+
   var explodeCounter = 0
-  
+
   val units = ArrayBuffer[Unit](
-      new TestUnit1(map, 1, (3, 10)),
-      new TestUnit2(map, player, (5, 4)),
-      new TestUnit2(map, player, (6, 6))
-  )
-  
+    new TestUnit1(map, 1, (3, 10)),
+    new TestUnit2(map, player, (5, 4)),
+    new TestUnit2(map, player, (6, 6)))
+
   units.filter(unit => unit.player == player).foreach(unit => map.removeShadeAround(unit.position))
-  
+
   def run() {
     running = true
 
@@ -54,12 +53,6 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
         frames += 1
         screen.render
         graphicsContext.render(screen.bitmap)
-        
-        explodeCounter += 1
-        
-        if (explodeCounter==5000) {
-          units(2).exploding = true
-        }
       }
 
       if (System.currentTimeMillis - lastTimer1 > 1000) {
@@ -72,6 +65,12 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   }
 
   def tick() {
+    explodeCounter += 1
+
+    if (explodeCounter == 60*5) {
+      units(2).exploding = true
+    }
+
     units.foreach(unit => unit.tick)
     tickCount += 1
   }
@@ -112,11 +111,9 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
     if (selectedUnit.isDefined) {
       if (unit == selectedUnit) {
         return
-      } 
-      else if (unit.player != player) {
+      } else if (unit.player != player) {
         //selectedUnit.attack(unit)
-      }
-      else {
+      } else {
         selectedUnit.get.unselect
         unit.select
         selectedUnit = Option(unit)

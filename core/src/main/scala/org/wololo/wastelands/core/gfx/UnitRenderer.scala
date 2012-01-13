@@ -34,8 +34,8 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
     if (unit.visible && !unit.dead) screen.canvas.drawImage(tileSet(unit.direction), offset.x, offset.y)
 
     if (unit.exploding) {
-      val o = (32 * screen.PixelSize)/2
-      screen.canvas.drawImage(explosion(count / 16), offset.x - o, offset.y - 7*screen.PixelSize - o)
+      val o = (32 * screen.PixelSize)/4
+      screen.canvas.drawImage(explosion(count / 16), offset.x - o, offset.y - (7*screen.PixelSize) - o)
       count += 1
       if (count > 6 * 16) {
         unit.dead = true
