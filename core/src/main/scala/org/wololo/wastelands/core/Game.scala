@@ -39,7 +39,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
       val now = System.nanoTime
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = true
+      var shouldRender = false
       while (unprocessed >= 1.0) {
         ticks += 1
         tick
