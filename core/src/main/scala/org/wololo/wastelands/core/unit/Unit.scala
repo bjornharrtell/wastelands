@@ -9,4 +9,7 @@ abstract class Unit(val map: GameMap, val player: Int, val position: Coordinate)
   var direction = Direction(0, 0)
   
   map.tiles(position).unit = Option(this)
+  
+  var exploding = false
+  var dead = false
 }

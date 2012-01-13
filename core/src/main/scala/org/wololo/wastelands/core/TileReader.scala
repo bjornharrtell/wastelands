@@ -11,7 +11,7 @@ trait TileReader[T] {
     getClass.getClassLoader.getResourceAsStream(resourceName)
   }
 
-  def fileToTiles(resourceName: String, bitmapType: Int, width: Int, height: Int): ArrayBuffer[T] = {
-    screen.tileSetFactory.createTileSetFromFile(getResource(resourceName), bitmapType, width, height)
+  def fileToTiles(resourceName: String, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[T] = {
+    screen.tileSetFactory.createTileSetFromFile(getResource(resourceName), bitmapType, width, height, srcsize, dstsize)
   }
 }

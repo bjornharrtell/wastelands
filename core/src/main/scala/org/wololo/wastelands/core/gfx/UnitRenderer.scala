@@ -7,14 +7,18 @@ import org.wololo.wastelands.core.unit._
 class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T] {
 
   // TODO: create array of tilesets instead
-  val tileSet1 = fileToTiles("tilesets/unit.png", BitmapTypes.Translucent, 8, 1)
+  val tileSet1 = fileToTiles("tilesets/unit.png", BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
   tileSet1.map(tile => tileSet1.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
 
-  val tileSet2 = fileToTiles("tilesets/unit2.png", BitmapTypes.Translucent, 8, 1)
+  val tileSet2 = fileToTiles("tilesets/unit2.png", BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
   tileSet2.map(tile => tileSet2.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
+
+  val explosion = fileToTiles("tilesets/bigexplosion.png", BitmapTypes.Translucent, 28, 1, 32, 32 * screen.PixelSize)
 
   // current render offset in pixels
   private var offset: Coordinate = (0, 0)
+
+  var count = 0
 
   def render(unit: Unit) {
     calcOffset(unit)
@@ -25,12 +29,21 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
       case x: TestUnit2 => tileSet2
     }
 
-    screen.canvas.drawImage(tileSet(unit.direction + 8), offset.x - 3, offset.y + 3)
-    unit match {
-      case unit: Selectable =>
-        if (unit.selected) screen.canvas.drawRect(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
+    if (unit.visible && !unit.dead) screen.canvas.drawImage(tileSet(unit.direction + 8), offset.x - 3, offset.y + 3)
+    if (unit.selected && unit.visible && !unit.dead) screen.canvas.drawRect(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
+    if (unit.visible && !unit.dead) screen.canvas.drawImage(tileSet(unit.direction), offset.x, offset.y)
+
+    if (unit.exploding) {
+      val o = (32 * screen.PixelSize)/2
+      screen.canvas.drawImage(explosion(count / 16), offset.x - o, offset.y - 7*screen.PixelSize - o)
+      count += 1
+      if (count > 6 * 16) {
+        unit.dead = true
+      }
+      if (count > 27 * 16) {
+        unit.exploding = false
+      }
     }
-    screen.canvas.drawImage(tileSet(unit.direction), offset.x, offset.y)
   }
 
   def calcOffset(unit: Unit) {
@@ -46,16 +59,13 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
 
     offset += screen.mapPixelOffset
 
-    unit match {
-      case movableUnit: Movable =>
-        // if unit is moving, add move distance as pixels to offset
-        if (movableUnit.moveStatus == Movable.MoveStatusMoving) {
-          offset.x += (screen.TileSize * movableUnit.direction.x * movableUnit.moveDistance).toInt
-          offset.y += (screen.TileSize * movableUnit.direction.y * movableUnit.moveDistance).toInt
-        }
+    // if unit is moving, add move distance as pixels to offset
+    if (unit.moveStatus == Movable.MoveStatusMoving) {
+      offset.x += (screen.TileSize * unit.direction.x * unit.moveDistance).toInt
+      offset.y += (screen.TileSize * unit.direction.y * unit.moveDistance).toInt
     }
-    
+
     unit.visible = true
-    unit.ScreenBounds.setTo(offset.x, offset.y, offset.x+screen.TileSize, offset.y+screen.TileSize)
+    unit.ScreenBounds.setTo(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
   }
 }

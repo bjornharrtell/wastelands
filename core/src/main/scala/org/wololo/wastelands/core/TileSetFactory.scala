@@ -3,12 +3,12 @@ import java.io.InputStream
 import org.wololo.wastelands.vmlayer._
 import scala.collection.mutable.ArrayBuffer
 
-class TileSetFactory[T](graphicsContext: GraphicsContext[T], size: Int) {
+class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
 
   val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
   val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory
 
-  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int): ArrayBuffer[T] = {
+  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[T] = {
     val image = bitmapFactory.create(inputStream)
 
     val tileSet = new ArrayBuffer[T](height * width)
@@ -18,14 +18,14 @@ class TileSetFactory[T](graphicsContext: GraphicsContext[T], size: Int) {
       y <- 0 until height;
       x <- 0 until width
     ) {
-      val tile: T = bitmapFactory.create(size, size, bitmapType)
+      val tile: T = bitmapFactory.create(dstsize, dstsize, bitmapType)
 
-      val sx1 = x * 16 + 1 + x
-      val sy1 = y * 16 + 1 + y
-      val sx2 = sx1 + 16
-      val sy2 = sy1 + 16
+      val sx1 = x * srcsize + 1 + x
+      val sy1 = y * srcsize + 1 + y
+      val sx2 = sx1 + srcsize
+      val sy2 = sy1 + srcsize
 
-      canvasFactory.create(tile).drawImage(image, 0, 0, size, size, sx1, sy1, sx2, sy2)
+      canvasFactory.create(tile).drawImage(image, 0, 0, dstsize, dstsize, sx1, sy1, sx2, sy2)
 
       tileSet.insert(count, tile)
       count += 1

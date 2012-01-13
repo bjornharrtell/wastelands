@@ -16,6 +16,8 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   var player = 0
   
+  var explodeCounter = 0
+  
   val units = ArrayBuffer[Unit](
       new TestUnit1(map, 1, (3, 10)),
       new TestUnit2(map, player, (5, 4)),
@@ -41,7 +43,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
       var shouldRender = true
       while (unprocessed >= 1.0) {
         ticks += 1
-        tick()
+        tick
         unprocessed -= 1
         shouldRender = true
       }
@@ -50,8 +52,14 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
       if (shouldRender) {
         frames += 1
-        screen.render()
+        screen.render
         graphicsContext.render(screen.bitmap)
+        
+        explodeCounter += 1
+        
+        if (explodeCounter==5000) {
+          units(2).exploding = true
+        }
       }
 
       if (System.currentTimeMillis - lastTimer1 > 1000) {

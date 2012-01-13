@@ -43,7 +43,7 @@ class Screen[T: ClassManifest](game: Game[T]) {
   val bitmap = graphicsContext.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
   val canvas = graphicsContext.canvasFactory.create(bitmap)
 
-  val tileSetFactory = new TileSetFactory[T](graphicsContext, TileSize)
+  val tileSetFactory = new TileSetFactory[T](graphicsContext)
   val tileRenderer = new TileRenderer(this)
   val unitRenderer = new UnitRenderer(this)
 
