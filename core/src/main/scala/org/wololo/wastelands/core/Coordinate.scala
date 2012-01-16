@@ -17,12 +17,16 @@ class Coordinate(var x: Int, var y: Int) {
     x = coordinate.x
     y = coordinate.y
   }
-  
+
   def setTo(x: Int, y: Int) = {
     this.x = x
     this.y = y
   }
-  
+
+  def distance(coordinate: Coordinate): Int = {
+    math.sqrt(math.pow(coordinate.x - x, 2) + math.pow(coordinate.y - y, 2)).toInt
+  }
+
   override def clone: Coordinate = (x, y)
 
   private def offset(dx: Int, dy: Int) {

@@ -18,6 +18,9 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   val units = ArrayBuffer[Unit](
     new TestUnit1(map, 1, (3, 10)),
+    new TestUnit1(map, 1, (1, 2)),
+    new TestUnit1(map, 1, (8, 8)),
+    new TestUnit1(map, 1, (9, 11)),
     new TestUnit2(map, player, (5, 4)),
     new TestUnit2(map, player, (6, 6)))
 
