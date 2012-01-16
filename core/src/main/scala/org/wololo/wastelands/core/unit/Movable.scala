@@ -17,6 +17,9 @@ trait Movable {
   val Velocity = 0.04
   val MovePauseTicks = 15
   
+  var tile: Option[Tile] = Option(map.tiles(position))
+  tile.get.unit = Option(this)
+  
   var moveDistance = 0.0
   var moveStatus = MoveStatusIdling
   
@@ -32,17 +35,25 @@ trait Movable {
     }
   }
 
+  /**
+   * Handle ticks when moving. Will freeze if unit is dead.
+   * 
+   * moveDistance is 0 first tick of move
+   * moveDistance is >= 1 when move is complete
+   */
   private def tickMoving() {
     if (moveDistance == 0) {
+      // (de)associate with tile when move is initiated 
       map.tiles(position).unit = None
-      map.tiles(position + direction).unit = Option(this)
+      tile = Option(map.tiles(position + direction))
+      tile.get.unit = Option(this)
     }
 
-    moveDistance += Velocity
+    if (alive) moveDistance += Velocity
 
     if (moveDistance >= 1) {
       moveDistance = 0
-
+      
       position += direction
 
       map.removeShadeAround(position)

@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
 
   var running = false
-  var tickCount = 0
+  var ticks = 0
 
   val map = new GameMap
   val screen = new Screen(this)
@@ -15,8 +15,6 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   var selectedUnit: Option[Unit] = None
 
   var player = 0
-
-  var explodeCounter = 0
 
   val units = ArrayBuffer[Unit](
     new TestUnit1(map, 1, (3, 10)),
@@ -65,14 +63,11 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   }
 
   def tick() {
-    explodeCounter += 1
-
-    if (explodeCounter == 60*5) {
-      units(2).exploding = true
-    }
-
+    units --= units.filter(unit => !unit.alive && !unit.visible)
+    
     units.foreach(unit => unit.tick)
-    tickCount += 1
+    
+    ticks += 1
   }
 
   def scroll(dx: Int, dy: Int) {
@@ -112,7 +107,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
       if (unit == selectedUnit) {
         return
       } else if (unit.player != player) {
-        //selectedUnit.attack(unit)
+        selectedUnit.get.attack(unit)
       } else {
         selectedUnit.get.unselect
         unit.select
