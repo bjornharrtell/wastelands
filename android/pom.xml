@@ -104,7 +104,6 @@
 							<resources>
 								<resource>
 									<directory>../resources/src/main/resources</directory>
-									<filtering>true</filtering>
 								</resource>
 							</resources>
 						</configuration>

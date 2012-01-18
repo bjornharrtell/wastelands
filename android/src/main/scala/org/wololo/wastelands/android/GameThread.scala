@@ -8,7 +8,7 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
   
   var running = false
   
-  val soundFactory = new AndroidSoundFactory(context.getAssets)
+  val soundFactory = new AndroidSoundFactory(context)
 
   var game: Game[Bitmap] = null
 
