@@ -7,14 +7,14 @@ import android.view.SurfaceView
 import android.view.View
 
 class Activity extends android.app.Activity with OnTouchListener {
-  val gameThread = new GameThread()
+  var gameThread: GameThread = null
 
   var prevX = 0
   var prevY = 0
 
   var tdx = 0
   var tdy = 0
-  
+
   val ClickTolerance = 3
 
   override def onCreate(savedInstanceState: Bundle) {
@@ -22,6 +22,8 @@ class Activity extends android.app.Activity with OnTouchListener {
     setContentView(R.layout.main)
 
     val surfaceView = findViewById(R.id.surfaceView1).asInstanceOf[SurfaceView]
+
+    gameThread = new GameThread(this)
 
     surfaceView.getHolder.addCallback(gameThread)
 

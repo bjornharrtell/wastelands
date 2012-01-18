@@ -1,26 +1,20 @@
 package org.wololo.wastelands.jvm
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
+import java.awt.event.WindowEvent
+import java.awt.event.WindowListener
 import java.awt.image.BufferedImage
-import java.awt.BorderLayout
-import java.awt.Canvas
-import java.awt.Dimension
-import org.wololo.wastelands.core.Game
-import javax.swing.JFrame
-import java.awt.GraphicsEnvironment
 import java.awt.DisplayMode
-import java.awt.Window
 import java.awt.Frame
 import java.awt.GraphicsDevice
-import scala.collection.mutable.ArrayBuffer
-import java.awt.event.KeyListener
-import java.awt.event.KeyEvent
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowListener
-import java.awt.event.WindowEvent
+import java.awt.GraphicsEnvironment
 
-object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with AWTGraphicsContext {
+import org.wololo.wastelands.core.Game
+
+object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with JVMContext {
   var game: Game[BufferedImage] = null
 
   var prevX = 0
@@ -42,7 +36,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   def main(args: Array[String]) {
     createFrame
     mainFrame.setVisible(true)
-    
+
     game = new Game(this)
 
     new Thread(this).start()
@@ -53,7 +47,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     mainFrame.setBounds(0, 0, screenWidth, screenHeight)
     mainFrame.setIgnoreRepaint(true)
     mainFrame.setResizable(false)
-    
+
     mainFrame.addWindowListener(this)
     mainFrame.addKeyListener(this)
     mainFrame.addMouseListener(this)

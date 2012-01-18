@@ -3,7 +3,7 @@ import java.io.InputStream
 import org.wololo.wastelands.vmlayer._
 import scala.collection.mutable.ArrayBuffer
 
-class TileSetFactory[T](graphicsContext: GraphicsContext[T]) {
+class TileSetFactory[T](graphicsContext: VMContext[T]) {
 
   val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
   val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory

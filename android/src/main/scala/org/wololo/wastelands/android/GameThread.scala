@@ -2,10 +2,13 @@ package org.wololo.wastelands.android
 import org.wololo.wastelands.core.Game
 import android.graphics.Bitmap
 import android.view.SurfaceHolder
+import android.content.Context
 
-class GameThread extends Thread with SurfaceHolder.Callback with AndroidGraphicsContext {
+class GameThread(context: Context) extends Thread with SurfaceHolder.Callback with DalvikContext {
   
   var running = false
+  
+  val soundFactory = new AndroidSoundFactory(context.getAssets)
 
   var game: Game[Bitmap] = null
 

@@ -8,10 +8,12 @@ import org.wololo.wastelands.core._
  */
 class Screen[T: ClassManifest](game: Game[T]) {
 
-  val graphicsContext = game.graphicsContext
-
-  val Width = graphicsContext.screenWidth
-  val Height = graphicsContext.screenHeight
+  val vmContext = game.vmContext
+  val bitmapFactory = vmContext.bitmapFactory
+  val canvasFactory = vmContext.canvasFactory
+  
+  val Width = vmContext.screenWidth
+  val Height = vmContext.screenHeight
   val Bounds: Rect = (0, 0, Width, Height)
 
   System.out.println("Width:" + Width + " Height:" + Height)
@@ -39,11 +41,11 @@ class Screen[T: ClassManifest](game: Game[T]) {
 
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
+  
+  val bitmap = bitmapFactory.create(Width, Height, BitmapTypes.Opague)
+  val canvas = canvasFactory.create(bitmap)
 
-  val bitmap = graphicsContext.bitmapFactory.create(Width, Height, BitmapTypes.Opague)
-  val canvas = graphicsContext.canvasFactory.create(bitmap)
-
-  val tileSetFactory = new TileSetFactory[T](graphicsContext)
+  val tileSetFactory = new TileSetFactory[T](vmContext)
   val tileRenderer = new TileRenderer(this)
   val unitRenderer = new UnitRenderer(this)
 

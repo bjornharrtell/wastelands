@@ -9,10 +9,10 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
 
   // TODO: create array of tilesets instead
   val tileSet1 = fileToTiles("tilesets/unit.png", BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
-  tileSet1.map(tile => tileSet1.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
+  tileSet1.map(tile => tileSet1.append(screen.bitmapFactory.createShadow(tile)))
 
   val tileSet2 = fileToTiles("tilesets/unit2.png", BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
-  tileSet2.map(tile => tileSet2.append(screen.graphicsContext.bitmapFactory.createShadow(tile)))
+  tileSet2.map(tile => tileSet2.append(screen.bitmapFactory.createShadow(tile)))
 
   // current render offset in pixels
   private var offset: Coordinate = (0, 0)

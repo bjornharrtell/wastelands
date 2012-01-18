@@ -4,7 +4,7 @@ import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 
-class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
+class Game[T: ClassManifest](val vmContext: VMContext[T]) {
 
   var running = false
   var ticks = 0
@@ -17,12 +17,12 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
   var player = 0
 
   val units = ArrayBuffer[Unit](
-    new TestUnit1(map, 1, (3, 10)),
-    new TestUnit1(map, 1, (1, 2)),
-    new TestUnit1(map, 1, (8, 8)),
-    new TestUnit1(map, 1, (9, 11)),
-    new TestUnit2(map, player, (5, 4)),
-    new TestUnit2(map, player, (6, 6)))
+    new TestUnit1(vmContext.soundFactory, map, 1, (3, 10)),
+    new TestUnit1(vmContext.soundFactory, map, 1, (1, 2)),
+    new TestUnit1(vmContext.soundFactory, map, 1, (8, 8)),
+    new TestUnit1(vmContext.soundFactory, map, 1, (9, 11)),
+    new TestUnit2(vmContext.soundFactory, map, player, (5, 4)),
+    new TestUnit2(vmContext.soundFactory, map, player, (6, 6)))
 
   units.filter(unit => unit.player == player).foreach(unit => map.removeShadeAround(unit.position))
 
@@ -53,7 +53,7 @@ class Game[T: ClassManifest](val graphicsContext: GraphicsContext[T]) {
       if (shouldRender) {
         frames += 1
         screen.render
-        graphicsContext.render(screen.bitmap)
+        vmContext.render(screen.bitmap)
       }
 
       if (System.currentTimeMillis - lastTimer1 > 1000) {

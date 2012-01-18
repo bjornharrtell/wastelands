@@ -1,6 +1,7 @@
 package org.wololo.wastelands.core.unit
 
 import org.wololo.wastelands.core._
+import org.wololo.wastelands.vmlayer.Sound
 
 abstract class Unit(val map: GameMap, val player: Int, val position: Coordinate) extends Movable with Selectable {
   var isOnScreen = false
@@ -19,7 +20,10 @@ abstract class Unit(val map: GameMap, val player: Int, val position: Coordinate)
   val Range = 1
   val FirePauseTicks = 30
   var readyToFire = true
-
+  
+  var fireSound: Sound
+  var explodeSound: Sound
+  
   def attack(unit: Unit) {
     if (position.distance(unit.position) > Range) {
       // TODO: should track unit position
@@ -31,6 +35,7 @@ abstract class Unit(val map: GameMap, val player: Int, val position: Coordinate)
   }
 
   def shoot(unit: Unit) {
+    fireSound.play
     unit.takeDamage(10)
   }
 
@@ -45,5 +50,6 @@ abstract class Unit(val map: GameMap, val player: Int, val position: Coordinate)
     tile = None
     alive = false
     explode = true
+    explodeSound.play
   }
 }
