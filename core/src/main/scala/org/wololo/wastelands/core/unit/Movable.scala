@@ -8,9 +8,9 @@ object Movable {
   val MoveStatusPausing = 2
 }
 
-trait Movable {
+trait Movable extends AbstractUnit {
   self: Unit =>
-
+    
   // TODO: why is this needed? I want an explanation :)
   import Movable._
 
@@ -27,12 +27,13 @@ trait Movable {
   private var nextDestination = destination.clone
   private var movePauseTicksCounter = MovePauseTicks
 
-  def tick() {
+  override def tick() {
     moveStatus match {
       case MoveStatusMoving => tickMoving
       case MoveStatusPausing => tickPausing
       case MoveStatusIdling => tickIdling
     }
+    super.tick()
   }
 
   /**
