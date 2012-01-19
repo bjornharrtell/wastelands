@@ -10,19 +10,19 @@ object Movable {
 
 trait Movable {
   self: Unit =>
-  
+
   // TODO: why is this needed? I want an explanation :)
   import Movable._
 
   val Velocity = 0.04
   val MovePauseTicks = 15
-  
+
   var tile: Option[Tile] = Option(map.tiles(position))
   tile.get.unit = Option(this)
-  
+
   var moveDistance = 0.0
   var moveStatus = MoveStatusIdling
-  
+
   private var destination = position.clone
   private var nextDestination = destination.clone
   private var movePauseTicksCounter = MovePauseTicks
@@ -37,7 +37,7 @@ trait Movable {
 
   /**
    * Handle ticks when moving. Will freeze if unit is dead.
-   * 
+   *
    * moveDistance is 0 first tick of move
    * moveDistance is >= 1 when move is complete
    */
@@ -53,7 +53,7 @@ trait Movable {
 
     if (moveDistance >= 1) {
       moveDistance = 0
-      
+
       position += direction
 
       map.removeShadeAround(position)
@@ -69,7 +69,7 @@ trait Movable {
       movePauseTicksCounter = MovePauseTicks
       moveStatus = MoveStatusIdling
       destination.setTo(nextDestination)
-      calc
+      if (!calc) map.removeShadeAround(position, true)
     }
   }
 
@@ -86,14 +86,14 @@ trait Movable {
 
   /**
    * Calculate next move.
-   * 
+   *
    * TODO: use real pathfinding, for now it will simply try a direction
    */
-  private def calc() {
+  private def calc(): Boolean = {
     var delta = destination - position
 
     // destination reached, bail
-    if (delta == (0, 0)) return
+    if (delta == (0, 0)) return false
 
     // calculate tile directions per axis
     val dx = math.signum(delta.x)
@@ -101,9 +101,11 @@ trait Movable {
 
     direction = Direction(dx, dy)
 
-    if (map.tiles(position + direction).isOccupied) return
+    if (map.tiles(position + direction).isOccupied) return false
 
     moveStatus = MoveStatusMoving
+
+    return true
   }
 }
 

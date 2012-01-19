@@ -146,6 +146,8 @@ class GameMap {
   }
 
   def removeShade(coordinate: Coordinate) {
+    if (!Bounds.contains(coordinate)) return
+    
     tiles(coordinate).shade = false
     
     var x = coordinate.x
@@ -161,18 +163,26 @@ class GameMap {
     makeShade((x - 1, y - 1))
   }
 
-  def removeShadeAround(coordinate: Coordinate) {
-    if (Bounds.contains(coordinate) == false) return
-
+  def removeShadeAround(coordinate: Coordinate, extra: Boolean = false) {
     removeShade(coordinate)
 
     var x = coordinate.x
     var y = coordinate.y
 
-    // out of map bounds checks are needed
-    if (x > 0) removeShade((x - 1, y))
-    if (x < Width - 1) removeShade((x + 1, y))
-    if (y > 0) removeShade((x, y - 1))
-    if (y < Height - 1) removeShade((x, y + 1))
+    removeShade((x, y - 1))
+    removeShade((x + 1, y - 1))
+    removeShade((x + 1, y))
+    removeShade((x + 1, y + 1))
+    removeShade((x, y + 1))
+    removeShade((x - 1, y + 1))
+    removeShade((x - 1, y))
+    removeShade((x - 1, y - 1))
+    
+    if (extra) {
+      removeShade((x, y + 2))
+      removeShade((x, y - 2))
+      removeShade((x + 2, y))
+      removeShade((x - 2, y))
+    }
   }
 }
