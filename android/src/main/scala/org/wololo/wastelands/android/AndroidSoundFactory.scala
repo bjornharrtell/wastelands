@@ -8,15 +8,15 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.media.SoundPool
 import android.media.AudioManager
+import java.io.File
 
-class AndroidSoundFactory(context: Context) extends SoundFactory {
-  val audioManager = context.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
+object AndroidSoundFactory extends SoundFactory {
+  val audioManager = Activity.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
   val soundPool = new SoundPool(20, AudioManager.STREAM_MUSIC, 0)
+  var assetManager = Activity.getAssets
   
-  def create(filename: String): Sound = {
-    
-    val path = "sounds/" + filename
-    val fd = context.getAssets.openFd(path)
+  def create(file: File): Sound = {
+    val fd = assetManager.openFd(file.getPath())
 
     val id = soundPool.load(fd, 1)
     fd.close

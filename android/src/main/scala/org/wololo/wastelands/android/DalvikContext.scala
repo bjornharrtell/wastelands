@@ -8,5 +8,5 @@ trait DalvikContext extends VMContext[Bitmap] {
   def render(bitmap: Bitmap)
   val bitmapFactory: BitmapFactory[Bitmap] = AndroidBitmapFactory
   val canvasFactory: CanvasFactory[Bitmap] = AndroidCanvasFactory
-  val soundFactory: SoundFactory
+  val soundFactory: SoundFactory = AndroidSoundFactory
 }

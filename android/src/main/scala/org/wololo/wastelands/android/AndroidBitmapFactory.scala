@@ -5,12 +5,16 @@ import java.io.InputStream
 import org.wololo.wastelands.vmlayer.BitmapTypes
 import android.graphics.Canvas
 import android.graphics.Color
+import java.io.File
 
 object AndroidBitmapFactory extends BitmapFactory[Bitmap] {
+  var assetManager = Activity.getAssets
+  
   def create(width: Int, height: Int, bitmapType: Int): Bitmap = {
     Bitmap.createBitmap(width, height, parseBitmapType(bitmapType))
   }
-  def create(inputStream: InputStream): Bitmap = {
+  def create(file: File): Bitmap = {
+    val inputStream = assetManager.open(file.getPath())
     android.graphics.BitmapFactory.decodeStream(inputStream)
   }
   def createShadow(bitmap: Bitmap): Bitmap = {

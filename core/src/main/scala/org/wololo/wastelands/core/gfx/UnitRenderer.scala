@@ -4,14 +4,15 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 import org.wololo.wastelands.core.unit._
 import scala.collection.mutable.ArrayBuffer
+import java.io.File
 
 class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T] {
 
   // TODO: create array of tilesets instead
-  val tileSet1 = fileToTiles("tilesets/unit.png", BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
+  val tileSet1 = fileToTiles(new File("tilesets/unit.png"), BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
   tileSet1.map(tile => tileSet1.append(screen.bitmapFactory.createShadow(tile)))
 
-  val tileSet2 = fileToTiles("tilesets/unit2.png", BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
+  val tileSet2 = fileToTiles(new File("tilesets/unit2.png"), BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
   tileSet2.map(tile => tileSet2.append(screen.bitmapFactory.createShadow(tile)))
 
   // current render offset in pixels

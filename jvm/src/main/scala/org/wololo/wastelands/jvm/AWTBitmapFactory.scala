@@ -13,6 +13,7 @@ import java.awt.Color
 import java.awt.CompositeContext
 import java.awt.AlphaComposite
 import java.awt.image.ColorModel
+import java.io.File
 
 object AWTBitmapFactory extends BitmapFactory[BufferedImage] {
   val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
@@ -22,9 +23,11 @@ object AWTBitmapFactory extends BitmapFactory[BufferedImage] {
   def create(width: Int, height: Int, bitmapType: Int): BufferedImage = {
     gc.createCompatibleImage(width, height, parseBitmapType(bitmapType))
   }
-  def create(inputStream: InputStream): BufferedImage = {
-    ImageIO.read(inputStream)
+  
+  def create(file: File): BufferedImage = {
+    ImageIO.read(file)
   }
+  
   def createShadow(bitmap: BufferedImage): BufferedImage = {
     val shadow = gc.createCompatibleImage(32, 32, Transparency.TRANSLUCENT)
     var g = shadow.createGraphics

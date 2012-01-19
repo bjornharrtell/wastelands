@@ -7,8 +7,6 @@ import android.content.Context
 class GameThread(context: Context) extends Thread with SurfaceHolder.Callback with DalvikContext {
   
   var running = false
-  
-  val soundFactory = new AndroidSoundFactory(context)
 
   var game: Game[Bitmap] = null
 

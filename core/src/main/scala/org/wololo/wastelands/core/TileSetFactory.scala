@@ -1,15 +1,19 @@
 package org.wololo.wastelands.core
-import java.io.InputStream
-import org.wololo.wastelands.vmlayer._
+import java.io.File
+
 import scala.collection.mutable.ArrayBuffer
+
+import org.wololo.wastelands.vmlayer.VMContext
+import org.wololo.wastelands.vmlayer.BitmapFactory
+import org.wololo.wastelands.vmlayer.CanvasFactory
 
 class TileSetFactory[T](graphicsContext: VMContext[T]) {
 
   val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
   val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory
 
-  def createTileSetFromFile(inputStream: InputStream, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[T] = {
-    val image = bitmapFactory.create(inputStream)
+  def createTileSetFromFile(file: File, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[T] = {
+    val image = bitmapFactory.create(file)
 
     val tileSet = new ArrayBuffer[T](height * width)
     var count = 0

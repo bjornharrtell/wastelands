@@ -1,14 +1,15 @@
 package org.wololo.wastelands.core.gfx
 import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
+import java.io.File
 
 class TileRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T] {
-  val shadeSet = fileToTiles("tilesets/shade.png", BitmapTypes.Bitmask, 18, 5, 16, screen.TileSize)
+  val shadeSet = fileToTiles(new File("tilesets/shade.png"), BitmapTypes.Bitmask, 18, 5, 16, screen.TileSize)
   val tileSets = Array.ofDim[T](4, 5 * 18)
-  tileSets(TileTypes.Base)(0) = fileToTiles("tilesets/desert.png", BitmapTypes.Opague, 1, 1, 16, screen.TileSize)(0)
-  tileSets(TileTypes.Dunes) = fileToTiles("tilesets/dunes.png", BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
-  tileSets(TileTypes.Rock) = fileToTiles("tilesets/rock.png", BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
-  tileSets(TileTypes.Spice) = fileToTiles("tilesets/spice.png", BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
+  tileSets(TileTypes.Base)(0) = fileToTiles(new File("tilesets/desert.png"), BitmapTypes.Opague, 1, 1, 16, screen.TileSize)(0)
+  tileSets(TileTypes.Dunes) = fileToTiles(new File("tilesets/dunes.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
+  tileSets(TileTypes.Rock) = fileToTiles(new File("tilesets/rock.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
+  tileSets(TileTypes.Spice) = fileToTiles(new File("tilesets/spice.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
 
   /**
    * Main tile render loop.

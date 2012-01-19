@@ -4,5 +4,5 @@ import java.io.File
 import java.net.URL
 
 trait SoundFactory {
-  def create(filename: String): Sound
+  def create(file: File): Sound
 }
