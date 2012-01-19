@@ -6,7 +6,7 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 
-object Activity extends android.app.Activity with OnTouchListener {
+class Activity extends android.app.Activity with OnTouchListener {
   var gameThread: GameThread = null
 
   var prevX = 0

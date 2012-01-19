@@ -1,14 +1,16 @@
 package org.wololo.wastelands.android
-import org.wololo.wastelands.vmlayer.BitmapFactory
-import android.graphics.Bitmap
-import java.io.InputStream
-import org.wololo.wastelands.vmlayer.BitmapTypes
-import android.graphics.Canvas
-import android.graphics.Color
 import java.io.File
 
-object AndroidBitmapFactory extends BitmapFactory[Bitmap] {
-  var assetManager = Activity.getAssets
+import org.wololo.wastelands.vmlayer.BitmapFactory
+import org.wololo.wastelands.vmlayer.BitmapTypes
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+
+class AndroidBitmapFactory(context: Context) extends BitmapFactory[Bitmap] {
+  var assetManager = context.getAssets
   
   def create(width: Int, height: Int, bitmapType: Int): Bitmap = {
     Bitmap.createBitmap(width, height, parseBitmapType(bitmapType))

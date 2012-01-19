@@ -1,8 +1,8 @@
 package org.wololo.wastelands.android
 import org.wololo.wastelands.vmlayer.Sound
-import android.media.MediaPlayer
-import android.media.SoundPool
+
 import android.media.AudioManager
+import android.media.SoundPool
 
 class AndroidSound(audioManager: AudioManager, soundPool: SoundPool, id: Int) extends Sound {
   def play() {
