@@ -1,5 +1,4 @@
 package org.wololo.wastelands.android
-import org.wololo.wastelands.android.DalvikContext
 import org.wololo.wastelands.core.Game
 
 import android.content.Context
