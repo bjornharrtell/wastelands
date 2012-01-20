@@ -1,7 +1,7 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.vmlayer.Sound
 
-trait Combatable extends AbstractUnit {
+trait Combatable extends Tickable {
   self: Unit =>
 
   var hp = 10

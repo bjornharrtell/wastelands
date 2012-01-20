@@ -8,7 +8,7 @@ object Movable {
   val MoveStatusPausing = 2
 }
 
-trait Movable extends AbstractUnit {
+trait Movable extends Tickable {
   self: Unit =>
     
   // TODO: why is this needed? I want an explanation :)
