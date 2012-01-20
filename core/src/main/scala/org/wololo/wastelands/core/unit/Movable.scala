@@ -10,7 +10,7 @@ object Movable {
 
 trait Movable extends Tickable {
   self: Unit =>
-    
+
   // TODO: why is this needed? I want an explanation :)
   import Movable._
 
@@ -48,6 +48,8 @@ trait Movable extends Tickable {
       map.tiles(position).unit = None
       tile = Option(map.tiles(position + direction))
       tile.get.unit = Option(this)
+
+      map.removeShadeAround(position + direction)
     }
 
     if (alive) moveDistance += Velocity
@@ -56,8 +58,6 @@ trait Movable extends Tickable {
       moveDistance = 0
 
       position += direction
-
-      map.removeShadeAround(position)
 
       moveStatus = MoveStatusPausing
     }

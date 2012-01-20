@@ -14,6 +14,8 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
 
   val tileSet2 = fileToTiles(new File("tilesets/unit2.png"), BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
   tileSet2.map(tile => tileSet2.append(screen.bitmapFactory.createShadow(tile)))
+  
+  val selection = fileToTiles(new File("tilesets/other.png"), BitmapTypes.Translucent, 1, 1, 16, screen.TileSize)(0)
 
   // current render offset in pixels
   private var offset: Coordinate = (0, 0)
@@ -31,10 +33,8 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
 
     if (unit.isOnScreen && unit.visible) {
       screen.canvas.drawImage(tileSet(unit.direction + 8), offset.x - 3, offset.y + 3)
-      if (unit.selected) {
-        screen.canvas.drawRect(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
-      }
       screen.canvas.drawImage(tileSet(unit.direction), offset.x, offset.y)
+      if (unit.selected) screen.canvas.drawImage(selection, offset.x, offset.y)
     }
 
     if (unit.explode) {
