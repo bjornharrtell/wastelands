@@ -7,8 +7,8 @@ object BitmapTypes {
   val Translucent = 2
 }
 
-trait BitmapFactory[T] {
-  def create(width: Int, height: Int, bitmapType: Int): T
-  def create(file: File): T
-  def createShadow(bitmap: T): T
+trait BitmapFactory {
+  def create(width: Int, height: Int, bitmapType: Int): Int
+  def create(file: File): Int
+  def createShadow(id: Int): Int
 }

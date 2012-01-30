@@ -7,22 +7,22 @@ import org.wololo.wastelands.vmlayer.VMContext
 import org.wololo.wastelands.vmlayer.BitmapFactory
 import org.wololo.wastelands.vmlayer.CanvasFactory
 
-class TileSetFactory[T](graphicsContext: VMContext[T]) {
+class TileSetFactory(graphicsContext: VMContext) {
 
-  val bitmapFactory: BitmapFactory[T] = graphicsContext.bitmapFactory
-  val canvasFactory: CanvasFactory[T] = graphicsContext.canvasFactory
+  val bitmapFactory: BitmapFactory = graphicsContext.bitmapFactory
+  val canvasFactory: CanvasFactory = graphicsContext.canvasFactory
 
-  def createTileSetFromFile(file: File, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[T] = {
+  def createTileSetFromFile(file: File, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[Int] = {
     val image = bitmapFactory.create(file)
 
-    val tileSet = new ArrayBuffer[T](height * width)
+    val tileSet = new ArrayBuffer[Int](height * width)
     var count = 0
 
     for (
       y <- 0 until height;
       x <- 0 until width
     ) {
-      val tile: T = bitmapFactory.create(dstsize, dstsize, bitmapType)
+      val tile: Int = bitmapFactory.create(dstsize, dstsize, bitmapType)
 
       val sx1 = x * srcsize + 1 + x
       val sy1 = y * srcsize + 1 + y

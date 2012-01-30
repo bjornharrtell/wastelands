@@ -1,25 +1,34 @@
 package org.wololo.wastelands.android
 import java.io.File
-
 import org.wololo.wastelands.vmlayer.BitmapFactory
 import org.wololo.wastelands.vmlayer.BitmapTypes
-
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import scala.collection.mutable.ArrayBuffer
 
-class AndroidBitmapFactory(context: Context) extends BitmapFactory[Bitmap] {
+object AndroidBitmapFactory {
+  val bitmaps = ArrayBuffer[Bitmap]()
+}
+
+class AndroidBitmapFactory(context: Context) extends BitmapFactory {
   var assetManager = context.getAssets
   
-  def create(width: Int, height: Int, bitmapType: Int): Bitmap = {
-    Bitmap.createBitmap(width, height, parseBitmapType(bitmapType))
+  import AndroidBitmapFactory.bitmaps
+
+  def create(width: Int, height: Int, bitmapType: Int): Int = {
+    bitmaps += Bitmap.createBitmap(width, height, parseBitmapType(bitmapType))
+    bitmaps.size-1
   }
-  def create(file: File): Bitmap = {
+  def create(file: File): Int = {
     val inputStream = assetManager.open(file.getPath())
-    android.graphics.BitmapFactory.decodeStream(inputStream)
+    AndroidBitmapFactory.bitmaps += android.graphics.BitmapFactory.decodeStream(inputStream)
+    bitmaps.size-1
   }
-  def createShadow(bitmap: Bitmap): Bitmap = {
+  def createShadow(id: Int): Int = {
+    val bitmap = bitmaps(id)
+    
     val shadow = Bitmap.createBitmap(bitmap.getWidth, bitmap.getHeight, Bitmap.Config.ARGB_8888)
     new Canvas(shadow).drawColor(Color.argb(0, 0, 0, 0))
 
@@ -30,7 +39,8 @@ class AndroidBitmapFactory(context: Context) extends BitmapFactory[Bitmap] {
       shadow.setPixel(x, y, (bitmap.getPixel(x, y) & 0x6f000000) | (shadow.getPixel(x, y) & 0x00ffffff))
     }
 
-    shadow
+    bitmaps += shadow
+    bitmaps.size-1
   }
 
   private def parseBitmapType(bitmapType: Int): Bitmap.Config = {

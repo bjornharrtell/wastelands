@@ -12,7 +12,7 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
   val bitmapFactory = new AndroidBitmapFactory(context)
   val soundFactory = new AndroidSoundFactory(context)
 
-  var game: Game[Bitmap] = null
+  var game: Game = null
 
   var surfaceHolder: SurfaceHolder = null
 
@@ -20,9 +20,9 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
     game.run()
   }
 
-  def render(bitmap: Bitmap) {
+  def render(id: Int) {
     val canvas = surfaceHolder.lockCanvas(null)
-    canvas.drawBitmap(bitmap, 0, 0, null)
+    canvas.drawBitmap(AndroidBitmapFactory.bitmaps(id), 0, 0, null)
     surfaceHolder.unlockCanvasAndPost(canvas)
   }
 

@@ -6,7 +6,7 @@ import org.wololo.wastelands.core.unit._
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
 
-class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T] {
+class UnitRenderer(val screen: Screen) extends TileReader {
 
   // TODO: create array of tilesets instead
   val tileSet1 = fileToTiles(new File("tilesets/unit.png"), BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
@@ -20,7 +20,7 @@ class UnitRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T
   // current render offset in pixels
   private var offset: Coordinate = (0, 0)
   
-  private var explosions = new ArrayBuffer[UnitExplosionRenderer[T]]
+  private var explosions = new ArrayBuffer[UnitExplosionRenderer]
 
   def render(unit: Unit) {
     calcOffset(unit)

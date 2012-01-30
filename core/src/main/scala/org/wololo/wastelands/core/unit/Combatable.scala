@@ -8,12 +8,16 @@ trait Combatable extends Tickable {
 
   var explode = false
   var exploding = false
+  
+  var hasFired = false;
 
   val Range = 2
   val FirePauseTicks = 120
+  val ProjectileTicks = 10
   private var firePauseTicksCounter = FirePauseTicks
   var attackStatus = AttackStatusPassive
   var unitToAttack: Option[Unit with Combatable] = None
+  var projectileDistance = 0.0
 
   var fireSound: Sound
   var explodeSound: Sound
@@ -33,6 +37,12 @@ trait Combatable extends Tickable {
         }
       case AttackStatusReloading =>
         firePauseTicksCounter -= 1
+        if (firePauseTicksCounter > FirePauseTicks - ProjectileTicks) {
+          projectileDistance -= (firePauseTicksCounter - (FirePauseTicks - ProjectileTicks)) / ProjectileTicks
+        } else {
+          projectileDistance = 0.0
+        }
+
         if (firePauseTicksCounter == 0) {
           attackStatus = AttackStatusReadyToFire
           firePauseTicksCounter = FirePauseTicks
@@ -60,7 +70,12 @@ trait Combatable extends Tickable {
 
   def shoot(unit: Unit with Combatable) {
     fireSound.play
+    
+    //game.projectiles(new Projectile(this, unit))
+    
     unit.takeDamage(2)
+
+    projectileDistance = 1.0
 
     if (unit.alive) {
       attackStatus = AttackStatusReloading

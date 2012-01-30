@@ -14,21 +14,28 @@ import java.awt.CompositeContext
 import java.awt.AlphaComposite
 import java.awt.image.ColorModel
 import java.io.File
+import scala.collection.mutable.ArrayBuffer
 
-object AWTBitmapFactory extends BitmapFactory[BufferedImage] {
+object AWTBitmapFactory extends BitmapFactory {
   val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
   val gs = ge.getDefaultScreenDevice
   val gc = gs.getDefaultConfiguration
+  
+  val bitmaps = ArrayBuffer[BufferedImage]()
 
-  def create(width: Int, height: Int, bitmapType: Int): BufferedImage = {
-    gc.createCompatibleImage(width, height, parseBitmapType(bitmapType))
+  def create(width: Int, height: Int, bitmapType: Int): Int = {
+    bitmaps += gc.createCompatibleImage(width, height, parseBitmapType(bitmapType))
+    bitmaps.size-1
   }
   
-  def create(file: File): BufferedImage = {
-    ImageIO.read(file)
+  def create(file: File): Int = {
+    bitmaps += ImageIO.read(file)
+    bitmaps.size-1
   }
   
-  def createShadow(bitmap: BufferedImage): BufferedImage = {
+  def createShadow(id: Int): Int = {
+    val bitmap = bitmaps(id)
+    
     val shadow = gc.createCompatibleImage(32, 32, Transparency.TRANSLUCENT)
     var g = shadow.createGraphics
     g.setColor(new Color(0, 0, 0))
@@ -36,10 +43,11 @@ object AWTBitmapFactory extends BitmapFactory[BufferedImage] {
     g.dispose
     applyGrayscaleMaskToAlpha(shadow, bitmap)
 
-    shadow
+    bitmaps += shadow
+    bitmaps.size-1
   }
 
-  def applyGrayscaleMaskToAlpha(image: BufferedImage, mask: BufferedImage) {
+  private def applyGrayscaleMaskToAlpha(image: BufferedImage, mask: BufferedImage) {
     val width = image.getWidth
     val height = image.getHeight
 

@@ -5,10 +5,10 @@ import java.io.InputStream
 import collection.mutable.ArrayBuffer
 import java.io.File
 
-trait TileReader[T] {
-  self: { val screen: Screen[T] } =>
+trait TileReader {
+  self: { val screen: Screen } =>
 
-  def fileToTiles(file: File, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[T] = {
+  def fileToTiles(file: File, bitmapType: Int, width: Int, height: Int, srcsize: Int = 16, dstsize: Int): ArrayBuffer[Int] = {
     screen.tileSetFactory.createTileSetFromFile(file, bitmapType, width, height, srcsize, dstsize)
   }
 }

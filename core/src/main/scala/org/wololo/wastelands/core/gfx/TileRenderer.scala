@@ -3,9 +3,9 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 import java.io.File
 
-class TileRenderer[T: ClassManifest](val screen: Screen[T]) extends TileReader[T] {
+class TileRenderer(val screen: Screen) extends TileReader {
   val shadeSet = fileToTiles(new File("tilesets/shade.png"), BitmapTypes.Bitmask, 18, 5, 16, screen.TileSize)
-  val tileSets = Array.ofDim[T](4, 5 * 18)
+  val tileSets = Array.ofDim[Int](4, 5 * 18)
   tileSets(TileTypes.Base)(0) = fileToTiles(new File("tilesets/desert.png"), BitmapTypes.Opague, 1, 1, 16, screen.TileSize)(0)
   tileSets(TileTypes.Dunes) = fileToTiles(new File("tilesets/dunes.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
   tileSets(TileTypes.Rock) = fileToTiles(new File("tilesets/rock.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray

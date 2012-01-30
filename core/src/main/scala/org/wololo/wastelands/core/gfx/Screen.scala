@@ -6,7 +6,7 @@ import org.wololo.wastelands.core._
 /**
  * Contains the state of the game screen.
  */
-class Screen[T: ClassManifest](game: Game[T]) {
+class Screen(game: Game) {
 
   val vmContext = game.vmContext
   val bitmapFactory = vmContext.bitmapFactory
@@ -45,7 +45,7 @@ class Screen[T: ClassManifest](game: Game[T]) {
   val bitmap = bitmapFactory.create(Width, Height, BitmapTypes.Opague)
   val canvas = canvasFactory.create(bitmap)
 
-  val tileSetFactory = new TileSetFactory[T](vmContext)
+  val tileSetFactory = new TileSetFactory(vmContext)
   val tileRenderer = new TileRenderer(this)
   val unitRenderer = new UnitRenderer(this)
 

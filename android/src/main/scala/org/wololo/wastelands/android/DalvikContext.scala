@@ -7,9 +7,9 @@ import org.wololo.wastelands.vmlayer.CanvasFactory
 
 import android.graphics.Bitmap
 
-trait DalvikContext extends VMContext[Bitmap] {
-  def render(bitmap: Bitmap)
-  val bitmapFactory: BitmapFactory[Bitmap]
-  val canvasFactory: CanvasFactory[Bitmap] = AndroidCanvasFactory
+trait DalvikContext extends VMContext {
+  def render(id: Int)
+  val bitmapFactory: BitmapFactory
+  val canvasFactory: CanvasFactory = AndroidCanvasFactory
   val soundFactory: SoundFactory
 }

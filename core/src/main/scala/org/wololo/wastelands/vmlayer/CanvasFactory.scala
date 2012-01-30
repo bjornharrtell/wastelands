@@ -1,5 +1,5 @@
 package org.wololo.wastelands.vmlayer
 
-trait CanvasFactory[T] {
-  def create(bitmap: T): Canvas[T]
+trait CanvasFactory {
+  def create(id: Int): Canvas
 }

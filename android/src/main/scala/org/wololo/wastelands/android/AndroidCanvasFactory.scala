@@ -4,8 +4,8 @@ import org.wololo.wastelands.vmlayer.CanvasFactory
 
 import android.graphics.Bitmap
 
-object AndroidCanvasFactory extends CanvasFactory[Bitmap] {
-  def create(bitmap: Bitmap): Canvas[Bitmap] = {
-    new AndroidCanvas(new android.graphics.Canvas(bitmap.asInstanceOf[Bitmap]))
+object AndroidCanvasFactory extends CanvasFactory {
+  def create(id: Int): Canvas = {
+    new AndroidCanvas(new android.graphics.Canvas(AndroidBitmapFactory.bitmaps(id)))
   }
 }

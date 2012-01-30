@@ -3,8 +3,9 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.Publisher
 
-class Game[T: ClassManifest](val vmContext: VMContext[T]) {
+class Game(val vmContext: VMContext) {
 
   var running = false
   var ticks = 0
@@ -52,6 +53,7 @@ class Game[T: ClassManifest](val vmContext: VMContext[T]) {
 
       if (shouldRender) {
         frames += 1
+        
         screen.render
         vmContext.render(screen.bitmap)
       }
