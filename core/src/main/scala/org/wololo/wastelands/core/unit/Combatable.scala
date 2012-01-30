@@ -71,7 +71,7 @@ trait Combatable extends Tickable {
   def shoot(unit: Unit with Combatable) {
     fireSound.play
     
-    //game.projectiles(new Projectile(this, unit))
+    game.projectiles += new Projectile(this, unit)
     
     unit.takeDamage(2)
 

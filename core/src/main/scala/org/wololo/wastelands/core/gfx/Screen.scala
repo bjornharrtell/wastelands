@@ -48,6 +48,10 @@ class Screen(game: Game) {
   val tileSetFactory = new TileSetFactory(vmContext)
   val tileRenderer = new TileRenderer(this)
   val unitRenderer = new UnitRenderer(this)
+  
+ 
+  private var projectileRenderer = new ProjectileRenderer(this)
+
 
   // screen pixel scroll offset
   var screenOffset: Coordinate = (0, 0)
@@ -83,6 +87,7 @@ class Screen(game: Game) {
 
     tileRenderer.render(false)
     game.units.foreach(unitRenderer.render(_))
+    game.projectiles.foreach(projectileRenderer.render(_))
     tileRenderer.render(true)
   }
 

@@ -18,14 +18,16 @@ class Game(val vmContext: VMContext) {
   var player = 0
 
   val units = ArrayBuffer[Unit](
-    new TestUnit1(vmContext.soundFactory, map, 1, (3, 10)),
-    new TestUnit1(vmContext.soundFactory, map, 1, (1, 2)),
-    new TestUnit1(vmContext.soundFactory, map, 1, (8, 8)),
-    new TestUnit1(vmContext.soundFactory, map, 1, (9, 11)),
-    new TestUnit2(vmContext.soundFactory, map, player, (5, 4)),
-    new TestUnit2(vmContext.soundFactory, map, player, (6, 6)))
+    new TestUnit1(this, 1, (3, 10)),
+    new TestUnit1(this, 1, (1, 2)),
+    new TestUnit1(this, 1, (8, 8)),
+    new TestUnit1(this, 1, (9, 11)),
+    new TestUnit2(this, player, (5, 4)),
+    new TestUnit2(this, player, (6, 6)))
 
   units.filter(unit => unit.player == player).foreach(unit => map.removeShadeAround(unit.position))
+  
+  val projectiles = ArrayBuffer[Projectile]()
 
   def run() {
     running = true
@@ -41,7 +43,7 @@ class Game(val vmContext: VMContext) {
       val now = System.nanoTime
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = false
+      var shouldRender = true
       while (unprocessed >= 1.0) {
         ticks += 1
         tick
@@ -68,9 +70,13 @@ class Game(val vmContext: VMContext) {
   }
 
   def tick() {
+    // TODO: refactor to remove dead invisible unit when it happens not check each tick
     units --= units.filter(unit => !unit.alive && !unit.visible)
     
     units.foreach(unit => unit.tick)
+    
+    projectiles.foreach(projectile => projectile.tick)
+    // TODO: need logic to remove finished projectiles
     
     ticks += 1
   }

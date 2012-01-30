@@ -21,7 +21,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
   private var offset: Coordinate = (0, 0)
   
   private var explosions = new ArrayBuffer[UnitExplosionRenderer]
-
+  
   def render(unit: Unit) {
     calcOffset(unit)
 
