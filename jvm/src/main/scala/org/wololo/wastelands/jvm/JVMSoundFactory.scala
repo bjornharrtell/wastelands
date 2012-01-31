@@ -34,4 +34,8 @@ object JVMSoundFactory extends SoundFactory {
 
     new JVMSound(soundSystem, sourcename)
   }
+  
+  def dispose() {
+    soundSystem.cleanup
+  }
 }

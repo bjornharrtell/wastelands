@@ -29,16 +29,19 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   var canRender = true
 
   override def run() {
-    game.run()
-    mainFrame.dispose
+    try {
+      game = new Game(this)
+      game.run()
+    } finally {
+      mainFrame.dispose
+      JVMSoundFactory.dispose
+    }
   }
 
   def main(args: Array[String]) {
     createFrame
     mainFrame.setVisible(true)
-
-    game = new Game(this)
-
+    
     new Thread(this).start()
   }
 
