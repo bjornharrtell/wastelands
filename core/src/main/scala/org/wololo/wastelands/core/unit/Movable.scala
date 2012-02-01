@@ -105,7 +105,7 @@ trait Movable extends Tickable {
     if (map.tiles(position + direction).isOccupied) return false
 
     moveStatus = MoveStatusMoving
-
+    
     return true
   }
 }

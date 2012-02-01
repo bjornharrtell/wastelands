@@ -1,8 +1,16 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.vmlayer.Sound
 
+object Combatable {
+  val AttackStatusPassive = 0
+  val AttackStatusReloading = 1
+  val AttackStatusReadyToFire = 2
+}
+
 trait Combatable extends Tickable {
   self: Unit =>
+  
+  import Combatable._
 
   var hp = 10
 
@@ -13,18 +21,12 @@ trait Combatable extends Tickable {
 
   val Range = 2
   val FirePauseTicks = 120
-  val ProjectileTicks = 10
   private var firePauseTicksCounter = FirePauseTicks
   var attackStatus = AttackStatusPassive
-  var unitToAttack: Option[Unit with Combatable] = None
-  var projectileDistance = 0.0
+  var unitToAttack: Option[Unit] = None
 
   var fireSound: Sound
   var explodeSound: Sound
-
-  val AttackStatusPassive = 0
-  val AttackStatusReloading = 1
-  val AttackStatusReadyToFire = 2
 
   override def tick() {
     attackStatus match {
@@ -37,11 +39,6 @@ trait Combatable extends Tickable {
         }
       case AttackStatusReloading =>
         firePauseTicksCounter -= 1
-        if (firePauseTicksCounter > FirePauseTicks - ProjectileTicks) {
-          projectileDistance -= (firePauseTicksCounter - (FirePauseTicks - ProjectileTicks)) / ProjectileTicks
-        } else {
-          projectileDistance = 0.0
-        }
 
         if (firePauseTicksCounter == 0) {
           attackStatus = AttackStatusReadyToFire
@@ -67,6 +64,11 @@ trait Combatable extends Tickable {
   def attack(unit: Unit with Combatable) {
     unitToAttack = Option(unit)
   }
+  
+  def abortAttack() {
+    attackStatus = AttackStatusPassive
+    unitToAttack = None
+  }
 
   def shoot(unit: Unit with Combatable) {
     fireSound.play
@@ -75,13 +77,10 @@ trait Combatable extends Tickable {
     
     unit.takeDamage(2)
 
-    projectileDistance = 1.0
-
     if (unit.alive) {
       attackStatus = AttackStatusReloading
     } else {
-      attackStatus = AttackStatusPassive
-      unitToAttack = None
+      abortAttack
     }
   }
 
