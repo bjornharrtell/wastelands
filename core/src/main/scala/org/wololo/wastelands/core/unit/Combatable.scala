@@ -65,6 +65,10 @@ trait Combatable extends Tickable {
     unitToAttack = Option(unit)
   }
   
+  def isAttacking : Boolean = {
+    unitToAttack != None
+  }
+  
   def abortAttack() {
     attackStatus = AttackStatusPassive
     unitToAttack = None
@@ -91,8 +95,8 @@ trait Combatable extends Tickable {
   }
 
   def kill() {
-    tile.get.unit = None
-    tile = None
+    tile.unit = None
+    //tile = None
     alive = false
     explode = true
     explodeSound.play

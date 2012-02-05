@@ -106,6 +106,7 @@ class Game(val vmContext: VMContext) {
     if (selectedUnit.isDefined) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + y)
+      selectedUnit.get.abortAttack
       selectedUnit.get.moveTo(mx, my)
     }
   }
