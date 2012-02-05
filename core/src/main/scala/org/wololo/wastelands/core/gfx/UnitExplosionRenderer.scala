@@ -12,7 +12,7 @@ class UnitExplosionRenderer(val screen: Screen, unit: Unit, offset: Coordinate) 
   private val SizeOffset = -Size / 4
   private val ExplosionOffsetY = -7 * screen.PixelSize
   private val Frames = 27
-  private val Step = 6
+  private val Step = 8
   private val Explosion = fileToTiles(new File("tilesets/bigexplosion.png"), BitmapTypes.Translucent, 28, 1, 32, Size)
 
   private var frame = 0

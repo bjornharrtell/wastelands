@@ -17,7 +17,7 @@ class Game(val vmContext: VMContext) {
 
   var player = 0
 
-  val units = ArrayBuffer[Unit](
+  var units = ArrayBuffer[Unit](
     new TestUnit1(this, 1, (3, 10)),
     new TestUnit1(this, 1, (1, 2)),
     new TestUnit1(this, 1, (8, 8)),
@@ -26,8 +26,8 @@ class Game(val vmContext: VMContext) {
     new TestUnit2(this, player, (6, 6)))
 
   units.filter(unit => unit.player == player).foreach(unit => map.removeShadeAround(unit.position))
-  
-  val projectiles = ArrayBuffer[Projectile]()
+
+  var projectiles = ArrayBuffer[Projectile]()
 
   def run() {
     running = true
@@ -43,7 +43,7 @@ class Game(val vmContext: VMContext) {
       val now = System.nanoTime
       unprocessed += (now - lastTime) / nsPerTick
       lastTime = now
-      var shouldRender = true
+      var shouldRender = false
       while (unprocessed >= 1.0) {
         ticks += 1
         tick
@@ -55,7 +55,7 @@ class Game(val vmContext: VMContext) {
 
       if (shouldRender) {
         frames += 1
-        
+
         screen.render
         vmContext.render(screen.bitmap)
       }
@@ -70,15 +70,8 @@ class Game(val vmContext: VMContext) {
   }
 
   def tick() {
-    // TODO: refactor to remove dead invisible unit when it happens not check each tick
-    units --= units.filter(unit => !unit.alive && !unit.visible)
-    
-    units.foreach(unit => unit.tick)
-    
-    projectiles.foreach(projectile => projectile.tick)
-    
-    // TODO: refactor to remove projectiles when it happens not check each tick
-    projectiles --= projectiles.filter(projectile => projectile.distance>=1.0)
+    units = for (unit <- units if unit.visible) yield unit.tick
+    projectiles = for (projectile <- projectiles if projectile.distance <= 1.0) yield projectile.tick
 
     ticks += 1
   }
@@ -90,12 +83,12 @@ class Game(val vmContext: VMContext) {
   def click(x: Int, y: Int) {
     var clickedUnit = false
 
-    // filter out visible and clicked units
+    // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    units.filter(unit => unit.visible && unit.ScreenBounds.contains(x, y)).foreach(unit => {
+    for (unit <- units if unit.visible && unit.ScreenBounds.contains(x, y)) yield {
       doClickedUnitAction(unit, x, y)
       clickedUnit = true
-    })
+    }
 
     // no unit was clicked
     if (!clickedUnit) doClickedMapTileAction(x, y)

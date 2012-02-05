@@ -28,7 +28,7 @@ trait Combatable extends Tickable {
   var fireSound: Sound
   var explodeSound: Sound
 
-  override def tick() {
+  override def tick() : Unit = {
     attackStatus match {
       case AttackStatusReadyToFire =>
         if (isWithinRange && unitToAttack.get.alive) {
@@ -77,7 +77,7 @@ trait Combatable extends Tickable {
   def shoot(unit: Unit with Combatable) {
     fireSound.play
     
-    game.projectiles += new Projectile(this, unit)
+    game.projectiles += new Projectile(game, this, unit)
     
     unit.takeDamage(2)
 
@@ -96,7 +96,6 @@ trait Combatable extends Tickable {
 
   def kill() {
     tile.unit = None
-    //tile = None
     alive = false
     explode = true
     explodeSound.play

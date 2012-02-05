@@ -41,7 +41,7 @@ trait Movable extends Tickable {
   
   private var movePauseTicksCounter = MovePauseTicks
 
-  override def tick() {
+  override def tick() : Unit = {
     moveStatus match {
       case MoveStatusMoving => tickMoving
       case MoveStatusPausing => tickPausing
