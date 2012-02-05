@@ -76,8 +76,10 @@ class Game(val vmContext: VMContext) {
     units.foreach(unit => unit.tick)
     
     projectiles.foreach(projectile => projectile.tick)
-    // TODO: need logic to remove finished projectiles
     
+    // TODO: refactor to remove projectiles when it happens not check each tick
+    projectiles --= projectiles.filter(projectile => projectile.distance>=1.0)
+
     ticks += 1
   }
 

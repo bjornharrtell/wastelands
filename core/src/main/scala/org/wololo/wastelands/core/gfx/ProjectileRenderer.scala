@@ -24,8 +24,8 @@ class ProjectileRenderer(val screen: Screen) extends TileReader {
 
     offset += screen.mapPixelOffset
 
-    val ox = ((projectile.fromPos.x - projectile.toPos.x) * projectile.distance * screen.TileSize).toInt
-    val oy = ((projectile.fromPos.y - projectile.toPos.y) * projectile.distance * screen.TileSize).toInt
+    val ox = ((projectile.toPos.x - projectile.fromPos.x) * projectile.distance * screen.TileSize).toInt
+    val oy = ((projectile.toPos.y - projectile.fromPos.y) * projectile.distance * screen.TileSize).toInt
 
     screen.canvas.drawImage(id, offset.x + ox + ro, offset.y + oy + ro)
   }
