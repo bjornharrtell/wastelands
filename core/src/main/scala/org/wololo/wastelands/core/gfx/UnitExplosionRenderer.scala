@@ -28,8 +28,9 @@ class UnitExplosionRenderer(val screen: Screen, unit: Unit, offset: Coordinate) 
       frame += 1
     }
     
+    // TODO: refactor away, renderer shouldn't change unit state
     if (stepCounter == 0 && frame==6) {
-      unit.visible = false
+      unit.alive = false
     }
 
     !(stepCounter == 0 && frame == Frames)

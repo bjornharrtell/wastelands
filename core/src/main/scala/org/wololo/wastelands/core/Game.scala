@@ -70,8 +70,8 @@ class Game(val vmContext: VMContext) {
   }
 
   def tick() {
-    units = for (unit <- units if unit.visible) yield unit.tick
-    projectiles = for (projectile <- projectiles if projectile.distance <= 1.0) yield projectile.tick
+    units = for (unit <- units if unit.alive) yield unit.tick
+    projectiles = for (projectile <- projectiles if projectile.alive) yield projectile.tick
 
     ticks += 1
   }
@@ -85,7 +85,7 @@ class Game(val vmContext: VMContext) {
 
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    for (unit <- units if unit.visible && unit.ScreenBounds.contains(x, y)) yield {
+    for (unit <- units if unit.alive && unit.ScreenBounds.contains(x, y)) yield {
       doClickedUnitAction(unit, x, y)
       clickedUnit = true
     }
