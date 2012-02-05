@@ -25,7 +25,7 @@ class Game(val vmContext: VMContext) {
     new TestUnit2(this, player, (5, 4)),
     new TestUnit2(this, player, (6, 6)))
 
-  units.filter(unit => unit.player == player).foreach(unit => map.removeShadeAround(unit.position))
+  for (unit <- units if unit.player == player) yield map.removeShadeAround(unit.position)
 
   var projectiles = ArrayBuffer[Projectile]()
 
