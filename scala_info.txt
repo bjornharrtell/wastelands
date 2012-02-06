@@ -1,0 +1,3 @@
+Scala guidelines FAQ:
+Q: When to use parenthesis on parameterless methods?
+A: Always when the return type is Unit, otherwise only if it isn't just returning an object, but also performing some kind of side-effects, like disk IO etc.

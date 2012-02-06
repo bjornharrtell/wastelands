@@ -21,7 +21,7 @@ object JVMSoundFactory extends SoundFactory {
     soundSystem.newSource(
       false,
       sourcename,
-      file.toURL,
+      file.toURI.toURL,
       file.getName,
       false,
       0,
@@ -36,6 +36,6 @@ object JVMSoundFactory extends SoundFactory {
   }
   
   def dispose() {
-    soundSystem.cleanup
+    soundSystem.cleanup()
   }
 }

@@ -34,11 +34,13 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   require(dx >= -1 && dx < 2)
   require(dy >= -1 && dy < 2)
 
-  def leftOf(): Direction = {
+  import Direction._
+
+  def leftOf: Direction = {
     if (this.toInt == 0) 7 else this.toInt - 1
   }
 
-  def rightOf(): Direction = {
+  def rightOf: Direction = {
     if (this.toInt == 7) 0 else this.toInt + 1
   }
 }

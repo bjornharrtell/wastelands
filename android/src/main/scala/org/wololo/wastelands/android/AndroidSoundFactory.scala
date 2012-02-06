@@ -14,10 +14,10 @@ class AndroidSoundFactory(context: Context) extends SoundFactory {
   var assetManager = context.getAssets
 
   def create(file: File): Sound = {
-    val fd = assetManager.openFd(file.getPath())
+    val fd = assetManager.openFd(file.getPath)
 
     val id = soundPool.load(fd, 1)
-    fd.close
+    fd.close()
 
     new AndroidSound(audioManager, soundPool, id)
   }

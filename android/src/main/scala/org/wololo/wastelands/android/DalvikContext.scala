@@ -5,11 +5,10 @@ import org.wololo.wastelands.vmlayer.SoundFactory
 import org.wololo.wastelands.vmlayer.VMContext
 import org.wololo.wastelands.vmlayer.CanvasFactory
 
-import android.graphics.Bitmap
-
 trait DalvikContext extends VMContext {
-  def render(id: Int)
-  val bitmapFactory: BitmapFactory
+  def bitmapFactory: BitmapFactory
+  def soundFactory: SoundFactory
   val canvasFactory: CanvasFactory = AndroidCanvasFactory
-  val soundFactory: SoundFactory
+
+  def render(id: Int)
 }

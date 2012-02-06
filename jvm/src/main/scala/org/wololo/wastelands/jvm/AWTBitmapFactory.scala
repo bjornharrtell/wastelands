@@ -37,10 +37,10 @@ object AWTBitmapFactory extends BitmapFactory {
     val bitmap = bitmaps(id)
     
     val shadow = gc.createCompatibleImage(32, 32, Transparency.TRANSLUCENT)
-    var g = shadow.createGraphics
+    val g = shadow.createGraphics
     g.setColor(new Color(0, 0, 0))
     g.fillRect(0, 0, 32, 32)
-    g.dispose
+    g.dispose()
     applyGrayscaleMaskToAlpha(shadow, bitmap)
 
     bitmaps += shadow
