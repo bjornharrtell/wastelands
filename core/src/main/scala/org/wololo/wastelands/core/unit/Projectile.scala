@@ -7,6 +7,7 @@ class Projectile(game: Game, fromUnit: Unit, toUnit: Unit) {
   val toPos = toUnit.position.clone()
 
   var distance = 0.0
+  // TODO: fix this, I messed something up then introducing constant speed/distance
   var tagetDistance = toPos.distance(fromPos)
   
   val Ticks = 10 * tagetDistance

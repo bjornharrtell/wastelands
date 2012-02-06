@@ -20,14 +20,13 @@ trait Combatable extends Tickable {
   var explode = false
   var exploding = false
 
-  var hasFired = false;
+  var hasFired = false
 
   val Range = 2
   val FirePauseTicks = 120
   private var firePauseTicksCounter = FirePauseTicks
   var attackStatus = AttackStatusPassive
   var unitToAttack: Option[Unit] = None
-
 
   override def tick(): Unit = {
     attackStatus match {

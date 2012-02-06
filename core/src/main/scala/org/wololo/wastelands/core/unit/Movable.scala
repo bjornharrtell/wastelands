@@ -114,7 +114,7 @@ trait Movable extends Tickable {
   /**
    * Calculate next move.
    *
-   * TODO: use real pathfinding, for now it will simply try a direction
+   * TODO: use real pathfinding, for now it will simply try a few directions
    * 
    * @return true if new move can be calculated false if obstructed or at destination
    */

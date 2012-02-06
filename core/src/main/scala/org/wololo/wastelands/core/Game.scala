@@ -25,7 +25,9 @@ class Game(val vmContext: VMContext) {
     new TestUnit2(this, player, (5, 4)),
     new TestUnit2(this, player, (6, 6)))
 
-  for (unit <- units if unit.player == player) yield map.removeShadeAround(unit.position)
+  for (unit <- units if unit.player == player) {
+    map.removeShadeAround(unit.position)
+  }
 
   var projectiles = ArrayBuffer[Projectile]()
 
@@ -70,8 +72,8 @@ class Game(val vmContext: VMContext) {
   }
   
   def tick() {
-    units = units.withFilter(_.alive).map(_.tick())
-    projectiles = projectiles.withFilter(_.alive).map(_.tick())
+    units = units.withFilter(_.alive).map(_.tick)
+    projectiles = projectiles.withFilter(_.alive).map(_.tick)
 
     ticks += 1
   }
@@ -85,7 +87,7 @@ class Game(val vmContext: VMContext) {
 
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    for (unit <- units if unit.alive && unit.ScreenBounds.contains(x, y)) yield {
+    for (unit <- units if unit.alive && unit.ScreenBounds.contains(x, y)) {
       doClickedUnitAction(unit, x, y)
       clickedUnit = true
     }

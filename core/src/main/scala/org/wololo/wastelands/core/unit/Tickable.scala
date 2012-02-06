@@ -1,5 +1,10 @@
 package org.wololo.wastelands.core.unit
 
+/**
+ * Base trait for units that need to react to game ticks.
+ * 
+ * Should be mixed in before any other Tickable dependant traits to make this implementation called last. 
+ */
 trait Tickable {
   self: Unit =>
 
