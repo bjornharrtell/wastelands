@@ -14,6 +14,4 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate)
 
   var isOnScreen = false
   val ScreenBounds: Rect = (0, 0, 0, 0)
-
-  var alive = true
 }

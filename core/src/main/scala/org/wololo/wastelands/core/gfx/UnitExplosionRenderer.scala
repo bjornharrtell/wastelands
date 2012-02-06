@@ -27,9 +27,10 @@ class UnitExplosionRenderer(val screen: Screen, unit: Unit, offset: Coordinate) 
       stepCounter = 0
       frame += 1
     }
-    
+
     // TODO: refactor away, renderer shouldn't change unit state
-    if (stepCounter == 0 && frame==6) {
+    // TODO: when refactored unit.alive could/should probably be a derived value from hp
+    if (stepCounter == 0 && frame == 6) {
       unit.alive = false
     }
 

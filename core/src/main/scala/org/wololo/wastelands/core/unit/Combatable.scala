@@ -7,6 +7,17 @@ object Combatable {
   val AttackStatusReadyToFire = 2
 }
 
+/**
+ * Logic to make a Unit able to attack and get killed
+ * 
+ * Default state is Passive.
+ * 
+ * When Passive state unit will auto move toward target unit until in range then change into ReadyToFire state.
+ * When ReadyToFire the unit will proceed to either:
+ *   Passive if target unit is dead or out of range.
+ *   Reloading after shooting target.
+ * When Reloading the unit will proceed to ReadyToFire after tick countdown.
+ */
 trait Combatable extends Tickable {
   self: Unit =>
 
@@ -15,6 +26,7 @@ trait Combatable extends Tickable {
   def fireSound: Sound
   def explodeSound: Sound
 
+  var alive = true
   var hp = 10
 
   var explode = false
@@ -46,7 +58,7 @@ trait Combatable extends Tickable {
         }
       case AttackStatusPassive if unitToAttack.isDefined =>
         if (isWithinRange) {
-          moveTo(position)
+          //moveTo(position)
           attackStatus = AttackStatusReadyToFire
         } else {
           moveTo(unitToAttack.get.position)
