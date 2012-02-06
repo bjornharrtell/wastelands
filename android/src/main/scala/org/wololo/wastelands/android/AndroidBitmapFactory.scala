@@ -22,7 +22,7 @@ class AndroidBitmapFactory(context: Context) extends BitmapFactory {
     bitmaps.size-1
   }
   def create(file: File): Int = {
-    val inputStream = assetManager.open(file.getPath())
+    val inputStream = assetManager.open(file.getPath)
     AndroidBitmapFactory.bitmaps += android.graphics.BitmapFactory.decodeStream(inputStream)
     bitmaps.size-1
   }

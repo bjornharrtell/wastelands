@@ -46,7 +46,7 @@ class Game(val vmContext: VMContext) {
       var shouldRender = false
       while (unprocessed >= 1.0) {
         ticks += 1
-        tick
+        tick()
         unprocessed -= 1
         shouldRender = true
       }
@@ -56,7 +56,7 @@ class Game(val vmContext: VMContext) {
       if (shouldRender) {
         frames += 1
 
-        screen.render
+        screen.render()
         vmContext.render(screen.bitmap)
       }
 
@@ -68,10 +68,10 @@ class Game(val vmContext: VMContext) {
       }
     }
   }
-
+  
   def tick() {
-    units = for (unit <- units if unit.alive) yield unit.tick
-    projectiles = for (projectile <- projectiles if projectile.alive) yield projectile.tick
+    units = units.withFilter(_.alive).map(_.tick())
+    projectiles = projectiles.withFilter(_.alive).map(_.tick())
 
     ticks += 1
   }
@@ -101,7 +101,7 @@ class Game(val vmContext: VMContext) {
     if (selectedUnit.isDefined) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + y)
-      selectedUnit.get.abortAttack
+      selectedUnit.get.abortAttack()
       selectedUnit.get.moveTo(mx, my)
     }
   }
@@ -116,12 +116,12 @@ class Game(val vmContext: VMContext) {
       } else if (unit.player != player) {
         selectedUnit.get.attack(unit)
       } else {
-        selectedUnit.get.unselect
-        unit.select
+        selectedUnit.get.unselect()
+        unit.select()
         selectedUnit = Option(unit)
       }
     } else if (unit.player == player) {
-      unit.select
+      unit.select()
       selectedUnit = Option(unit)
     }
   }

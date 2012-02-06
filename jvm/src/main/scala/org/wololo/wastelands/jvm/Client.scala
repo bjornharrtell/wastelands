@@ -20,8 +20,8 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   var prevX = 0
   var prevY = 0
 
-  val device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-  var gc = device.getDefaultConfiguration()
+  val device = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
+  var gc = device.getDefaultConfiguration
 
   var mainFrame: Frame = null
 
@@ -33,43 +33,45 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
       game = new Game(this)
       game.run()
     } finally {
-      mainFrame.dispose
-      JVMSoundFactory.dispose
+      mainFrame.dispose()
+      JVMSoundFactory.dispose()
     }
   }
 
   def main(args: Array[String]) {
-    createFrame
+    mainFrame = newFrame
     mainFrame.setVisible(true)
     
     new Thread(this).start()
   }
 
-  def createFrame() {
-    mainFrame = new Frame(gc)
-    mainFrame.setBounds(0, 0, screenWidth, screenHeight)
-    mainFrame.setIgnoreRepaint(true)
-    mainFrame.setResizable(false)
+  def newFrame: Frame = {
+    val frame = new Frame(gc)
+    frame.setBounds(0, 0, screenWidth, screenHeight)
+    frame.setIgnoreRepaint(true)
+    frame.setResizable(false)
 
-    mainFrame.addWindowListener(this)
-    mainFrame.addKeyListener(this)
-    mainFrame.addMouseListener(this)
-    mainFrame.addMouseMotionListener(this)
+    frame.addWindowListener(this)
+    frame.addKeyListener(this)
+    frame.addMouseListener(this)
+    frame.addMouseMotionListener(this)
+
+    frame
   }
 
   def getBestDisplayMode(device: GraphicsDevice): DisplayMode = {
-    val modes = device.getDisplayModes()
+    val modes = device.getDisplayModes
     for (i <- 0 until modes.length) {
       val mode = modes(i)
-      if (mode.getWidth() == screenWidth
-        && mode.getHeight() == screenHeight) {
+      if (mode.getWidth == screenWidth
+        && mode.getHeight == screenHeight) {
         return mode
       }
     }
     null
   }
 
-  def chooseBestDisplayMode(device: GraphicsDevice) = {
+  def chooseBestDisplayMode(device: GraphicsDevice) {
     val best = getBestDisplayMode(device)
     if (best != null) {
       device.setDisplayMode(best)
@@ -95,9 +97,9 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     if (isFullscreen) {
       canRender = false
 
-      mainFrame.dispose
+      mainFrame.dispose()
 
-      createFrame
+      mainFrame = newFrame
       mainFrame.setVisible(true)
 
       canRender = true
@@ -105,8 +107,8 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     } else {
       canRender = false
 
-      mainFrame.dispose
-      createFrame
+      mainFrame.dispose()
+      mainFrame = newFrame
       mainFrame.setUndecorated(true)
 
       device.setFullScreenWindow(mainFrame)
@@ -130,9 +132,9 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   def windowDeactivated(e: WindowEvent) {}
 
   def keyPressed(e: KeyEvent) {
-    val keyCode = e.getKeyCode()
+    val keyCode = e.getKeyCode
     if (keyCode == KeyEvent.VK_F11) {
-      toggleFullscreen
+      toggleFullscreen()
     } else if (keyCode == KeyEvent.VK_Q) {
       game.running = false
     }

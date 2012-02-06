@@ -19,8 +19,10 @@ object Movable {
 trait Movable extends Tickable {
   self: Unit =>
 
-  // TODO: why is this needed? I want an explanation :)
+  // TODO: Question: why is this needed? I want an explanation :)
+  // TODO: Answer: Why should an singleton objects members be accessible to a trait? It is not the same object. This is the difference from java with not having static members or methods.
   import Movable._
+  import scala.math.random
 
   val Velocity = 0.04
   val MovePauseTicks = 15
@@ -29,7 +31,7 @@ trait Movable extends Tickable {
   tile.unit = Option(this)
 
   // randomize initial direction
-  var direction: Direction = (Math.random*7+1).toInt
+  var direction: Direction = (random*7+1).toInt
   
   var moveDistance = 0.0
   var moveStatus = MoveStatusIdling
@@ -43,9 +45,9 @@ trait Movable extends Tickable {
 
   override def tick() : Unit = {
     moveStatus match {
-      case MoveStatusMoving => tickMoving
-      case MoveStatusPausing => tickPausing
-      case MoveStatusIdling => tickIdling
+      case MoveStatusMoving => tickMoving()
+      case MoveStatusPausing => tickPausing()
+      case MoveStatusIdling => tickIdling()
     }
     super.tick()
   }
@@ -57,9 +59,9 @@ trait Movable extends Tickable {
    * moveDistance is >= 1 when move is complete
    */
   private def tickMoving() {
-    if (moveDistance == 0) init
+    if (moveDistance == 0) init()
     if (alive) moveDistance += Velocity
-    if (moveDistance >= 1) finish
+    if (moveDistance >= 1) finish()
   }
 
   /**
@@ -94,14 +96,14 @@ trait Movable extends Tickable {
       movePauseTicksCounter = MovePauseTicks
       moveStatus = MoveStatusIdling
       destination.setTo(nextDestination)
-      if (!calc) map.removeShadeAround(position, true)
+      if (calc()) map.removeShadeAround(position, true)
     }
   }
 
   private def tickIdling() {
     if (nextDestination != destination) {
       destination.setTo(nextDestination)
-      calc
+      calc()
     }
   }
 
@@ -114,34 +116,34 @@ trait Movable extends Tickable {
    *
    * TODO: use real pathfinding, for now it will simply try a direction
    * 
-   * @returns true if new move can be calculated false if obstructed or at destination
+   * @return true if new move can be calculated false if obstructed or at destination
    */
   private def calc(): Boolean = {
-    var delta = destination - position
-
-    // destination reached, bail
-    if (delta == (0, 0)) return false
-
-    // calculate tile directions per axis
-    val dx = math.signum(delta.x)
-    val dy = math.signum(delta.y)
-
-    var testDirection = Direction(dx, dy)
+    val delta = destination - position
+    val isDestinationReached = delta == (0, 0)
     
-    // if direction is obstructed try left/right
-    if (map.tiles(position + testDirection).isOccupied) {
-      testDirection = testDirection.leftOf
+    if(!isDestinationReached){
+      // calculate tile directions per axis
+      val dx = math.signum(delta.x)
+      val dy = math.signum(delta.y)
+
+      var testDirection = Direction(dx, dy)
+
+      // if direction is obstructed try left/right
       if (map.tiles(position + testDirection).isOccupied) {
-        testDirection = testDirection.rightOf
-        if (map.tiles(position + testDirection).isOccupied) return false
+        testDirection = testDirection.leftOf
+        if (map.tiles(position + testDirection).isOccupied) {
+          testDirection = testDirection.rightOf
+          if (map.tiles(position + testDirection).isOccupied) return false
+        }
       }
+
+      direction = testDirection
+
+      moveStatus = MoveStatusMoving
     }
-    
-    direction = testDirection
 
-    moveStatus = MoveStatusMoving
-
-    return true
+    isDestinationReached
   }
 }
 

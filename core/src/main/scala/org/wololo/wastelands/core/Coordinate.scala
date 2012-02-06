@@ -9,16 +9,16 @@ class Coordinate(var x: Int, var y: Int) {
   def !=(tuple: (Int, Int)) = !(this == tuple)
   def ==(coordinate: Coordinate) = x == coordinate.x && y == coordinate.y
   def !=(coordinate: Coordinate) = !(this == coordinate)
-  def +=(coordinate: Coordinate) = offset(coordinate.x, coordinate.y)
+  def +=(coordinate: Coordinate) { offset(coordinate.x, coordinate.y) }
   def +(coordinate: Coordinate): Coordinate = (x + coordinate.x, y + coordinate.y)
   def -(coordinate: Coordinate): Coordinate = (x - coordinate.x, y - coordinate.y)
 
-  def setTo(coordinate: Coordinate) = {
+  def setTo(coordinate: Coordinate) {
     x = coordinate.x
     y = coordinate.y
   }
 
-  def setTo(x: Int, y: Int) = {
+  def setTo(x: Int, y: Int) {
     this.x = x
     this.y = y
   }
