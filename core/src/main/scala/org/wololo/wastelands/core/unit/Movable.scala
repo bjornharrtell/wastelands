@@ -18,11 +18,8 @@ object Movable {
  */
 trait Movable extends Tickable {
   self: Unit =>
-
-  // TODO: Question: why is this needed? I want an explanation :)
-  // TODO: Answer: Why should an singleton objects members be accessible to a trait? It is not the same object. This is the difference from java with not having static members or methods.
+    
   import Movable._
-  import scala.math.random
 
   val Velocity = 0.04
   val MovePauseTicks = 15
@@ -31,7 +28,7 @@ trait Movable extends Tickable {
   tile.unit = Option(this)
 
   // randomize initial direction
-  var direction: Direction = (random*7+1).toInt
+  var direction: Direction = (math.random*7+1).toInt
   
   var moveDistance = 0.0
   var moveStatus = MoveStatusIdling
