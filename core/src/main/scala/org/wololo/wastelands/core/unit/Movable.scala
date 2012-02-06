@@ -119,7 +119,7 @@ trait Movable extends Tickable {
    * @return true if new move can be calculated false if obstructed or at destination
    */
   private def calc(): Boolean = {
-    var delta = destination - position
+    val delta = destination - position
     val isDestinationReached = delta == (0, 0)
     
     if(!isDestinationReached){

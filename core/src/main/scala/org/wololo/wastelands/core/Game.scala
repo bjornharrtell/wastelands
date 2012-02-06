@@ -68,10 +68,10 @@ class Game(val vmContext: VMContext) {
       }
     }
   }
-
+  
   def tick() {
-    units = for (unit <- units if unit.alive) yield unit.tick() //TODO: rewrite
-    projectiles = for (projectile <- projectiles if projectile.alive) yield projectile.tick()
+    units = units.withFilter(_.alive).map(_.tick())
+    projectiles = projectiles.withFilter(_.alive).map(_.tick())
 
     ticks += 1
   }
