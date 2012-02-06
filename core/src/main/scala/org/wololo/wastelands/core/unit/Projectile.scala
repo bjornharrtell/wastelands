@@ -6,19 +6,20 @@ class Projectile(game: Game, fromUnit: Unit, toUnit: Unit) {
   val fromPos = fromUnit.position.clone()
   val toPos = toUnit.position.clone()
 
-  val Ticks = 10
-  var ticks: Float = Ticks
-
   var distance = 0.0
+  var tagetDistance = toPos.distance(fromPos)
+  
+  val Ticks = 10 * tagetDistance
+  var ticks: Float = Ticks
   
   var alive = true
 
   def tick() : Projectile = {
     ticks -= 1
 
-    distance = 1.0 - (ticks / Ticks)
+    distance = (1 - (ticks / Ticks)) * tagetDistance
 
-    if (distance == 1.0) alive = false
+    if (distance == tagetDistance) alive = false
     
     this
   }
