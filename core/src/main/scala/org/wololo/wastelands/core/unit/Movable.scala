@@ -2,10 +2,10 @@ package org.wololo.wastelands.core.unit
 
 import org.wololo.wastelands.core._
 
-object Movable {
-  val MoveStatusIdling = 0
-  val MoveStatusMoving = 1
-  val MoveStatusPausing = 2
+object MoveStatus {
+  val Idling = 0
+  val Moving = 1
+  val Pausing = 2
 }
 
 /**
@@ -19,7 +19,7 @@ object Movable {
 trait Movable extends Tickable {
   self: Unit =>
     
-  import Movable._
+  import MoveStatus._
 
   val Velocity = 0.04
   val MovePauseTicks = 15
@@ -31,7 +31,7 @@ trait Movable extends Tickable {
   var direction: Direction = (math.random*7+1).toInt
   
   var moveDistance = 0.0
-  var moveStatus = MoveStatusIdling
+  var moveStatus = Idling
 
   // destination is the target position of the unit 
   private var destination = position.clone
@@ -42,9 +42,9 @@ trait Movable extends Tickable {
 
   override def tick() : Unit = {
     moveStatus match {
-      case MoveStatusMoving => tickMoving()
-      case MoveStatusPausing => tickPausing()
-      case MoveStatusIdling => tickIdling()
+      case Moving => tickMoving()
+      case Pausing => tickPausing()
+      case Idling => tickIdling()
     }
     super.tick()
   }
@@ -83,7 +83,7 @@ trait Movable extends Tickable {
     tile = map.tiles(position)
     tile.unit = Option(this)
 
-    moveStatus = MoveStatusPausing
+    moveStatus = Pausing
   }
 
   private def tickPausing() {
@@ -91,7 +91,7 @@ trait Movable extends Tickable {
 
     if (movePauseTicksCounter == 0) {
       movePauseTicksCounter = MovePauseTicks
-      moveStatus = MoveStatusIdling
+      moveStatus = Idling
       destination.setTo(nextDestination)
       if (calc()) map.removeShadeAround(position, true)
     }
@@ -137,7 +137,7 @@ trait Movable extends Tickable {
 
       direction = testDirection
 
-      moveStatus = MoveStatusMoving
+      moveStatus = Moving
     }
 
     isDestinationReached

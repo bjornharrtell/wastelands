@@ -1,10 +1,10 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.vmlayer.Sound
 
-object Combatable {
-  val AttackStatusPassive = 0
-  val AttackStatusReloading = 1
-  val AttackStatusReadyToFire = 2
+object CombatStatus {
+  val Passive = 0
+  val Reloading = 1
+  val ReadyToFire = 2
 }
 
 /**
@@ -21,7 +21,7 @@ object Combatable {
 trait Combatable extends Tickable {
   self: Unit =>
 
-  import Combatable._
+  import CombatStatus._
 
   def fireSound: Sound
   def explodeSound: Sound
@@ -37,33 +37,33 @@ trait Combatable extends Tickable {
   val Range = 2
   val FirePauseTicks = 120
   private var firePauseTicksCounter = FirePauseTicks
-  var attackStatus = AttackStatusPassive
+  var attackStatus = Passive
   var unitToAttack: Option[Unit] = None
 
   override def tick(): Unit = {
     attackStatus match {
-      case AttackStatusReadyToFire =>
+      case ReadyToFire =>
         if (isWithinRange && unitToAttack.get.alive) {
           shoot(unitToAttack.get)
         } else {
-          attackStatus = AttackStatusPassive
+          attackStatus = Passive
           if (!unitToAttack.get.alive) unitToAttack = None
         }
-      case AttackStatusReloading =>
+      case Reloading =>
         firePauseTicksCounter -= 1
 
         if (firePauseTicksCounter == 0) {
-          attackStatus = AttackStatusReadyToFire
+          attackStatus = ReadyToFire
           firePauseTicksCounter = FirePauseTicks
         }
-      case AttackStatusPassive if unitToAttack.isDefined =>
+      case Passive if unitToAttack.isDefined =>
         if (isWithinRange) {
-          //moveTo(position)
-          attackStatus = AttackStatusReadyToFire
+          moveTo(position)
+          attackStatus = ReadyToFire
         } else {
           moveTo(unitToAttack.get.position)
         }
-      case AttackStatusPassive =>
+      case Passive =>
     }
 
     super.tick()
@@ -82,7 +82,7 @@ trait Combatable extends Tickable {
   }
 
   def abortAttack() {
-    attackStatus = AttackStatusPassive
+    attackStatus = Passive
     unitToAttack = None
   }
 
@@ -94,7 +94,7 @@ trait Combatable extends Tickable {
     unit.takeDamage(2)
 
     if (unit.alive) {
-      attackStatus = AttackStatusReloading
+      attackStatus = Reloading
     } else {
       abortAttack()
     }
