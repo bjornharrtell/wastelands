@@ -7,10 +7,9 @@ class Projectile(game: Game, fromUnit: Unit, toUnit: Unit) {
   val toPos = toUnit.position.clone()
 
   var distance = 0.0
-  // TODO: fix this, I messed something up then introducing constant speed/distance
-  var tagetDistance = toPos.distance(fromPos)
+  var targetDistance = toPos.distance(fromPos)
   
-  val Ticks = 10 * tagetDistance
+  val Ticks = 10 * targetDistance
   var ticks: Float = Ticks
   
   var alive = true
@@ -18,9 +17,9 @@ class Projectile(game: Game, fromUnit: Unit, toUnit: Unit) {
   def tick() : Projectile = {
     ticks -= 1
 
-    distance = (1 - (ticks / Ticks)) * tagetDistance
+    distance = (1 - (ticks / Ticks)) * targetDistance
 
-    if (distance == tagetDistance) alive = false
+    if (distance >= targetDistance) alive = false
     
     this
   }
