@@ -13,6 +13,7 @@ abstract class Action(unit: Unit) extends Publisher with Subscriber {
   type Pub = Action
 
   unit.game.subscribe(this)
+  subscribe(unit)
 
   def notify(pub: Publisher, event: Event) {
     onTick
@@ -21,6 +22,7 @@ abstract class Action(unit: Unit) extends Publisher with Subscriber {
   def complete() {
     unit.game.removeSubscription(this)
     publish(new ActionCompleteEvent)
+    removeSubscriptions()
   }
   
   def onTick()

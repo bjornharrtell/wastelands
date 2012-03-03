@@ -6,6 +6,7 @@ import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.GameMap
 import org.wololo.wastelands.core.unit.Action
+import org.wololo.wastelands.core.unit.action.Turn
 
 class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
 
@@ -13,20 +14,18 @@ class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
     val direction = calcDirection(unit.game.map, unit.position)
 
     if (direction.isDefined) {
-      if (unit.direction != direction.get) {
-        val action = new org.wololo.wastelands.core.unit.action.Turn(unit, direction.get)
-        action.subscribe(unit)
-        return Option(action)
-      } else {
-        val action = new org.wololo.wastelands.core.unit.action.Move(unit)
-        action.subscribe(unit)
-        return Option(action)
-      }
+      if (unit.direction != direction.get)
+        return Option(new Turn(unit, direction.get))
+      else
+        return Option(new org.wololo.wastelands.core.unit.action.Move(unit))
     } else {
       return None
     }
   }
 
+  /**
+   * TODO: replace with pathfinding
+   */
   private def calcDirection(map: GameMap, position: Coordinate): Option[Direction] = {
     val delta = destination - position
 
