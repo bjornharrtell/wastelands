@@ -9,13 +9,16 @@ import org.wololo.wastelands.core.unit.Action
 
 class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
   
-  override def generateAction() {
+  override def generateAction() : Option[Action] = {
 	  val direction = calcDirection(unit.game.map, unit.position)
 	  
 	  if (direction.isDefined) {
 	    unit.direction = direction.get
 	    val action = new org.wololo.wastelands.core.unit.action.Move(unit)
 	    action.subscribe(unit)
+	    return Option(action)
+	  } else {
+	    return None
 	  }
 	}
   

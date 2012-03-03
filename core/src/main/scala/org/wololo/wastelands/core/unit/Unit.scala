@@ -20,11 +20,13 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   val ScreenBounds: Rect = (0, 0, 0, 0)
 
   var order: Order = new Guard(this)
+  var action: Option[Action] = None 
 
   val Velocity = 0.04
+  
+  // TODO: this is move action state, should it live here?
   var moveDistance = 0.0
 
-  // randomize initial direction
   var direction: Direction = (math.random * 7 + 1).toInt
 
   var alive = true
@@ -41,13 +43,17 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def onActionComplete() {
-    order.generateAction
+    action = order.generateAction
   }
   
-
+  def guard() {
+    
+  }
+  
   def moveTo(position: Coordinate) {
     order = new Move(this, position)
-    order.generateAction
+    if (action.isEmpty)
+      action = order.generateAction
   }
 
   def attack(target: Unit) {

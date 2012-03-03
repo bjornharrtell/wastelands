@@ -10,37 +10,41 @@ import org.wololo.wastelands.core.Event
 class Move(unit: Unit) extends Action(unit) {
 
   val map = unit.game.map
-  
-  init()
-  
-  def notify(pub: Publisher[Event], event: Event) {
-    unit.moveDistance += unit.Velocity
-    
-    if (unit.moveDistance >= 1) finish()
+
+  var pausing = false
+  val MovePauseTicks = 15
+  private var movePauseTicksCounter = MovePauseTicks
+
+  map.removeShadeAround(unit.position + unit.direction)
+
+  def onTick() {
+    if (pausing)
+      pauseTick
+    else if (unit.moveDistance >= 1)
+      finish
+    else
+      unit.moveDistance += unit.Velocity
   }
   
-  /**
-   * Stuff that needs to be done when move is initiated
-   */
-  private def init() {
-    map.removeShadeAround(unit.position+unit.direction)
+  private def pauseTick() {
+    movePauseTicksCounter -= 1
+    if (movePauseTicksCounter == 0) {
+      unit.game.removeSubscription(this)
+      publish(new ActionCompleteEvent)
+    }
   }
-  
-  /**
-   * Stuff that needs to be done when move is finished
-   */
+
   private def finish() {
     unit.moveDistance = 0
-    
+
     // deassociate with previous tile
     map.tiles(unit.position).unit = None
-    
+
     unit.position += unit.direction
-    
+
     // associate with new tile
     map.tiles(unit.position).unit = Option(unit)
-    
-    unit.game.removeSubscription(this)
-    publish(new ActionCompleteEvent)
+
+    pausing = true
   }
 }

@@ -14,5 +14,9 @@ abstract class Action(unit: Unit) extends Publisher[Event] with Subscriber[Event
 
   unit.game.subscribe(this)
 
-  def notify(pub: Publisher[Event], event: Event)
+  def notify(pub: Publisher[Event], event: Event) {
+    onTick
+  }
+  
+  def onTick()
 }
