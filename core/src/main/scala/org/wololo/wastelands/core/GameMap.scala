@@ -1,4 +1,5 @@
 package org.wololo.wastelands.core
+import org.wololo.wastelands.core.unit.Direction
 
 class GameMap {
   val Width = 64
@@ -183,6 +184,36 @@ class GameMap {
       removeShade((x, y - 2))
       removeShade((x + 2, y))
       removeShade((x - 2, y))
+    }
+  }
+  
+  /**
+   * TODO: replace with real pathfinding
+   */
+  def calcDirection(from: Coordinate, to: Coordinate): Option[Direction] = {
+    val delta = to - from
+
+    val isDestinationReached = delta == (0, 0)
+
+    if (!isDestinationReached) {
+      // calculate tile directions per axis
+      val dx = math.signum(delta.x)
+      val dy = math.signum(delta.y)
+
+      var direction = Direction(dx, dy)
+
+      // if direction is obstructed try left/right
+      if (tiles(from + direction).isOccupied) {
+        direction = direction.leftOf
+        if (tiles(from + direction).isOccupied) {
+          direction = direction.rightOf
+          if (tiles(from + direction).isOccupied) return None
+        }
+      }
+
+      return Option(direction)
+    } else {
+      return None
     }
   }
 }
