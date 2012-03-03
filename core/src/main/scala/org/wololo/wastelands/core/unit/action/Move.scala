@@ -1,11 +1,6 @@
 package org.wololo.wastelands.core.unit.action
 import org.wololo.wastelands.core.unit.Action
-import org.wololo.wastelands.core.Game
-import org.wololo.wastelands.core.TickEvent
 import org.wololo.wastelands.core.unit.Unit
-import org.wololo.wastelands.core.unit.ActionCompleteEvent
-import scala.collection.mutable.Publisher
-import org.wololo.wastelands.core.Event
 
 class Move(unit: Unit) extends Action(unit) {
 
@@ -19,16 +14,16 @@ class Move(unit: Unit) extends Action(unit) {
 
   def onTick() {
     if (pausing)
-      pauseTick
+      pauseTick()
     else if (unit.moveDistance >= 1)
-      finish
+      finish()
     else
       unit.moveDistance += unit.Velocity
   }
   
   private def pauseTick() {
     movePauseTicksCounter -= 1
-    if (movePauseTicksCounter == 0) complete
+    if (movePauseTicksCounter == 0) complete()
   }
 
   private def finish() {

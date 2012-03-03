@@ -1,7 +1,6 @@
 package org.wololo.wastelands.core.unit
 
 import org.wololo.wastelands.core._
-import org.wololo.wastelands.vmlayer.Sound
 import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
 import org.wololo.wastelands.core.unit.order.Guard
@@ -39,9 +38,9 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def onActionComplete() {
-    action = order.generateAction
+    action = order.generateAction()
     
-    if (action.isEmpty) guard
+    if (action.isEmpty) guard()
   }
   
   def guard() {
@@ -51,7 +50,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def moveTo(position: Coordinate) {
     order = new Move(this, position)
     if (action.isEmpty)
-      action = order.generateAction
+      action = order.generateAction()
   }
 
   def attack(target: Unit) {

@@ -3,7 +3,6 @@ package org.wololo.wastelands.core.unit.action
 import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Action
 import org.wololo.wastelands.core.unit.Direction
-import org.wololo.wastelands.core.unit.ActionCompleteEvent
 
 class Turn(unit: Unit, target: Direction) extends Action(unit: Unit) {
 
@@ -13,9 +12,9 @@ class Turn(unit: Unit, target: Direction) extends Action(unit: Unit) {
 
   def onTick() {
     if (firstTick)
-      turn
+      turn()
     else
-      pauseTick
+      pauseTick()
   }
 
   private def turn() {
@@ -25,7 +24,7 @@ class Turn(unit: Unit, target: Direction) extends Action(unit: Unit) {
 
   private def pauseTick() {
     turnPauseTicksCounter -= 1
-    if (turnPauseTicksCounter == 0) complete
+    if (turnPauseTicksCounter == 0) complete()
   }
 
 }

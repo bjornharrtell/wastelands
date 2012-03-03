@@ -11,15 +11,15 @@ import org.wololo.wastelands.core.unit.action.Turn
 class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
 
   override def generateAction(): Option[Action] = {
-    val direction = calcDirection(unit.game.map, unit.position)
+    val directionOption = calcDirection(unit.game.map, unit.position)
 
-    if (direction.isDefined) {
-      if (unit.direction != direction.get)
-        return Option(new Turn(unit, direction.get))
-      else
-        return Option(new org.wololo.wastelands.core.unit.action.Move(unit))
-    } else {
-      return None
+    directionOption match {
+      case Some(direction) if (direction != unit.direction) =>
+        Option(new Turn(unit, direction))
+      case Some(direction) =>
+        Option(new org.wololo.wastelands.core.unit.action.Move(unit))
+      case None =>
+        None
     }
   }
 
@@ -47,9 +47,9 @@ class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
         }
       }
 
-      return Option(direction)
+      Option(direction)
     } else {
-      return None
+      None
     }
   }
 }

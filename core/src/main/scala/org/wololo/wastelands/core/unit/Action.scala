@@ -1,6 +1,4 @@
 package org.wololo.wastelands.core.unit
-import org.wololo.wastelands.core.Game
-import org.wololo.wastelands.core.TickEvent
 import org.wololo.wastelands.core.Event
 import org.wololo.wastelands.core.Subscriber
 import org.wololo.wastelands.core.Publisher
@@ -16,7 +14,7 @@ abstract class Action(unit: Unit) extends Publisher with Subscriber {
   subscribe(unit)
 
   def notify(pub: Publisher, event: Event) {
-    onTick
+    onTick()
   }
   
   def complete() {
