@@ -35,6 +35,9 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   require(dy >= -1 && dy < 2)
 
   import Direction._
+  
+  def ==(direction: Direction) = this.toInt == direction.toInt
+  def !=(direction: Direction) = !(this == direction)
 
   def leftOf: Direction = {
     if (this.toInt == 0) 7 else this.toInt - 1
@@ -44,8 +47,9 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
     if (this.toInt == 7) 0 else this.toInt + 1
   }
   
-  def turnTowards(direction: Direction) {
-    if (this.toInt > direction.toInt) {
+  def turnTowards(target: Direction) : Direction = {
+    // TODO: fix index wrap problem causing direction to move the long way towards the target
+    if (this.toInt < target.toInt) {
       rightOf
     } else {
       leftOf

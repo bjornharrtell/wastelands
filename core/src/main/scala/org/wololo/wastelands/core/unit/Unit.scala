@@ -6,16 +6,14 @@ import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
 import org.wololo.wastelands.core.unit.order.Guard
 
-
 /**
- * Base combined implementation for units
- *
- * This class only contains helper information for renderer and collission detection.
- * Mixins provide base implementations for combined unit logic.
+ * Base abstract implementation for units
  */
 abstract class Unit(val game: Game, val player: Int, val position: Coordinate) extends Selectable with Subscriber {
   var isOnScreen = false
   val ScreenBounds: Rect = (0, 0, 0, 0)
+  
+  game.map.tiles(position).unit = Option(this)
 
   var order: Order = new Guard(this)
   var action: Option[Action] = None 
@@ -36,16 +34,18 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def notify(pub: Publisher, event: Event) {
     event match {
-      case e: ActionCompleteEvent => onActionComplete()
+      case x: ActionCompleteEvent => onActionComplete()
     }
   }
 
   def onActionComplete() {
     action = order.generateAction
+    
+    if (action.isEmpty) guard
   }
   
   def guard() {
-    
+    order = new Guard(this)
   }
   
   def moveTo(position: Coordinate) {

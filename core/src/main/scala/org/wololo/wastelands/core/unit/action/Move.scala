@@ -28,10 +28,7 @@ class Move(unit: Unit) extends Action(unit) {
   
   private def pauseTick() {
     movePauseTicksCounter -= 1
-    if (movePauseTicksCounter == 0) {
-      unit.game.removeSubscription(this)
-      publish(new ActionCompleteEvent)
-    }
+    if (movePauseTicksCounter == 0) complete
   }
 
   private def finish() {

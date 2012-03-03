@@ -18,5 +18,10 @@ abstract class Action(unit: Unit) extends Publisher with Subscriber {
     onTick
   }
   
+  def complete() {
+    unit.game.removeSubscription(this)
+    publish(new ActionCompleteEvent)
+  }
+  
   def onTick()
 }

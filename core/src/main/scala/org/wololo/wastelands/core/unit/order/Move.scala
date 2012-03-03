@@ -8,26 +8,31 @@ import org.wololo.wastelands.core.GameMap
 import org.wololo.wastelands.core.unit.Action
 
 class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
-  
-  override def generateAction() : Option[Action] = {
-	  val direction = calcDirection(unit.game.map, unit.position)
-	  
-	  if (direction.isDefined) {
-	    unit.direction = direction.get
-	    val action = new org.wololo.wastelands.core.unit.action.Move(unit)
-	    action.subscribe(unit)
-	    return Option(action)
-	  } else {
-	    return None
-	  }
-	}
-  
+
+  override def generateAction(): Option[Action] = {
+    val direction = calcDirection(unit.game.map, unit.position)
+
+    if (direction.isDefined) {
+      if (unit.direction != direction.get) {
+        val action = new org.wololo.wastelands.core.unit.action.Turn(unit, direction.get)
+        action.subscribe(unit)
+        return Option(action)
+      } else {
+        val action = new org.wololo.wastelands.core.unit.action.Move(unit)
+        action.subscribe(unit)
+        return Option(action)
+      }
+    } else {
+      return None
+    }
+  }
+
   private def calcDirection(map: GameMap, position: Coordinate): Option[Direction] = {
     val delta = destination - position
-    
+
     val isDestinationReached = delta == (0, 0)
 
-    if(!isDestinationReached){
+    if (!isDestinationReached) {
       // calculate tile directions per axis
       val dx = math.signum(delta.x)
       val dy = math.signum(delta.y)
@@ -42,7 +47,7 @@ class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
           if (map.tiles(position + direction).isOccupied) return None
         }
       }
-      
+
       return Option(direction)
     } else {
       return None
