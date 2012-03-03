@@ -6,7 +6,7 @@ class GameMap {
 
   val Bounds: Rect = (0, 0, Width, Height)
 
-  val tiles = (0 until Width * Height).toArray.map(_ => new Tile)
+  val tiles = Array.fill(Width * Height){ new Tile }
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
     3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,

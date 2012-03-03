@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wololo.wastelands</groupId>
-	<artifactId>jvm</artifactId>
+	<artifactId>incubator</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>Wastelands JVM client</name>
+	<name>Wastelands Incubator</name>
 
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
@@ -13,6 +13,22 @@
 		<encoding>UTF-8</encoding>
 		<scala.version>2.9.1</scala.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-Tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>Scala-Tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<dependencies>
 		<dependency>
