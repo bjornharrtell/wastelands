@@ -5,4 +5,5 @@ import org.wololo.wastelands.core.unit.Order
 
 class Guard(unit: Unit) extends Order(unit: Unit) {
 
+  unit.map.subscribe(unit)
 }

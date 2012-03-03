@@ -3,9 +3,7 @@ import org.wololo.wastelands.core.Event
 import org.wololo.wastelands.core.Subscriber
 import org.wololo.wastelands.core.Publisher
 
-class ActionCompleteEvent extends Event {
-
-}
+class ActionCompleteEvent extends Event
 
 abstract class Action(unit: Unit) extends Publisher with Subscriber {
   type Pub = Action

@@ -4,9 +4,7 @@ import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 
-class TickEvent extends Event {
-  
-}
+class TickEvent extends Event
 
 class Game(val vmContext: VMContext) extends Publisher {
   type Pub = Game
@@ -33,6 +31,10 @@ class Game(val vmContext: VMContext) extends Publisher {
     map.removeShadeAround(unit.position)
   }
 
+  for (unit <- units) {
+    map.subscribe(unit)
+  }
+  
   var projectiles = ArrayBuffer[Projectile]()
 
   def run() {

@@ -16,7 +16,7 @@ class Move(unit: Unit) extends Action(unit) {
     if (pausing)
       pauseTick()
     else if (unit.moveDistance >= 1)
-      finish()
+      moveTileStep()
     else
       unit.moveDistance += unit.Velocity
   }
@@ -25,18 +25,11 @@ class Move(unit: Unit) extends Action(unit) {
     pauseTicksCounter -= 1
     if (pauseTicksCounter == 0) complete()
   }
-
-  private def finish() {
-    unit.moveDistance = 0
-
-    // deassociate with previous tile
-    map.tiles(unit.position).unit = None
-
-    unit.position += unit.direction
-
-    // associate with new tile
-    map.tiles(unit.position).unit = Option(unit)
-
+  
+  private def moveTileStep() {
+    unit.moveTileStep()
     pausing = true
   }
+
+  
 }

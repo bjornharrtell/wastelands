@@ -24,7 +24,7 @@ class Fire(unit: Unit, target: Unit) extends Action(unit) {
     
     unit.game.projectiles += new Projectile(unit.game, unit, target)
     
-    target.damage(2)
+    target.damage(unit.AttackStrength)
   }
 
   private def pauseTick() {

@@ -1,7 +1,13 @@
 package org.wololo.wastelands.core
+import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Direction
+import org.wololo.wastelands.core.unit.TileStepEvent
 
-class GameMap {
+class TileOccupationEvent(val tile: Tile, val unit: Unit) extends Event
+
+class GameMap extends Publisher with Subscriber {
+  type Pub = GameMap
+  
   val Width = 64
   val Height = 64
 
@@ -215,5 +221,18 @@ class GameMap {
     } else {
       return None
     }
+  }
+  
+  def notify(pub: Publisher, event: Event) {
+    event match {
+      case x: TileStepEvent => onTileStep(x)
+    }
+  }
+  
+  def onTileStep(e: TileStepEvent) {
+    tiles(e.from).unit = None
+    tiles(e.to).unit = Option(e.unit)
+    
+    publish(new TileOccupationEvent(tiles(e.to), e.unit))
   }
 }
