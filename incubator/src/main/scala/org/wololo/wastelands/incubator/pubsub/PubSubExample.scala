@@ -18,33 +18,42 @@ object PubSubExample extends App {
 /**
  * Events
  */
-class WorldEvent
+class ActionEvent
 
-class BeginningEvent extends WorldEvent
+class WorldCreateEvent extends ActionEvent
 
-class EndEvent extends WorldEvent
+class WorldEndEvent extends ActionEvent
 
-class World extends Publisher[WorldEvent] {
-  type Pub = World
+class MuuEvent extends ActionEvent
+
+class ActionEventPublisher extends Publisher[ActionEvent] {
+  type Pub = ActionEventPublisher
+}
+
+class World extends ActionEventPublisher {
 
   def begin() {
-    System.out.println("This is the beginning of the world.");
-    publish(new BeginningEvent);
+    System.out.println("This is the beginning of the world.")
+    publish(new WorldCreateEvent)
 
-    for (val i <- 0 until 10000) {
+ /*   for(i <- 1 until 100000){
 
+    }*/
+    this.synchronized{
+      wait(10000)
     }
 
-    System.out.println("This is the end of the world.");
-    publish(new EndEvent);
+    System.out.println("This is the end of the world.")
+    publish(new WorldEndEvent)
   }
 }
 
-class Cow extends Subscriber[WorldEvent, World] {
-  def notify(pub: World, event: WorldEvent): Unit = {
+class Cow extends Subscriber[ActionEvent, ActionEventPublisher] {
+  def notify(pub: ActionEventPublisher, event: ActionEvent) {
     event match {
-      case be: BeginningEvent => System.out.println("Cow realizes that it's experiencing the beginning of the world.")
-      case ee: EndEvent => System.out.println("Cow realizes that it's experiencing the end of the world.")
+      case be: WorldCreateEvent => System.out.println("Cow realizes that it's experiencing the beginning of the world.")
+      case ee: WorldEndEvent => System.out.println("Cow realizes that it's experiencing the end of the world.")
+      case me: MuuEvent => System.out.println("Muuuuuu!")
     }
   }
 }
