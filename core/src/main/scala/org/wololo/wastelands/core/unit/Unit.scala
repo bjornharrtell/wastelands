@@ -4,8 +4,6 @@ import org.wololo.wastelands.core._
 import org.wololo.wastelands.vmlayer.Sound
 import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
-import scala.collection.mutable.Subscriber
-import scala.collection.mutable.Publisher
 import org.wololo.wastelands.core.unit.order.Guard
 
 
@@ -15,7 +13,7 @@ import org.wololo.wastelands.core.unit.order.Guard
  * This class only contains helper information for renderer and collission detection.
  * Mixins provide base implementations for combined unit logic.
  */
-abstract class Unit(val game: Game, val player: Int, val position: Coordinate) extends Selectable with Subscriber[Event, Publisher[Event]] {
+abstract class Unit(val game: Game, val player: Int, val position: Coordinate) extends Selectable with Subscriber {
   var isOnScreen = false
   val ScreenBounds: Rect = (0, 0, 0, 0)
 
@@ -36,7 +34,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   val Range = 2
 
-  def notify(pub: Publisher[Event], event: Event) {
+  def notify(pub: Publisher, event: Event) {
     event match {
       case e: ActionCompleteEvent => onActionComplete()
     }

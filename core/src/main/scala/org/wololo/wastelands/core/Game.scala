@@ -3,13 +3,12 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.mutable.Publisher
 
 class TickEvent extends Event {
   
 }
 
-class Game(val vmContext: VMContext) extends Publisher[Event] {
+class Game(val vmContext: VMContext) extends Publisher {
   type Pub = Game
   
   var running = false
