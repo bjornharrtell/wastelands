@@ -4,6 +4,7 @@ import org.wololo.wastelands.core._
 import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
 import org.wololo.wastelands.core.unit.order.Guard
+import java.io.File
 
 /**
  * Base abstract implementation for units
@@ -18,6 +19,9 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   var action: Option[Action] = None 
 
   val Velocity = 0.04
+
+  val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
+  val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
   
   // TODO: this is move action state, should it live here?
   var moveDistance = 0.0
@@ -66,10 +70,10 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def kill() {
-    //tile.unit = None
+    game.map.tiles(position).unit = None
     if (!explode && !exploding) {
       explode = true
-      //explodeSound.play()
+      explodeSound.play()
     }
   }
 }

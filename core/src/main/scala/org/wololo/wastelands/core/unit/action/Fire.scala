@@ -20,6 +20,8 @@ class Fire(unit: Unit, target: Unit) extends Action(unit) {
   private def fire() {
     firstTick = false
     
+    unit.fireSound.play()
+    
     unit.game.projectiles += new Projectile(unit.game, unit, target)
     
     target.damage(2)
