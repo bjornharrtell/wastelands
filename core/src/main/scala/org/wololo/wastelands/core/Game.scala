@@ -79,7 +79,7 @@ class Game(val vmContext: VMContext) extends Publisher {
     publish(new TickEvent);
     
     //units = units.withFilter(_.alive).map(_.tick)
-    //projectiles = projectiles.withFilter(_.alive).map(_.tick)
+    projectiles = projectiles.withFilter(_.alive).map(_.tick)
 
     ticks += 1
   }

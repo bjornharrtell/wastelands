@@ -7,8 +7,8 @@ class Move(unit: Unit) extends Action(unit) {
   val map = unit.game.map
 
   var pausing = false
-  val MovePauseTicks = 15
-  private var movePauseTicksCounter = MovePauseTicks
+  val PauseTicks = 15
+  private var pauseTicksCounter = PauseTicks
 
   map.removeShadeAround(unit.position + unit.direction)
 
@@ -22,8 +22,8 @@ class Move(unit: Unit) extends Action(unit) {
   }
   
   private def pauseTick() {
-    movePauseTicksCounter -= 1
-    if (movePauseTicksCounter == 0) complete()
+    pauseTicksCounter -= 1
+    if (pauseTicksCounter == 0) complete()
   }
 
   private def finish() {

@@ -55,5 +55,21 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def attack(target: Unit) {
     order = new Attack(this, target)
+    if (action.isEmpty)
+      action = order.generateAction()
+  }
+  
+  def damage(damage: Int) {
+    hp -= damage
+
+    if (hp <= 0) kill()
+  }
+
+  def kill() {
+    //tile.unit = None
+    if (!explode && !exploding) {
+      explode = true
+      //explodeSound.play()
+    }
   }
 }

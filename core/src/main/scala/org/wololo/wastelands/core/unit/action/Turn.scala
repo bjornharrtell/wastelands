@@ -4,11 +4,11 @@ import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Action
 import org.wololo.wastelands.core.unit.Direction
 
-class Turn(unit: Unit, target: Direction) extends Action(unit: Unit) {
+class Turn(unit: Unit, target: Direction) extends Action(unit) {
 
   var firstTick = true
-  val TurnPauseTicks = 15
-  private var turnPauseTicksCounter = TurnPauseTicks
+  val PauseTicks = 15
+  private var pauseTicksCounter = PauseTicks
 
   def onTick() {
     if (firstTick)
@@ -23,8 +23,8 @@ class Turn(unit: Unit, target: Direction) extends Action(unit: Unit) {
   }
 
   private def pauseTick() {
-    turnPauseTicksCounter -= 1
-    if (turnPauseTicksCounter == 0) complete()
+    pauseTicksCounter -= 1
+    if (pauseTicksCounter == 0) complete()
   }
 
 }
