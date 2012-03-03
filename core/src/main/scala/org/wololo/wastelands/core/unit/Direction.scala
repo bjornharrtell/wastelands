@@ -43,4 +43,16 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   def rightOf: Direction = {
     if (this.toInt == 7) 0 else this.toInt + 1
   }
+  
+  def turnTowards(direction: Direction) {
+    if (this.toInt > direction.toInt) {
+      rightOf
+    } else {
+      leftOf
+    }
+  }
+  
+  override def clone: Direction = {
+    new Direction(dx, dy)
+  }
 }

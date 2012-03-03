@@ -17,6 +17,8 @@ object CombatStatus {
  *   Passive if target unit is dead or out of range.
  *   Reloading after shooting target.
  * When Reloading the unit will proceed to ReadyToFire after tick countdown.
+ * 
+ * @deprecated in favor of order/action stuff
  */
 trait Combatable extends Tickable {
   self: Unit =>
@@ -26,15 +28,10 @@ trait Combatable extends Tickable {
   def fireSound: Sound
   def explodeSound: Sound
 
-  var alive = true
-  var hp = 10
 
-  var explode = false
-  var exploding = false
 
   var hasFired = false
-
-  val Range = 2
+  
   val FirePauseTicks = 120
   private var firePauseTicksCounter = FirePauseTicks
   var attackStatus = Passive
@@ -58,15 +55,15 @@ trait Combatable extends Tickable {
         }
       case Passive if unitToAttack.isDefined =>
         if (isWithinRange) {
-          moveTo(position)
+          //moveTo(position)
           attackStatus = ReadyToFire
         } else {
-          moveTo(unitToAttack.get.position)
+          //moveTo(unitToAttack.get.position)
         }
       case Passive =>
     }
 
-    super.tick()
+    super.tick
   }
 
   def isWithinRange: Boolean = {
@@ -86,12 +83,12 @@ trait Combatable extends Tickable {
     unitToAttack = None
   }
 
-  def shoot(unit: Unit with Combatable) {
+  def shoot(unit: Unit) {
     fireSound.play()
 
     game.projectiles += new Projectile(game, this, unit)
 
-    unit.takeDamage(2)
+    //unit.takeDamage(2)
 
     if (unit.alive) {
       attackStatus = Reloading
@@ -107,7 +104,7 @@ trait Combatable extends Tickable {
   }
 
   def kill() {
-    tile.unit = None
+    //tile.unit = None
     if (!explode && !exploding) {
       explode = true
       explodeSound.play()

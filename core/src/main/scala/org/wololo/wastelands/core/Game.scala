@@ -5,8 +5,13 @@ import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Publisher
 
-class Game(val vmContext: VMContext) {
+class TickEvent extends Event {
+  
+}
 
+class Game(val vmContext: VMContext) extends Publisher[Event] {
+  type Pub = Game
+  
   var running = false
   var ticks = 0
 
@@ -72,8 +77,10 @@ class Game(val vmContext: VMContext) {
   }
   
   def tick() {
-    units = units.withFilter(_.alive).map(_.tick)
-    projectiles = projectiles.withFilter(_.alive).map(_.tick)
+    publish(new TickEvent);
+    
+    //units = units.withFilter(_.alive).map(_.tick)
+    //projectiles = projectiles.withFilter(_.alive).map(_.tick)
 
     ticks += 1
   }
@@ -103,7 +110,6 @@ class Game(val vmContext: VMContext) {
     if (selectedUnit.isDefined) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + y)
-      selectedUnit.get.abortAttack()
       selectedUnit.get.moveTo(mx, my)
     }
   }

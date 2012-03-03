@@ -65,7 +65,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     offset += screen.mapPixelOffset
 
     // if unit is moving, add move distance as pixels to offset
-    if (unit.moveStatus == MoveStatus.Moving) {
+    if (unit.moveDistance > 0.0) {
       offset.x += (screen.TileSize * unit.direction.x * unit.moveDistance).toInt
       offset.y += (screen.TileSize * unit.direction.y * unit.moveDistance).toInt
     }

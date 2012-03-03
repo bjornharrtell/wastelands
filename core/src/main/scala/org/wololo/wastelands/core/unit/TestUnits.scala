@@ -5,12 +5,12 @@ import java.io.File
 
 class TestUnit1(game: Game, player: Int, coordinate: Coordinate) extends Unit(game, player, coordinate) {
   override val Velocity = 0.03
-  override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
-  override val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
+  //override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
+  //override val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
 }
 
 class TestUnit2(game: Game, player: Int, coordinate: Coordinate) extends Unit(game, player, coordinate) {
   override val Velocity = 0.06
-  override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
-  override val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
+  //override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
+  //override val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
 }

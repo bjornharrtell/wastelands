@@ -15,6 +15,8 @@ object MoveStatus {
  * When idle, a movable unit will progress to moving state when nextDestination isn't equal to destination.
  * When moving a movable unit will initiate, tick and finish a move from one tile to an adjacent tile then progress to pausing state.
  * When pausing a movable unit will do nothing for a defined amount of ticks then progress to idle state.
+ * 
+ * @deprecated in favor of order/action stuff
  */
 trait Movable extends Tickable {
   self: Unit =>
@@ -27,9 +29,6 @@ trait Movable extends Tickable {
   var tile: Tile = map.tiles(position)
   tile.unit = Option(this)
 
-  // randomize initial direction
-  var direction: Direction = (math.random*7+1).toInt
-  
   var moveDistance = 0.0
   var moveStatus = Idling
 
@@ -41,11 +40,13 @@ trait Movable extends Tickable {
   private var movePauseTicksCounter = MovePauseTicks
 
   override def tick() : Unit = {
+
     moveStatus match {
       case Moving => tickMoving()
       case Pausing => tickPausing()
       case Idling => tickIdling()
     }
+
     super.tick()
   }
 
@@ -105,6 +106,17 @@ trait Movable extends Tickable {
   }
 
   def moveTo(coordinate: Coordinate) {
+    val delta = coordinate - position
+    val isDestinationReached = delta == (0, 0)
+    
+    if(!isDestinationReached){
+      // calculate tile directions per axis
+      val dx = math.signum(delta.x)
+      val dy = math.signum(delta.y)
+
+      var targetDirection = Direction(dx, dy)
+    }
+    
     nextDestination.setTo(coordinate)
   }
 
