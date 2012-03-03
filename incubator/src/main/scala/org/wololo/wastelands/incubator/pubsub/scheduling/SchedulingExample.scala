@@ -1,8 +1,10 @@
 package org.wololo.wastelands.incubator.scheduling
 
 import compat.Platform
-import java.util.concurrent.{TimeUnit, Executors}
 import org.wololo.wastelands.incubator.pubsub._
+import java.util.concurrent.{ScheduledExecutorService, TimeUnit, Executors}
+import scheduling.oxbow.{Interval, Schedules, FixedDelayStrategy}
+import org.wololo.wastelands.incubator.pubsub.scheduling.oxbow._
 
 object SchedulingExample extends App {
   override def main(args: Array[String]) {
@@ -25,18 +27,20 @@ object SchedulingExample extends App {
   }
 }
 
-//TODO: find out how to use a real scheduler so we don't need to spawn a new thread for each event.
-object EventScheduler extends ActionEventPublisher {
+object EventScheduler extends ActionEventPublisher with Intervals with Schedules with JavaCalendars with FixedRateStrategy {
+
+  val nThreads = 5
 
   def publishMuu = publish(new MuuEvent)
 
   def scheduleActionEvent(actionEvent: ActionEvent, delayedInMs: Long) {
-    new Thread(new Runnable() {
+    schedule(publishMuu) onceIn delayedInMs.millis
+    
+    /*new Thread(new Runnable() {
       override def run() {
           Thread.sleep(delayedInMs)
           publish(actionEvent)
       }
-    }).start();
+    }).start();*/
   }
-
 }
