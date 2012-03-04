@@ -77,8 +77,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def moveTo(position: Coordinate) {
     order = new Move(this, position)
-    if (action.isEmpty)
-      action = order.generateAction()
+    if (action.isEmpty) action = order.generateAction()
   }
 
   def moveTileStep() {
@@ -93,8 +92,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def attack(target: Unit) {
     order = new Attack(this, target)
-    if (action.isEmpty)
-      action = order.generateAction()
+    if (action.isEmpty) action = order.generateAction()
   }
 
   def damage(damage: Int) {

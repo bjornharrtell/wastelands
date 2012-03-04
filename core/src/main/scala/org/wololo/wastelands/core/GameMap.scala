@@ -94,9 +94,7 @@ class GameMap extends Publisher with Subscriber {
 
     val tile = tiles(coordinate)
 
-    if (tile.baseType != TileTypes.Base) {
-      tile.subType = calcSubType(coordinate, tile.baseType)
-    }
+    if (tile.baseType != TileTypes.Base) tile.subType = calcSubType(coordinate, tile.baseType)
   }
 
   /**
@@ -107,9 +105,7 @@ class GameMap extends Publisher with Subscriber {
 
     val tile = tiles(coordinate)
 
-    if (tile.shade) {
-      tile.shadeSubType = calcShadeSubType(coordinate)
-    }
+    if (tile.shade) tile.shadeSubType = calcShadeSubType(coordinate)
   }
 
   private def calcSubType(coordinate: Coordinate, baseType: Int): Int = {
@@ -158,26 +154,16 @@ class GameMap extends Publisher with Subscriber {
 
     tiles(coordinate).shade = false
 
-    // TODO: fix bug with surroundingCoordinates causing problems here, seems it's not the correct surrounding coordinates?
-    surroundingCoordinates(coordinate).foreach(_ => makeShade(_))
+    for (coordinate <- surroundingCoordinates(coordinate)) makeShade(coordinate)
   }
 
   def removeShadeAround(coordinate: Coordinate, extra: Boolean = false) {
     removeShade(coordinate)
-
-    var x = coordinate.x
-    var y = coordinate.y
-
-    removeShade((x, y - 1))
-    removeShade((x + 1, y - 1))
-    removeShade((x + 1, y))
-    removeShade((x + 1, y + 1))
-    removeShade((x, y + 1))
-    removeShade((x - 1, y + 1))
-    removeShade((x - 1, y))
-    removeShade((x - 1, y - 1))
+    for (coordinate <- surroundingCoordinates(coordinate)) removeShade(coordinate)
 
     if (extra) {
+      var x = coordinate.x
+      var y = coordinate.y
       removeShade((x, y + 2))
       removeShade((x, y - 2))
       removeShade((x + 2, y))
@@ -226,12 +212,13 @@ class GameMap extends Publisher with Subscriber {
     val array = new ArrayBuffer[Coordinate]
 
     for {
-      y <- position.y - range until position.y + range;
-      x <- position.x - range until position.x + range
+      y <- position.y - range to position.y + range;
+      x <- position.x - range to position.x + range
     } {
       val coordinate = (x,y)
       if (Bounds.contains(coordinate) && coordinate != position) array += coordinate
     }
+    
     array
   }
   
