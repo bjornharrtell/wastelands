@@ -26,12 +26,6 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   map.tiles(position).unit = Option(this)
 
   private var _order: Order = new Guard(this)
-  def order = _order
-  def order_=(order: Order): scala.Unit = {
-    _order = order
-    publish(new OrderEvent())
-  }
-  
   var action: Option[Action] = None 
 
   val Velocity = 0.04
@@ -50,6 +44,13 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
       case x: ActionCompleteEvent => onActionComplete()
       case x: TileOccupationEvent => onTileOccupation(x)
     }
+  }
+  
+  def order = _order
+  
+  def order_=(order: Order): scala.Unit = {
+    _order = order
+    publish(new OrderEvent())
   }
 
   def onActionComplete() {
