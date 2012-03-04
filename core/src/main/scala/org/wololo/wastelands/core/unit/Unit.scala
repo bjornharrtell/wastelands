@@ -7,7 +7,7 @@ import org.wololo.wastelands.core.unit.order.Guard
 import java.io.File
 
 class TileStepEvent(val unit: Unit, val from: Coordinate, val to: Coordinate) extends Event
-class OrderEvent() extends Event
+class OrderEvent extends Event
 
 /**
  * Base abstract implementation for units
