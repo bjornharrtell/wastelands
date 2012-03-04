@@ -13,6 +13,8 @@ class OrderEvent() extends Event
  * Base abstract implementation for units
  */
 abstract class Unit(val game: Game, val player: Int, val position: Coordinate) extends Selectable with Publisher with Subscriber {
+  type Pub = Unit
+  
   val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
   val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
   
@@ -27,7 +29,6 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def order = _order
   def order_=(order: Order): scala.Unit = {
     _order = order
-    
     publish(new OrderEvent())
   }
   
@@ -82,8 +83,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
     position += direction
     
-    // TODO: publish events does not reach map?! hack workaround
-    map.onTileStep(new TileStepEvent(this, oldPosition, position))
+    publish(new TileStepEvent(this, oldPosition, position))
   }
 
   def attack(target: Unit) {

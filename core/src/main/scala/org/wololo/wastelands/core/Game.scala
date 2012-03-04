@@ -32,7 +32,7 @@ class Game(val vmContext: VMContext) extends Publisher {
   }
 
   for (unit <- units) {
-    map.subscribe(unit)
+    unit.subscribe(map)
   }
   
   var projectiles = ArrayBuffer[Projectile]()

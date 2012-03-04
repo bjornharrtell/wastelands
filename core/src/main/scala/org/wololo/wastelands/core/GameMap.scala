@@ -226,6 +226,7 @@ class GameMap extends Publisher with Subscriber {
   def notify(pub: Publisher, event: Event) {
     event match {
       case x: TileStepEvent => onTileStep(x)
+      case _ =>
     }
   }
   
