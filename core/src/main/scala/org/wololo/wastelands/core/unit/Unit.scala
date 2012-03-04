@@ -14,19 +14,19 @@ class OrderEvent() extends Event
  */
 abstract class Unit(val game: Game, val player: Int, val position: Coordinate) extends Selectable with Publisher with Subscriber {
   type Pub = Unit
-  
+
   val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
   val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
-  
+
   var isOnScreen = false
   val ScreenBounds: Rect = (0, 0, 0, 0)
-  
+
   val map = game.map
-  
+
   map.tiles(position).unit = Option(this)
 
   private var _order: Order = new Guard(this)
-  var action: Option[Action] = None 
+  var action: Option[Action] = None
 
   val Velocity = 0.04
   var moveDistance = 0.0
@@ -41,49 +41,53 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def notify(pub: Publisher, event: Event) {
     event match {
-      case x: ActionCompleteEvent => onActionComplete()
-      case x: TileOccupationEvent => onTileOccupation(x)
+      case e: ActionCompleteEvent => onActionComplete()
+      case e: TileOccupationEvent => onTileOccupation(e)
     }
   }
-  
+
   def order = _order
-  
+
   def order_=(order: Order): scala.Unit = {
+    _order.dispose()
     _order = order
     publish(new OrderEvent())
   }
 
   def onActionComplete() {
     action = order.generateAction()
-    
+
     if (action.isEmpty) guard()
   }
-  
+
   def onTileOccupation(e: TileOccupationEvent) {
-    // TODO: should only react on events within range
-    if (e.unit.player != this.player)
-      order = new Attack(this, e.unit)
+    order = new Attack(this, e.unit)
   }
-  
+
   def guard() {
+    for (tile <- map.surroundingTiles(position, Range)) {
+      tile.unit match {
+        case Some(unit) if unit.player != player => return attack(tile.unit.get)
+        case _ =>
+      }
+    }
+
     order = new Guard(this)
-    
-    // TODO: must check tiles within range for enemies and attack
   }
-  
+
   def moveTo(position: Coordinate) {
     order = new Move(this, position)
     if (action.isEmpty)
       action = order.generateAction()
   }
-  
+
   def moveTileStep() {
     moveDistance = 0.0
-    
+
     val oldPosition = position.clone()
 
     position += direction
-    
+
     publish(new TileStepEvent(this, oldPosition, position))
   }
 
@@ -92,7 +96,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
     if (action.isEmpty)
       action = order.generateAction()
   }
-  
+
   def damage(damage: Int) {
     hp -= damage
 

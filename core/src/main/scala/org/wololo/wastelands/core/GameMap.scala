@@ -2,18 +2,19 @@ package org.wololo.wastelands.core
 import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.unit.TileStepEvent
+import scala.collection.mutable.ArrayBuffer
 
 class TileOccupationEvent(val tile: Tile, val unit: Unit) extends Event
 
 class GameMap extends Publisher with Subscriber {
   type Pub = GameMap
-  
+
   val Width = 64
   val Height = 64
 
   val Bounds: Rect = (0, 0, Width, Height)
 
-  val tiles = Array.fill(Width * Height){ new Tile }
+  val tiles = Array.fill(Width * Height) { new Tile }
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
     3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,
@@ -74,7 +75,7 @@ class GameMap extends Publisher with Subscriber {
     x <- 0 until Width
   } {
     makeBorder((x, y))
-    tiles((x, y)).shade=true
+    tiles((x, y)).shade = true
   }
 
   def tiles(coordinate: Coordinate): Tile = {
@@ -154,20 +155,11 @@ class GameMap extends Publisher with Subscriber {
 
   def removeShade(coordinate: Coordinate) {
     if (!Bounds.contains(coordinate)) return
-    
-    tiles(coordinate).shade = false
-    
-    var x = coordinate.x
-    var y = coordinate.y
 
-    makeShade((x, y - 1))
-    makeShade((x + 1, y - 1))
-    makeShade((x + 1, y))
-    makeShade((x + 1, y + 1))
-    makeShade((x, y + 1))
-    makeShade((x - 1, y + 1))
-    makeShade((x - 1, y))
-    makeShade((x - 1, y - 1))
+    tiles(coordinate).shade = false
+
+    // TODO: fix bug with surroundingCoordinates causing problems here, seems it's not the correct surrounding coordinates?
+    surroundingCoordinates(coordinate).foreach(_ => makeShade(_))
   }
 
   def removeShadeAround(coordinate: Coordinate, extra: Boolean = false) {
@@ -184,7 +176,7 @@ class GameMap extends Publisher with Subscriber {
     removeShade((x - 1, y + 1))
     removeShade((x - 1, y))
     removeShade((x - 1, y - 1))
-    
+
     if (extra) {
       removeShade((x, y + 2))
       removeShade((x, y - 2))
@@ -192,7 +184,7 @@ class GameMap extends Publisher with Subscriber {
       removeShade((x - 2, y))
     }
   }
-  
+
   /**
    * TODO: replace with real pathfinding
    */
@@ -222,18 +214,35 @@ class GameMap extends Publisher with Subscriber {
       return None
     }
   }
-  
+
   def notify(pub: Publisher, event: Event) {
     event match {
       case x: TileStepEvent => onTileStep(x)
       case _ =>
     }
   }
+
+  def surroundingCoordinates(position: Coordinate, range: Int = 1) : ArrayBuffer[Coordinate] = {
+    val array = new ArrayBuffer[Coordinate]
+
+    for {
+      y <- position.y - range until position.y + range;
+      x <- position.x - range until position.x + range
+    } {
+      val coordinate = (x,y)
+      if (Bounds.contains(coordinate) && coordinate != position) array += coordinate
+    }
+    array
+  }
   
+  def surroundingTiles(position: Coordinate, range: Int = 1): ArrayBuffer[Tile] = {
+    surroundingCoordinates(position, range).map((coordinate: Coordinate) => tiles(coordinate))
+  }
+
   def onTileStep(e: TileStepEvent) {
     tiles(e.from).unit = None
     tiles(e.to).unit = Option(e.unit)
-    
+
     publish(new TileOccupationEvent(tiles(e.to), e.unit))
   }
 }

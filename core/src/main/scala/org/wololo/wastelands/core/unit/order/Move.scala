@@ -19,6 +19,7 @@ class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
       else
         return Option(new org.wololo.wastelands.core.unit.action.Move(unit))
     } else {
+      unit.map.removeShadeAround(unit.position, true)
       return None
     }
   }
