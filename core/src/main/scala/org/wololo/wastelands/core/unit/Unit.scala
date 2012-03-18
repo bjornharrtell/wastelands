@@ -51,6 +51,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def order_=(order: Order): scala.Unit = {
     _order.dispose()
     _order = order
+    if (action.isDefined) action.get.abort()
     publish(new OrderEvent())
   }
 

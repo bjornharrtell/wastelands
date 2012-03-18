@@ -30,5 +30,6 @@ class Fire(unit: Unit, target: Unit) extends Action(unit) {
   private def pauseTick() {
     pauseTicksCounter -= 1
     if (pauseTicksCounter == 0) complete()
+    if (shouldAbort) complete()
   }
 }

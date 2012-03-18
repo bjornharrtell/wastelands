@@ -10,10 +10,14 @@ abstract class Action(unit: Unit) extends Publisher with Subscriber {
 
   unit.game.subscribe(this)
   subscribe(unit)
+  
+  var shouldAbort = false 
 
   def notify(pub: Publisher, event: Event) {
     onTick()
   }
+  
+  def abort() { shouldAbort = true }
   
   def complete() {
     unit.game.removeSubscription(this)
