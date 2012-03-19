@@ -32,19 +32,10 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   def turnTowards(target: Direction): Direction = {
     var delta = this.toInt - target.toInt
 
-    if (delta > 0) {
-      if (math.abs(delta) >= 4) {
-        rightOf
-      } else {
-        leftOf
-      }
-    } else {
-      if (math.abs(delta) >= 4) {
-        leftOf
-      } else {
-        rightOf
-      }
-    }
+    if (delta > 0)
+      if (math.abs(delta) >= 4) rightOf else leftOf
+    else
+      if (math.abs(delta) >= 4) leftOf else rightOf
   }
 
   override def clone: Direction = new Direction(dx, dy)
