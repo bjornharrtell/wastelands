@@ -30,11 +30,20 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   def rightOf: Direction = if (this.toInt == 7) 0 else this.toInt + 1
 
   def turnTowards(target: Direction): Direction = {
-    // TODO: fix index wrap problem causing direction to move the long way towards the target
-    if (this.toInt < target.toInt) {
-      rightOf
+    var delta = this.toInt - target.toInt
+
+    if (delta > 0) {
+      if (math.abs(delta) >= 4) {
+        rightOf
+      } else {
+        leftOf
+      }
     } else {
-      leftOf
+      if (math.abs(delta) >= 4) {
+        leftOf
+      } else {
+        rightOf
+      }
     }
   }
 
