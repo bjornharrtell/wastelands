@@ -30,7 +30,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   val Velocity = 0.04
   var moveDistance = 0.0
-  var direction: Direction = (math.random * 7 + 1).toInt
+  var direction: Direction = Direction.fromTileIndex((math.random * 7 + 1).toInt)
 
   val Range = 2
   val AttackStrength = 2

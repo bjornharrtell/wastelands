@@ -32,8 +32,8 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     }
 
     if (unit.isOnScreen && unit.alive) {
-      screen.canvas.drawImage(tileSet(unit.direction + 8), offset.x - 3, offset.y + 3)
-      screen.canvas.drawImage(tileSet(unit.direction), offset.x, offset.y)
+      screen.canvas.drawImage(tileSet(unit.direction.toTileIndex + 8), offset.x - 3, offset.y + 3)
+      screen.canvas.drawImage(tileSet(unit.direction.toTileIndex), offset.x, offset.y)
       if (unit.selected) screen.canvas.drawImage(selection, offset.x, offset.y)
     }
 

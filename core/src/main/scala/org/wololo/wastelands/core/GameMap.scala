@@ -190,6 +190,7 @@ class GameMap extends Publisher with Subscriber {
       if (tiles(from + direction).isOccupied) {
         direction = direction.leftOf
         if (tiles(from + direction).isOccupied) {
+          direction = Direction(dx, dy)
           direction = direction.rightOf
           if (tiles(from + direction).isOccupied) return None
         }
