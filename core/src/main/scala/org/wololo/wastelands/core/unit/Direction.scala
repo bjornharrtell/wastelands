@@ -22,8 +22,8 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   require(dx >= -1 && dx < 2)
   require(dy >= -1 && dy < 2)
   
-  def leftOf: Direction = if (this.toTileIndex == 0) Directions(7) else Directions(this.toTileIndex - 1)
-  def rightOf: Direction = if (this.toTileIndex == 7) Directions(0) else Directions(this.toTileIndex + 1)
+  def leftOf: Direction = if (this.toTileIndex == 0) fromTileIndex(7) else fromTileIndex(this.toTileIndex - 1)
+  def rightOf: Direction = if (this.toTileIndex == 7) fromTileIndex(0) else fromTileIndex(this.toTileIndex + 1)
   
   def toTileIndex: Int = Directions.indexOf(this)
 
