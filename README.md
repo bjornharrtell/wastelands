@@ -1,6 +1,8 @@
-Source of an old Amiga E project of mine to make a Dune II clone.
+Wastelands
+==========
 
-Eclipse requirements:
+Eclipse requirements
+--------------------
 
 * Scala IDE
 
@@ -12,3 +14,7 @@ Eclipse requirements:
 
   http://mavennatives.googlecode.com/svn/eclipse-update/
 
+Special thanks
+--------------
+
+ * Peter Segerstedt
