@@ -12,7 +12,7 @@
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<encoding>UTF-8</encoding>
-		<scala.version>2.9.1</scala.version>
+		<scala.version>2.9.2</scala.version>
 	</properties>
 
 	<dependencies>
@@ -29,12 +29,13 @@
 			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		
+		<!--<dependency>
 			<groupId>org.scala-tools.testing</groupId>
 			<artifactId>specs_${scala.version}</artifactId>
 			<version>1.6.9</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_${scala.version}</artifactId>
