@@ -5,6 +5,8 @@ import android.view.View.OnTouchListener
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
+import android.media.AudioManager
+import android.view.Window
 
 class Activity extends android.app.Activity with OnTouchListener {
   var gameThread: GameThread = null
@@ -19,6 +21,10 @@ class Activity extends android.app.Activity with OnTouchListener {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
+    
+    setVolumeControlStream(AudioManager.STREAM_MUSIC)
+    requestWindowFeature(Window.FEATURE_NO_TITLE)
+    
     setContentView(R.layout.main)
 
     val surfaceView = findViewById(R.id.surfaceView1).asInstanceOf[SurfaceView]
