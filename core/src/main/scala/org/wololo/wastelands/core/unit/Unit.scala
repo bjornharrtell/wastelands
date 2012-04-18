@@ -5,9 +5,10 @@ import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
 import org.wololo.wastelands.core.unit.order.Guard
 import java.io.File
+import org.wololo.wastelands.core.input.Event
 
-class TileStepEvent(val unit: Unit, val from: Coordinate, val to: Coordinate) extends Event
-class OrderEvent extends Event
+case class TileStepEvent(val unit: Unit, val from: Coordinate, val to: Coordinate) extends Event
+case class OrderEvent extends Event
 
 /**
  * Base abstract implementation for units

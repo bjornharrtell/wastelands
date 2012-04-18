@@ -7,8 +7,12 @@ import android.view.SurfaceView
 import android.view.View
 import android.media.AudioManager
 import android.view.Window
+import org.wololo.wastelands.core.Publisher
+import org.wololo.wastelands.core.input.MouseClicked
+import org.wololo.wastelands.core.Coordinate
 
-class Activity extends android.app.Activity with OnTouchListener {
+
+class Activity extends android.app.Activity with OnTouchListener with Publisher {
   var gameThread: GameThread = null
 
   var prevX = 0
@@ -62,7 +66,7 @@ class Activity extends android.app.Activity with OnTouchListener {
         tdy = 0
       } else if (action == MotionEvent.ACTION_UP) {
         if (tdx < ClickTolerance && tdy < ClickTolerance) {
-          gameThread.game.click(x, y)
+          publish(new MouseClicked(new Coordinate(x,y), 1))
         }
       }
 
@@ -88,7 +92,7 @@ class Activity extends android.app.Activity with OnTouchListener {
       tdy = 0
     } else if (action == MotionEvent.ACTION_UP) {
       if (tdx < ClickTolerance && tdy < ClickTolerance) {
-        gameThread.game.click(x, y)
+        publish(new MouseClicked(new Coordinate(x,y), 1))
       }
     }
 

@@ -11,10 +11,14 @@ import java.awt.DisplayMode
 import java.awt.Frame
 import java.awt.GraphicsDevice
 import java.awt.GraphicsEnvironment
-
 import org.wololo.wastelands.core.Game
+import org.wololo.wastelands.core.Coordinate
+import org.wololo.wastelands.core.Publisher
+import org.wololo.wastelands.core.input.MouseClicked
 
-object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with JVMContext {
+object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with JVMContext with Publisher {
+  type Pub = Client.type
+  
   var game: Game = null
 
   var prevX = 0
@@ -31,6 +35,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   override def run() {
     try {
       game = new Game(this)
+      subscribe(game)
       game.run()
     } finally {
       mainFrame.dispose()
@@ -168,7 +173,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     val x = e.getX
     val y = e.getY
 
-    game.click(x, y)
+    publish(new MouseClicked(new Coordinate(x,y), e.getClickCount))
   }
 
   def mouseEntered(e: MouseEvent) {}
