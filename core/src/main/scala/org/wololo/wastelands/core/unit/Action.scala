@@ -1,7 +1,7 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.core.Subscriber
 import org.wololo.wastelands.core.Publisher
-import org.wololo.wastelands.core.input.Event
+import org.wololo.wastelands.core.event.Event
 
 case class ActionCompleteEvent extends Event
 

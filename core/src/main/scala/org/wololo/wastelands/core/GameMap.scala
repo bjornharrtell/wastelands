@@ -3,7 +3,7 @@ import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.unit.TileStepEvent
 import scala.collection.mutable.ArrayBuffer
-import org.wololo.wastelands.core.input.Event
+import org.wololo.wastelands.core.event.Event
 
 case class TileOccupationEvent(val tile: Tile, val unit: Unit) extends Event
 

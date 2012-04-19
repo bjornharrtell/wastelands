@@ -14,7 +14,7 @@ import java.awt.GraphicsEnvironment
 import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.Publisher
-import org.wololo.wastelands.core.input.MouseClicked
+import org.wololo.wastelands.core.event.TouchEvent
 
 object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with JVMContext with Publisher {
   type Pub = Client.type
@@ -173,7 +173,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     val x = e.getX
     val y = e.getY
 
-    publish(new MouseClicked(new Coordinate(x,y), e.getClickCount))
+    publish(new TouchEvent(new Coordinate(x,y), TouchEvent.DOWN))
   }
 
   def mouseEntered(e: MouseEvent) {}

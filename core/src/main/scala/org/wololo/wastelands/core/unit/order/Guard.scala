@@ -3,7 +3,7 @@ package org.wololo.wastelands.core.unit.order
 import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Order
 import org.wololo.wastelands.core.TileOccupationEvent
-import org.wololo.wastelands.core.input.Event
+import org.wololo.wastelands.core.event.Event
 
 class Guard(unit: Unit) extends Order(unit: Unit) {
   unit.map.subscribe(unit, filter)

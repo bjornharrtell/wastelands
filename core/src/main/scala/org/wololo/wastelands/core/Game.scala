@@ -3,8 +3,8 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
-import org.wololo.wastelands.core.input.Event
-import org.wololo.wastelands.core.input.MouseClicked
+import org.wololo.wastelands.core.event.Event
+import org.wololo.wastelands.core.event.TouchEvent
 
 case class TickEvent extends Event
 
@@ -90,7 +90,7 @@ class Game(val vmContext: VMContext) extends Publisher with Subscriber {
   
   def notify(pub: Publisher, event: Event) {
     event match {
-      case x: MouseClicked => mouseClicked(x)
+      case x: TouchEvent if x.action == TouchEvent.DOWN => touchDown(x)
       case _ =>
     }
   }
@@ -99,7 +99,7 @@ class Game(val vmContext: VMContext) extends Publisher with Subscriber {
     screen.scroll(dx, dy)
   }
 
-  def mouseClicked(e: MouseClicked) {
+  def touchDown(e: TouchEvent) {
     var clickedUnit = false
 
     // process out visible and clicked units
