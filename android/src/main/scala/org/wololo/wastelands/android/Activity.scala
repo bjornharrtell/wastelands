@@ -15,14 +15,6 @@ import org.wololo.wastelands.core.Coordinate
 class Activity extends android.app.Activity with OnTouchListener with Publisher {
   var gameThread: GameThread = null
 
-  var prevX = 0
-  var prevY = 0
-
-  var tdx = 0
-  var tdy = 0
-
-  val ClickTolerance = 3
-
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     
@@ -44,9 +36,7 @@ class Activity extends android.app.Activity with OnTouchListener with Publisher 
 
     val action = motionEvent.getAction
 
-    if (action == MotionEvent.ACTION_CANCEL) {
-      return true;
-    }
+    if (action == MotionEvent.ACTION_CANCEL) return true
 
     val historySize = motionEvent.getHistorySize
 
@@ -58,56 +48,27 @@ class Activity extends android.app.Activity with OnTouchListener with Publisher 
     for (h <- 0 until historySize) {
       val x = motionEvent.getHistoricalX(p, h).toInt
       val y = motionEvent.getHistoricalY(p, h).toInt
-
-      if (action == MotionEvent.ACTION_DOWN) {
-        prevX = x
-        prevY = y
-        tdx = 0
-        tdy = 0
-      } else if (action == MotionEvent.ACTION_UP) {
-        if (tdx < ClickTolerance && tdy < ClickTolerance) {
-          publish(new TouchEvent(new Coordinate(x,y), TouchEvent.UP))
-        }
-      }
-
-      val dx = prevX - x
-      val dy = prevY - y
-
-      tdx += dx
-      tdy += dy
-
-      gameThread.game.scroll(dx, dy)
-
-      prevX = x
-      prevY = y
+      val coordinate = (x, y)
+      handleAction(action, coordinate)
     }
 
     val x = motionEvent.getX(p).toInt
     val y = motionEvent.getY(p).toInt
-
-    if (action == MotionEvent.ACTION_DOWN) {
-      prevX = x
-      prevY = y
-      tdx = 0
-      tdy = 0
-    } else if (action == MotionEvent.ACTION_UP) {
-      if (tdx < ClickTolerance && tdy < ClickTolerance) {
-        publish(new TouchEvent(new Coordinate(x,y), TouchEvent.UP))
-      }
-    }
-
-    val dx = prevX - x
-    val dy = prevY - y
-
-    gameThread.game.scroll(dx, dy)
-
-    prevX = x
-    prevY = y
+    val coordinate = (x, y)
+    handleAction(action, coordinate)
 
     // sleep 16 milliseconds to avoid too much input CPU processing
     // goal is to get slightly more input events than target FPS which is 60
     Thread.sleep(16L)
 
     true
+  }
+  
+  def handleAction(action:Int, coordinate: Coordinate) {
+    action match {
+      case MotionEvent.ACTION_DOWN => publish(new TouchEvent(coordinate, TouchEvent.DOWN))
+      case MotionEvent.ACTION_UP => publish(new TouchEvent(coordinate, TouchEvent.UP))
+      case MotionEvent.ACTION_MOVE => publish(new TouchEvent(coordinate, TouchEvent.MOVE))
+    }
   }
 }

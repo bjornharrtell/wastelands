@@ -8,7 +8,7 @@ import java.io.File
 import org.wololo.wastelands.core.event.Event
 
 case class TileStepEvent(val unit: Unit, val from: Coordinate, val to: Coordinate) extends Event
-case class OrderEvent extends Event
+case class OrderEvent() extends Event
 
 /**
  * Base abstract implementation for units

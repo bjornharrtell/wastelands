@@ -21,9 +21,6 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   
   var game: Game = null
 
-  var prevX = 0
-  var prevY = 0
-
   val device = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
   var gc = device.getDefaultConfiguration
 
@@ -147,37 +144,11 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
 
   def keyReleased(e: KeyEvent) {}
   def keyTyped(e: KeyEvent) {}
-
-  def mouseDragged(e: MouseEvent) {
-    val x = e.getX
-    val y = e.getY
-
-    val dx = prevX - x
-    val dy = prevY - y
-
-    game.scroll(dx, dy)
-
-    prevX = x
-    prevY = y
-  }
-
-  def mouseMoved(e: MouseEvent) {
-    val x = e.getX
-    val y = e.getY
-
-    prevX = x
-    prevY = y
-  }
-
-  def mouseClicked(e: MouseEvent) {
-    val x = e.getX
-    val y = e.getY
-
-    publish(new TouchEvent(new Coordinate(x,y), TouchEvent.DOWN))
-  }
-
+  def mouseDragged(e: MouseEvent) = publish(new TouchEvent((e.getX, e.getY), TouchEvent.MOVE))
+  def mouseMoved(e: MouseEvent) {}
+  def mouseClicked(e: MouseEvent) {}
   def mouseEntered(e: MouseEvent) {}
   def mouseExited(e: MouseEvent) {}
-  def mousePressed(e: MouseEvent) {}
-  def mouseReleased(e: MouseEvent) {}
+  def mousePressed(e: MouseEvent) = publish(new TouchEvent((e.getX, e.getY), TouchEvent.DOWN))
+  def mouseReleased(e: MouseEvent) = publish(new TouchEvent((e.getX, e.getY), TouchEvent.UP))
 }
