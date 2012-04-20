@@ -8,7 +8,7 @@ import org.wololo.wastelands.core.event.TouchEvent
 
 case class TickEvent() extends Event
 
-class Game(val vmContext: VMContext) extends Publisher with Subscriber {
+class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
   type Pub = Game
   
   var running = false
@@ -20,10 +20,6 @@ class Game(val vmContext: VMContext) extends Publisher with Subscriber {
   var selectedUnit: Option[Unit] = None
 
   var player = 0
-  
-  val tolerance = 5
-  var previous: Coordinate = (0, 0)
-  var downAt: Coordinate = (0, 0)
 
   var units = ArrayBuffer[Unit](
     new TestUnit1(this, 1, (3, 10)),
@@ -92,51 +88,10 @@ class Game(val vmContext: VMContext) extends Publisher with Subscriber {
     ticks += 1
   }
   
-  def notify(pub: Publisher, event: Event) {
-    event match {
-      case x: TouchEvent => touch(x)
-      case _ =>
-    }
-  }
-  
-  def touch(e: TouchEvent) {
-    e.action match {
-      case TouchEvent.DOWN => touchDown(e.coordinate)
-      case TouchEvent.MOVE => touchMove(e.coordinate)
-      case TouchEvent.UP => touchUp(e.coordinate)
-    }
-  }
-
-  def touchUp(coordinate: Coordinate) {
-  }
-  
-  def touchMove(coordinate: Coordinate) {
-    if (coordinate.distance(downAt)>tolerance) screen.scroll(previous-coordinate)
-    
-    previous = coordinate
-  }
-
-  def touchDown(coordinate: Coordinate) {
-    var clickedUnit = false
-
-    // process out visible and clicked units
-    // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    for (unit <- units if unit.alive && unit.ScreenBounds.contains(coordinate)) {
-      doClickedUnitAction(unit)
-      clickedUnit = true
-    }
-
-    // no unit was clicked
-    if (!clickedUnit) doClickedMapTileAction(coordinate)
-    
-    downAt = coordinate
-    previous = coordinate
-  }
-
   /**
-   * Do appropriate actions when a map tile has been clicked
+   * Perform action on a chosen map tile
    */
-  private def doClickedMapTileAction(coordinate: Coordinate) {
+  def mapTileAction(coordinate: Coordinate) {
     if (selectedUnit.isDefined) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
@@ -145,9 +100,9 @@ class Game(val vmContext: VMContext) extends Publisher with Subscriber {
   }
 
   /**
-   * Do appropriate actions when a selectable unit has been clicked
+   * Perform action on a selectable unit
    */
-  private def doClickedUnitAction(unit: Unit) {
+  def unitAction(unit: Unit) {
     if (selectedUnit.isDefined) {
       if (unit == selectedUnit) {
         return
