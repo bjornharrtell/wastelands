@@ -4,8 +4,10 @@ import org.wololo.wastelands.core._
 import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
 import org.wololo.wastelands.core.unit.order.Guard
+import org.wololo.wastelands.core.unit.action.Fire;
 import java.io.File
 import org.wololo.wastelands.core.event.Event
+import scala.collection.mutable.ArrayBuffer
 
 case class TileStepEvent(val unit: Unit, val from: Coordinate, val to: Coordinate) extends Event
 case class OrderEvent() extends Event
@@ -28,7 +30,9 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   private var _order: Order = new Guard(this)
   var action: Option[Action] = None
-
+  
+  var cooldowns = ArrayBuffer[Cooldown]()
+  
   val Velocity = 0.04
   var moveDistance = 0.0
   var direction: Direction = Direction.fromTileIndex((math.random * 7 + 1).toInt)
@@ -42,8 +46,8 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def notify(pub: Publisher, event: Event) {
     event match {
-      case e: ActionCompleteEvent => onActionComplete()
-      case e: CooldownCompleteEvent => onCooldownComplete()
+      case e: ActionCompleteEvent => onActionComplete(e.action)
+      case e: CooldownCompleteEvent => onCooldownComplete(e.cooldown)
       case e: TileOccupationEvent => onTileOccupation(e)
     }
   }
@@ -53,24 +57,39 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def order_=(order: Order): scala.Unit = {
     _order.dispose()
     _order = order
-    if (action.isDefined) action.get.abort()
     publish(new OrderEvent())
   }
 
-  def onActionComplete() {
-    // TODO: should generate new action if order has changed and uf there is no active cooldown for the type of action to be generated
+  def onActionComplete(action: Action) {
+    if (action.CooldownTicks>0) cooldowns += new Cooldown(action)
+    
+    val gogg = order
+    
+    // if the current order is changed from the one initiating the completed action and
+    // if the new order action has no active cooldown, generate a new action from the order
+    if (gogg != action.order && cooldowns.forall(p => !p.action.isInstanceOf[gogg.generatesAction])) {
+      this.action = order.generateAction()
+      if (this.action.isEmpty) guard()
+    } else {
+      this.action = None;
+    }
+    
+    // TODO: should generate new action if order has changed and if there is no active cooldown for the type of action to be generated
     
     //action = order.generateAction()
 
     //if (action.isEmpty) guard()
   }
   
-  def onCooldownComplete() {
-    // TODO: should generate new action only if order is unchanged
+  def onCooldownComplete(cooldown: Cooldown) {
+    cooldowns -= cooldown
     
-    action = order.generateAction()
+    // if the unit has the same order as the action causing this cooldown, generate a new action from the order
+    if (order == cooldown.action.order) {
+      action = order.generateAction()
 
-    if (action.isEmpty) guard()
+      if (action.isEmpty) guard()
+    }
   }
 
   def onTileOccupation(e: TileOccupationEvent) {
@@ -89,8 +108,10 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def moveTo(position: Coordinate) {
-    order = new Move(this, position)
-    if (action.isEmpty) action = order.generateAction()
+    if (cooldowns.forall(p => !p.action.isInstanceOf[org.wololo.wastelands.core.unit.action.Move])) {
+    	order = new Move(this, position)
+    	if (action.isEmpty) action = order.generateAction()
+    }
   }
 
   def moveTileStep() {
@@ -104,8 +125,10 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def attack(target: Unit) {
-    order = new Attack(this, target)
-    if (action.isEmpty) action = order.generateAction()
+    if (cooldowns.forall(p => !p.action.isInstanceOf[Fire])) {
+    	order = new Attack(this, target)
+    	if (action.isEmpty) action = order.generateAction()
+    }
   }
 
   def damage(damage: Int) {

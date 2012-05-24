@@ -6,6 +6,7 @@ import org.wololo.wastelands.core.TileOccupationEvent
 import org.wololo.wastelands.core.event.Event
 
 class Guard(unit: Unit) extends Order(unit: Unit) {
+  
   unit.map.subscribe(unit, filter)
   
   /**

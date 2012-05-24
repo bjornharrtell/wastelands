@@ -4,9 +4,9 @@ import org.wololo.wastelands.core.Subscriber
 import org.wololo.wastelands.core.event.Event
 import org.wololo.wastelands.core.Publisher
 
-case class CooldownCompleteEvent() extends Event
+case class CooldownCompleteEvent(cooldown: Cooldown) extends Event
 
-class Cooldown(action: Action) extends Publisher with Subscriber {
+class Cooldown(val action: Action) extends Publisher with Subscriber {
   type Pub = Cooldown
 
   // subscribe this cooldown to game to get tick events
@@ -15,8 +15,7 @@ class Cooldown(action: Action) extends Publisher with Subscriber {
   // subscribe unit to cooldown
   subscribe(action.unit)
 
-  // TODO: this should be a default to be overriden by actions
-  var counter = 20
+  var counter = action.CooldownTicks
   
   def notify(pub: Publisher, event: Event) {
     onTick()
@@ -24,7 +23,7 @@ class Cooldown(action: Action) extends Publisher with Subscriber {
   
   def complete() {
     action.unit.game.removeSubscription(this)
-    publish(new CooldownCompleteEvent)
+    publish(new CooldownCompleteEvent(this))
     removeSubscriptions()
   }
   

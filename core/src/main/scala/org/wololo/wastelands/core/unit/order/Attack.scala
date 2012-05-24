@@ -7,6 +7,9 @@ import org.wololo.wastelands.core.unit.action.Turn
 import org.wololo.wastelands.core.unit.action.Fire
 
 class Attack(unit: Unit, target: Unit) extends Order(unit: Unit) {
+  
+  type generatesAction = Fire
+  
   override def generateAction(): Option[Action] = {
     if (!target.alive) return None
     
@@ -14,11 +17,11 @@ class Attack(unit: Unit, target: Unit) extends Order(unit: Unit) {
 
     if (direction.isDefined) {
       if (unit.direction != direction.get)
-        return Option(new Turn(unit, direction.get))
+        return Option(new Turn(this, unit, direction.get))
       else if (unit.position.distance(target.position) <= unit.Range)
-        return Option(new Fire(unit, target))
+        return Option(new Fire(this, unit, target))
       else
-        return Option(new org.wololo.wastelands.core.unit.action.Move(unit))
+        return Option(new org.wololo.wastelands.core.unit.action.Move(this, unit))
     } else {
       return None
     }

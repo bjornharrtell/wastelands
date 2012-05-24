@@ -10,14 +10,16 @@ import org.wololo.wastelands.core.unit.action.Turn
 
 class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
 
+  type generatesAction = org.wololo.wastelands.core.unit.action.Move
+  
   override def generateAction(): Option[Action] = {
     val direction = unit.game.map.calcDirection(unit.position, destination)
 
     if (direction.isDefined) {
       if (unit.direction != direction.get)
-        return Option(new Turn(unit, direction.get))
+        return Option(new Turn(this, unit, direction.get))
       else
-        return Option(new org.wololo.wastelands.core.unit.action.Move(unit))
+        return Option(new org.wololo.wastelands.core.unit.action.Move(this, unit))
     } else {
       unit.map.removeShadeAround(unit.position, true)
       return None
