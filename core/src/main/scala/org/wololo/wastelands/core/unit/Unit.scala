@@ -43,6 +43,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def notify(pub: Publisher, event: Event) {
     event match {
       case e: ActionCompleteEvent => onActionComplete()
+      case e: CooldownCompleteEvent => onCooldownComplete()
       case e: TileOccupationEvent => onTileOccupation(e)
     }
   }
@@ -57,6 +58,16 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def onActionComplete() {
+    // TODO: should generate new action if order has changed and uf there is no active cooldown for the type of action to be generated
+    
+    //action = order.generateAction()
+
+    //if (action.isEmpty) guard()
+  }
+  
+  def onCooldownComplete() {
+    // TODO: should generate new action only if order is unchanged
+    
     action = order.generateAction()
 
     if (action.isEmpty) guard()

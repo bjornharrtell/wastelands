@@ -6,12 +6,8 @@ import org.wololo.wastelands.core.unit.Direction
 
 class Turn(unit: Unit, target: Direction) extends Action(unit) {
 
-  val PauseTicks = 10
-  private var pauseTicksCounter = PauseTicks
-
   def onTick() {
-    if (pauseTicksCounter == 0) turn()
-    pauseTicksCounter -= 1
+    turn()
   }
 
   private def turn() {

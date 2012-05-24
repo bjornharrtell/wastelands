@@ -6,30 +6,17 @@ import org.wololo.wastelands.core.unit.Projectile
 
 class Fire(unit: Unit, target: Unit) extends Action(unit) {
   
-  var firstTick = true
-  val PauseTicks = 120
-  private var pauseTicksCounter = PauseTicks
-  
   def onTick() {
-    if (firstTick)
-      fire()
-    else
-      pauseTick()
+	fire()
   }
   
   private def fire() {
-    firstTick = false
-    
     unit.fireSound.play()
     
     unit.game.projectiles += new Projectile(unit.game, unit, target)
     
     target.damage(unit.AttackStrength)
-  }
-
-  private def pauseTick() {
-    pauseTicksCounter -= 1
-    if (pauseTicksCounter == 0) complete()
-    if (shouldAbort) complete()
+    
+    complete()
   }
 }

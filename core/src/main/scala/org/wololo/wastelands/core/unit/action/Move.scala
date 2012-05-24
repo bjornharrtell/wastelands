@@ -5,25 +5,14 @@ import org.wololo.wastelands.core.unit.Unit
 class Move(unit: Unit) extends Action(unit) {
 
   val map = unit.game.map
-
-  var pausing = true
-  val PauseTicks = 10
-  private var pauseTicksCounter = PauseTicks
-
+  
   map.removeShadeAround(unit.position + unit.direction)
 
   def onTick() {
-    if (pausing)
-      pauseTick()
-    else if (unit.moveDistance >= 1)
+    if (unit.moveDistance >= 1)
       moveTileStep()
     else
       unit.moveDistance += unit.Velocity
-  }
-  
-  private def pauseTick() {
-    if (pauseTicksCounter == 0) pausing = false
-    pauseTicksCounter -= 1
   }
   
   private def moveTileStep() {
