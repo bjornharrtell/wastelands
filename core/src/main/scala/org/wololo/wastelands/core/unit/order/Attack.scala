@@ -7,7 +7,6 @@ import org.wololo.wastelands.core.unit.action.Turn
 import org.wololo.wastelands.core.unit.action.Fire
 
 class Attack(unit: Unit, target: Unit) extends Order(unit: Unit) {
-  
   type generatesAction = Fire
   
   override def generateAction(): Option[Action] = {

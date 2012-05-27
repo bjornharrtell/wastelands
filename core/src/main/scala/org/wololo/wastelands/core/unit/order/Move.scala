@@ -9,7 +9,6 @@ import org.wololo.wastelands.core.unit.Action
 import org.wololo.wastelands.core.unit.action.Turn
 
 class Move(unit: Unit, destination: Coordinate) extends Order(unit: Unit) {
-
   type generatesAction = org.wololo.wastelands.core.unit.action.Move
   
   override def generateAction(): Option[Action] = {
