@@ -90,7 +90,6 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Handler for CooldownComplete events
-   *
    * 
    * If the unit has the same order as the action causing this cooldown generate a new action from the order
    */
@@ -108,6 +107,11 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
     order = new Attack(this, e.unit)
   }
 
+  /**
+   * Issue guard order
+   * 
+   * Check for attack conditions, if true then go to attack immediately else issue the actual guard order 
+   */
   def guard() {
     for (tile <- map.surroundingTiles(position, Range)) {
       tile.unit match {
@@ -119,13 +123,23 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
     order = new Guard(this)
   }
 
+  /**
+   * Issue move order
+   */
   def moveTo(position: Coordinate) {
+    order = new Move(this, position)
+    
+    // generate action if there is no active cooldown on the action to be generated
     if (cooldowns.forall(p => !p.action.isInstanceOf[org.wololo.wastelands.core.unit.action.Move])) {
-      order = new Move(this, position)
       if (action.isEmpty) action = order.generateAction()
     }
   }
 
+  /**
+   * Logic to initiate a tile step move
+   * 
+   * Note that the position is changed when the move is initiated
+   */
   def moveTileStep() {
     moveDistance = 0.0
 
@@ -136,9 +150,14 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
     publish(new TileStepEvent(this, oldPosition, position))
   }
 
+  /**
+   * Issue attack order
+   */
   def attack(target: Unit) {
+    order = new Attack(this, target)
+    
+    // generate action if there is no active cooldown on the action to be generated
     if (cooldowns.forall(p => !p.action.isInstanceOf[Fire])) {
-      order = new Attack(this, target)
       if (action.isEmpty) action = order.generateAction()
     }
   }
