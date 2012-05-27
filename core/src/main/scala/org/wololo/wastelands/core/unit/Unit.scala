@@ -54,6 +54,14 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   def order = _order
 
+  /**
+   * Setter for order
+   * 
+   * Will call dispose and trigger event.
+   * 
+   * NOTE: Perhaps this shouldn't be implemented as a property but for now it is to
+   * avoid setting order in the wrong way.
+   */
   def order_=(order: Order): scala.Unit = {
     _order.dispose()
     _order = order
