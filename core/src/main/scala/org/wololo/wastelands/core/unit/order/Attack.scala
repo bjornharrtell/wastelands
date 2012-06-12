@@ -5,9 +5,10 @@ import org.wololo.wastelands.core.unit.Order
 import org.wololo.wastelands.core.unit.Action
 import org.wololo.wastelands.core.unit.action.Turn
 import org.wololo.wastelands.core.unit.action.Fire
+import org.wololo.wastelands.core.unit.action.MoveStep
 
 class Attack(unit: Unit, target: Unit) extends Order(unit: Unit) {
-  type generatesAction = Fire
+  val Type = 2
   
   override def generateAction(): Option[Action] = {
     if (!target.alive) return None
@@ -20,7 +21,7 @@ class Attack(unit: Unit, target: Unit) extends Order(unit: Unit) {
       else if (unit.position.distance(target.position) <= unit.Range)
         return Option(new Fire(this, unit, target))
       else
-        return Option(new org.wololo.wastelands.core.unit.action.Move(this, unit))
+        return Option(new MoveStep(this, unit))
     } else {
       return None
     }

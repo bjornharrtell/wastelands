@@ -7,14 +7,18 @@ case class ActionCompleteEvent(action: Action) extends Event
 
 abstract class Action(val order: Order, val unit: Unit) extends Publisher with Subscriber {
   type Pub = Action
-
-  // subscribe this action to game to get tick events
-  unit.game.subscribe(this)
-
-  // subscribe unit to action
-  subscribe(unit)
+  
+  val Type: Int
   
   val CooldownTicks = 30
+  
+  def execute() {
+    // subscribe this action to game to get tick events
+	unit.game.subscribe(this)
+
+    // subscribe unit to action
+    subscribe(unit)
+  }
 
   def notify(pub: Publisher, event: Event) {
     onTick()

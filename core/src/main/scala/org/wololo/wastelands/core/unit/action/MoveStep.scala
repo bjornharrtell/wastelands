@@ -3,14 +3,17 @@ import org.wololo.wastelands.core.unit.Action
 import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Order
 
-class Move(order: Order, unit: Unit) extends Action(order, unit) {
+class MoveStep(order: Order, unit: Unit) extends Action(order, unit) {
 
   override val CooldownTicks = 30
   
-  val map = unit.game.map
+  val Type = 0
   
-  map.removeShadeAround(unit.position + unit.direction)
-
+  override def execute() {
+	  super.execute();
+	  unit.game.map.removeShadeAround(unit.position + unit.direction)
+  }
+  
   def onTick() {
     if (unit.moveDistance >= 1)
       moveTileStep()

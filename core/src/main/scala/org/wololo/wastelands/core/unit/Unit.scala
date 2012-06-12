@@ -4,7 +4,9 @@ import org.wololo.wastelands.core._
 import org.wololo.wastelands.core.unit.order.Move
 import org.wololo.wastelands.core.unit.order.Attack
 import org.wololo.wastelands.core.unit.order.Guard
-import org.wololo.wastelands.core.unit.action.Fire;
+import org.wololo.wastelands.core.unit.action.MoveStep
+import org.wololo.wastelands.core.unit.action.Turn
+import org.wololo.wastelands.core.unit.action.Fire
 import java.io.File
 import org.wololo.wastelands.core.event.Event
 import scala.collection.mutable.ArrayBuffer
@@ -70,37 +72,35 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Handler for ActionComplete events
-   *
-   * If the current order is changed from the one initiating the completed action and
-   * if the new order action has no active cooldown generate a new action from the
-   * order or else do nothing but set the current action to None.
    */
   def onActionComplete(action: Action) {
     if (action.CooldownTicks > 0) cooldowns += new Cooldown(action)
 
-    val localOrder = order
-
-    if (localOrder != action.order && cooldowns.forall(p => !p.action.isInstanceOf[localOrder.generatesAction])) {
-      this.action = order.generateAction()
-      if (this.action.isEmpty) guard()
+    val potentialAction = order.generateAction();
+    
+    if (potentialAction.isDefined && order.Type != action.order.Type && cooldowns.forall(p => !(p.action.Type == potentialAction.get.Type))) {
+      this.action = potentialAction
+      this.action.get.execute()
     } else {
-      this.action = None;
+      this.action = None
+      // FIXME: guard will be issued at times when it should not be...
+      if (action.CooldownTicks == 0) guard()
     }
   }
 
   /**
    * Handler for CooldownComplete events
-   * 
-   * If the unit has the same order as the action causing this cooldown generate a new action from the order
    */
   def onCooldownComplete(cooldown: Cooldown) {
     cooldowns -= cooldown
     
-    if (order == cooldown.action.order) {
+    if (order.Type == cooldown.action.order.Type) {
       action = order.generateAction()
-
-      if (action.isEmpty) guard()
+      if (action.isDefined) action.get.execute()
     }
+
+    // FIXME: guard will be issued at times when it should not be...
+    if (action.isEmpty) guard()
   }
 
   def onTileOccupation(e: TileOccupationEvent) {
@@ -129,9 +129,12 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def moveTo(position: Coordinate) {
     order = new Move(this, position)
     
-    // generate action if there is no active cooldown on the action to be generated
-    if (cooldowns.forall(p => !p.action.isInstanceOf[org.wololo.wastelands.core.unit.action.Move])) {
-      if (action.isEmpty) action = order.generateAction()
+    // generate action if there is no active Action or Cooldown for MoveStep or Turn
+    if (action.isEmpty && 
+        cooldowns.forall(p => !p.action.isInstanceOf[MoveStep]) &&
+        cooldowns.forall(p => !p.action.isInstanceOf[Turn])) {
+      action = order.generateAction()
+      if (action.isDefined) action.get.execute()
     }
   }
 
@@ -156,9 +159,14 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def attack(target: Unit) {
     order = new Attack(this, target)
     
-    // generate action if there is no active cooldown on the action to be generated
-    if (cooldowns.forall(p => !p.action.isInstanceOf[Fire])) {
-      if (action.isEmpty) action = order.generateAction()
+    // generate action if there is no active Action or Cooldown for Fire, MoveStep or Turn
+    // TODO: cooldown check should be based on the potential action to be generated
+    if (action.isEmpty &&
+        cooldowns.forall(p => !p.action.isInstanceOf[Fire]) &&
+        cooldowns.forall(p => !p.action.isInstanceOf[MoveStep]) &&
+        cooldowns.forall(p => !p.action.isInstanceOf[Turn])) {
+      action = order.generateAction()
+      if (action.isDefined) action.get.execute()
     }
   }
 

@@ -7,6 +7,8 @@ import org.wololo.wastelands.core.event.Event
 
 class Guard(unit: Unit) extends Order(unit: Unit) {
   
+  val Type = 0
+  
   unit.map.subscribe(unit, filter)
   
   /**

@@ -9,6 +9,8 @@ class Turn(order: Order, unit: Unit, target: Direction) extends Action(order, un
 
   override val CooldownTicks = 20
   
+  val Type = 1
+  
   def onTick() {
     turn()
   }

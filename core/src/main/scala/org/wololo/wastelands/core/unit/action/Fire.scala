@@ -10,6 +10,8 @@ class Fire(order: Order, unit: Unit, target: Unit) extends Action(order, unit) {
   
   override val CooldownTicks = 60
   
+  val Type = 2
+  
   def onTick() {
 	fire()
   }
