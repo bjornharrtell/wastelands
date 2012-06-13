@@ -72,6 +72,8 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Handler for ActionComplete events
+   * 
+   * Generates new action or puts unit in guard depending on conditions.
    */
   def onActionComplete(action: Action) {
     if (action.CooldownTicks > 0) cooldowns += new Cooldown(action)
@@ -82,6 +84,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
       this.action = potentialAction
       this.action.get.execute()
     } else {
+      // other logic depends on action set to None here which is kind of nonobvious but haven't found better solution 
       this.action = None
       if (potentialAction.isEmpty) guard()
     }
