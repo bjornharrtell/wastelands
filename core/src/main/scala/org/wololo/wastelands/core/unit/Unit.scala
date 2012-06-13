@@ -58,9 +58,9 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Setter for order
-   * 
+   *
    * Will call dispose and trigger event.
-   * 
+   *
    * NOTE: Perhaps this shouldn't be implemented as a property but for now it is to
    * avoid setting order in the wrong way.
    */
@@ -76,31 +76,31 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   def onActionComplete(action: Action) {
     if (action.CooldownTicks > 0) cooldowns += new Cooldown(action)
 
-    val potentialAction = order.generateAction();
-    
+    val potentialAction = order.generateAction()
+
     if (potentialAction.isDefined && order.Type != action.order.Type && cooldowns.forall(p => !(p.action.Type == potentialAction.get.Type))) {
       this.action = potentialAction
       this.action.get.execute()
     } else {
       this.action = None
-      // FIXME: guard will be issued at times when it should not be...
-      if (action.CooldownTicks == 0) guard()
+      if (potentialAction.isEmpty) guard()
     }
   }
 
   /**
    * Handler for CooldownComplete events
+   * 
+   * Generates new actions from current order if possible or puts unit in guard.
    */
   def onCooldownComplete(cooldown: Cooldown) {
     cooldowns -= cooldown
-    
-    if (order.Type == cooldown.action.order.Type) {
-      action = order.generateAction()
-      if (action.isDefined) action.get.execute()
-    }
 
-    // FIXME: guard will be issued at times when it should not be...
-    if (action.isEmpty) guard()
+    val potentialAction = order.generateAction()
+
+    if (potentialAction.isDefined && order.Type == cooldown.action.order.Type) {
+      action = potentialAction
+      action.get.execute()
+    }
   }
 
   def onTileOccupation(e: TileOccupationEvent) {
@@ -109,8 +109,8 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Issue guard order
-   * 
-   * Check for attack conditions, if true then go to attack immediately else issue the actual guard order 
+   *
+   * Check for attack conditions, if true then order attack immediately else issue the actual guard order.
    */
   def guard() {
     for (tile <- map.surroundingTiles(position, Range)) {
@@ -125,23 +125,24 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Issue move order
+   * 
+   * Generates new action if there is no active action or blocking cooldown.
    */
   def moveTo(position: Coordinate) {
     order = new Move(this, position)
-    
-    // generate action if there is no active Action or Cooldown for MoveStep or Turn
-    if (action.isEmpty && 
-        cooldowns.forall(p => !p.action.isInstanceOf[MoveStep]) &&
-        cooldowns.forall(p => !p.action.isInstanceOf[Turn])) {
+
+    if (action.isEmpty &&
+      cooldowns.forall(p => !p.action.isInstanceOf[MoveStep]) &&
+      cooldowns.forall(p => !p.action.isInstanceOf[Turn])) {
       action = order.generateAction()
       if (action.isDefined) action.get.execute()
     }
   }
 
   /**
-   * Logic to initiate a tile step move
-   * 
-   * Note that the position is changed when the move is initiated
+   * Move the unit one tile tile step in the current direction
+   *
+   * Note that the position is changed when the move is initiated.
    */
   def moveTileStep() {
     moveDistance = 0.0
@@ -155,15 +156,14 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
 
   /**
    * Issue attack order
+   * 
+   * Generates new action if there is no active action or blocking cooldown.
    */
   def attack(target: Unit) {
     order = new Attack(this, target)
     
-    // generate action if there is no active Action or Cooldown for Fire, MoveStep or Turn
-    // TODO: cooldown check should be based on the potential action to be generated
     if (action.isEmpty &&
         cooldowns.forall(p => !p.action.isInstanceOf[Fire]) &&
-        cooldowns.forall(p => !p.action.isInstanceOf[MoveStep]) &&
         cooldowns.forall(p => !p.action.isInstanceOf[Turn])) {
       action = order.generateAction()
       if (action.isDefined) action.get.execute()
