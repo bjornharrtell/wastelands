@@ -45,7 +45,11 @@ trait GameInputHandler extends Subscriber {
     }
 
     // no unit was clicked
-    if (!clickedUnit) mapTileAction(coordinate)
+    if (!clickedUnit) {
+      val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
+      val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
+      mapTileAction((mx, my))
+    }
     
     downAt = coordinate
     previous = coordinate

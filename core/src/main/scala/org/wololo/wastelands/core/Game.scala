@@ -10,7 +10,7 @@ case class TickEvent() extends Event
 
 class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
   type Pub = Game
-  
+
   var running = false
   var ticks = 0
 
@@ -20,24 +20,26 @@ class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
   var selectedUnit: Option[Unit] = None
 
   var player = 0
-
-  var units = ArrayBuffer[Unit](
-    new TestUnit1(this, 1, (3, 10)),
-    new TestUnit1(this, 1, (1, 2)),
-    new TestUnit1(this, 1, (8, 8)),
-    new TestUnit1(this, 1, (9, 11)),
-    new TestUnit2(this, player, (5, 4)),
-    new TestUnit2(this, player, (6, 6)))
-
-  for (unit <- units if unit.player == player) {
-    map.removeShadeAround(unit.position)
-  }
-
-  for (unit <- units) {
-    unit.subscribe(map)
-  }
   
+  var units = ArrayBuffer[Unit]()
   var projectiles = ArrayBuffer[Projectile]()
+  
+  def init() {
+    units += (new TestUnit1(this, 1, (3, 10)),
+      new TestUnit1(this, 1, (1, 2)),
+      new TestUnit1(this, 1, (8, 8)),
+      new TestUnit1(this, 1, (9, 11)),
+      new TestUnit2(this, player, (5, 4)),
+      new TestUnit2(this, player, (6, 6)))
+
+    for (unit <- units if unit.player == player) {
+      map.removeShadeAround(unit.position)
+    }
+
+    for (unit <- units) {
+      unit.subscribe(map)
+    }
+  }
 
   def run() {
     running = true
@@ -48,6 +50,8 @@ class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
     var frames = 0
     var ticks = 0
     var lastTimer1 = System.currentTimeMillis
+
+    init()
 
     while (running) {
       val now = System.nanoTime
@@ -78,24 +82,22 @@ class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
       }
     }
   }
-  
+
   def tick() {
     publish(new TickEvent)
-    
+
     //units = units.withFilter(_.alive).map(_.tick)
     projectiles = projectiles.withFilter(_.alive).map(_.tick)
 
     ticks += 1
   }
-  
+
   /**
    * Perform action on a chosen map tile
    */
   def mapTileAction(coordinate: Coordinate) {
     if (selectedUnit.isDefined) {
-      val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
-      val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
-      selectedUnit.get.moveTo(mx, my)
+      selectedUnit.get.moveTo(coordinate)
     }
   }
 

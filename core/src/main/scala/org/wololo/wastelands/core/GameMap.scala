@@ -97,6 +97,10 @@ class GameMap extends Publisher with Subscriber {
 
     if (tile.baseType != TileTypes.Base) tile.subType = calcSubType(coordinate, tile.baseType)
   }
+  
+  def makeBorderAround(coordinate: Coordinate) {
+    for (coordinate <- surroundingCoordinates(coordinate)) makeBorder(coordinate)
+  }
 
   /**
    * Calculates shade (fog of war) for tile
