@@ -12,6 +12,7 @@ import java.awt.Frame
 import java.awt.GraphicsDevice
 import java.awt.GraphicsEnvironment
 import org.wololo.wastelands.core.Game
+import org.wololo.wastelands.core.GameMapEditor
 import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.Publisher
 import org.wololo.wastelands.core.event.TouchEvent
@@ -31,7 +32,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
 
   override def run() {
     try {
-      game = new Game(this)
+      game = new GameMapEditor(this)
       subscribe(game)
       game.run()
     } finally {
