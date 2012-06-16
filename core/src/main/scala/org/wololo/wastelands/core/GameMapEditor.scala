@@ -8,6 +8,8 @@ import org.wololo.wastelands.core.event.TouchEvent
 
 class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
   
+  var tileType: Option[Int] = None
+  
   override def init() {
     map.tiles.foreach(tile => { tile.shade = false })
   }
@@ -16,7 +18,30 @@ class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
    * Perform action on a chosen map tile
    */
   override def mapTileAction(coordinate: Coordinate) {
-    map.tiles(coordinate).baseType = TileTypes.Dunes
-    map.makeBorderAround(coordinate)
+  }
+  
+  override def touchMove(coordinate: Coordinate) {
+    tileType match {
+      case x: Some[Int] => {
+        val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
+        val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
+        map.tiles(mx, my).baseType = x.get
+        map.makeBorderAround((mx, my))
+      }
+      case None => if (coordinate.distance(downAt)>tolerance) screen.scroll(previous-coordinate)
+    }
+    
+    previous = coordinate
+  }
+  
+  override def keyDown(keyCode: Int) {
+    keyCode match {
+      case KeyCode.KEY_1 => tileType = None
+      case KeyCode.KEY_2 => tileType = Option(TileTypes.Base)
+      case KeyCode.KEY_3 => tileType = Option(TileTypes.Dunes)
+      case KeyCode.KEY_4 => tileType = Option(TileTypes.Rock)
+      case KeyCode.KEY_5 => tileType = Option(TileTypes.Spice)
+      case _ =>
+    }
   }
 }

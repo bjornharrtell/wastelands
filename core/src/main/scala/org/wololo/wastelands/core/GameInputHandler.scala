@@ -3,6 +3,14 @@ package org.wololo.wastelands.core
 import org.wololo.wastelands.core.event.TouchEvent
 import org.wololo.wastelands.core.event.Event
 
+object KeyCode {
+  val KEY_1: Int = 0
+  val KEY_2: Int = 1
+  val KEY_3: Int = 2
+  val KEY_4: Int = 3
+  val KEY_5: Int = 4
+}
+
 trait GameInputHandler extends Subscriber {
   self : Game =>
   
@@ -53,5 +61,9 @@ trait GameInputHandler extends Subscriber {
     
     downAt = coordinate
     previous = coordinate
+  }
+  
+  def keyDown(keyCode: Int) {
+    
   }
 }

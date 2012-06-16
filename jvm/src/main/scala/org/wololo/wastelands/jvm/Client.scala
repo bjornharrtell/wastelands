@@ -16,6 +16,7 @@ import org.wololo.wastelands.core.GameMapEditor
 import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.Publisher
 import org.wololo.wastelands.core.event.TouchEvent
+import org.wololo.wastelands.core.KeyCode
 
 object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with JVMContext with Publisher {
   type Pub = Client.type
@@ -140,6 +141,15 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
       toggleFullscreen()
     } else if (keyCode == KeyEvent.VK_Q) {
       game.running = false
+    } else {
+      keyCode match {
+        case KeyEvent.VK_1 => game.keyDown(KeyCode.KEY_1)
+        case KeyEvent.VK_2 => game.keyDown(KeyCode.KEY_2)
+        case KeyEvent.VK_3 => game.keyDown(KeyCode.KEY_3)
+        case KeyEvent.VK_4 => game.keyDown(KeyCode.KEY_4)
+        case KeyEvent.VK_5 => game.keyDown(KeyCode.KEY_5)
+        case _ =>
+      }
     }
   }
 
