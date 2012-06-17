@@ -4,6 +4,10 @@ import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.unit.TileStepEvent
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event
+import java.io.ObjectOutputStream
+import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.FileInputStream
 
 case class TileOccupationEvent(val tile: Tile, val unit: Unit) extends Event
 
@@ -15,7 +19,7 @@ class GameMap extends Publisher with Subscriber {
 
   val Bounds: Rect = (0, 0, Width, Height)
 
-  val tiles = Array.fill(Width * Height) { new Tile }
+  var tiles = Array.fill(Width * Height) { new Tile }
 
   val subDef = Array(2, 4, 2, 36, 5, 24, 41, 24, 2, 4, 2, 36, 42, 16, 44, 16,
     3, 51, 3, 53, 25, 7, 13, 7, 39, 54, 39, 67, 25, 7, 13, 7, 2, 4, 2,
@@ -71,6 +75,8 @@ class GameMap extends Publisher with Subscriber {
   tiles(24, 8).baseType = TileTypes.Rock
   tiles(24, 7).baseType = TileTypes.Rock
 
+  //load()
+  
   for {
     y <- 0 until Height;
     x <- 0 until Width
@@ -78,6 +84,8 @@ class GameMap extends Publisher with Subscriber {
     makeBorder((x, y))
     tiles((x, y)).shade = true
   }
+  
+  
 
   def tiles(coordinate: Coordinate): Tile = {
     tiles(coordinate.y * Height + coordinate.x)
@@ -85,6 +93,18 @@ class GameMap extends Publisher with Subscriber {
 
   def tiles(x: Int, y: Int): Tile = {
     tiles(y * Height + x)
+  }
+  
+  def save() {
+    val objectOutputStream = new ObjectOutputStream(new FileOutputStream("map.data"))
+    objectOutputStream.writeObject(tiles);
+    objectOutputStream.close();
+  }
+  
+  def load() {
+    val objectInputStream = new ObjectInputStream(new FileInputStream("map.data"))
+    tiles = objectInputStream.readObject().asInstanceOf[Array[Tile]]
+    objectInputStream.close();
   }
 
   /**

@@ -9,6 +9,8 @@ object KeyCode {
   val KEY_3: Int = 2
   val KEY_4: Int = 3
   val KEY_5: Int = 4
+  val KEY_9: Int = 8
+  val KEY_0: Int = 9
 }
 
 trait GameInputHandler extends Subscriber {

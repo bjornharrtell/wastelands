@@ -33,7 +33,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
 
   override def run() {
     try {
-      game = new GameMapEditor(this)
+      game = new Game(this)
       subscribe(game)
       game.run()
     } finally {
@@ -148,6 +148,8 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
         case KeyEvent.VK_3 => game.keyDown(KeyCode.KEY_3)
         case KeyEvent.VK_4 => game.keyDown(KeyCode.KEY_4)
         case KeyEvent.VK_5 => game.keyDown(KeyCode.KEY_5)
+        case KeyEvent.VK_9 => game.keyDown(KeyCode.KEY_9)
+        case KeyEvent.VK_0 => game.keyDown(KeyCode.KEY_0)
         case _ =>
       }
     }

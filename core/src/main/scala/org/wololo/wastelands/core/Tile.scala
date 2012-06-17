@@ -6,7 +6,7 @@ object Tile {
   val Size = 32
 }
 
-class Tile() {
+class Tile() extends Serializable {
   
   /**
    * The tileset this tile belongs to.

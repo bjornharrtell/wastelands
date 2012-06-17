@@ -39,6 +39,8 @@ class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
       case KeyCode.KEY_3 => tileType = Option(TileTypes.Dunes)
       case KeyCode.KEY_4 => tileType = Option(TileTypes.Rock)
       case KeyCode.KEY_5 => tileType = Option(TileTypes.Spice)
+      case KeyCode.KEY_9 => map.save()
+      case KeyCode.KEY_0 => map.load()
       case _ =>
     }
   }
