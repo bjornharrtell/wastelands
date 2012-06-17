@@ -37,44 +37,6 @@ class GameMap extends Publisher with Subscriber {
     27, 77, 27, 45, 12, 45, 20, 75, 50, 66, 50, 18, 8, 18, 29, 31, 1,
     47, 1, 22, 30, 22, 49, 31, 1, 47, 1)
 
-  // TODO: test data, replace with serialization and map editor.
-  tiles(0, 0).baseType = TileTypes.Dunes
-  tiles(1, 1).baseType = TileTypes.Dunes
-
-  tiles(15, 5).baseType = TileTypes.Dunes
-  tiles(16, 5).baseType = TileTypes.Dunes
-  tiles(17, 5).baseType = TileTypes.Dunes
-  tiles(15, 6).baseType = TileTypes.Dunes
-  tiles(16, 6).baseType = TileTypes.Dunes
-  tiles(17, 6).baseType = TileTypes.Dunes
-  tiles(15, 7).baseType = TileTypes.Dunes
-  tiles(16, 7).baseType = TileTypes.Dunes
-  tiles(17, 7).baseType = TileTypes.Dunes
-
-  tiles(25, 5).baseType = TileTypes.Rock
-  tiles(26, 5).baseType = TileTypes.Rock
-  tiles(27, 5).baseType = TileTypes.Rock
-  tiles(25, 6).baseType = TileTypes.Rock
-  tiles(26, 6).baseType = TileTypes.Rock
-  tiles(27, 6).baseType = TileTypes.Rock
-  tiles(25, 7).baseType = TileTypes.Rock
-  tiles(26, 7).baseType = TileTypes.Rock
-  tiles(27, 7).baseType = TileTypes.Rock
-
-  tiles(25, 8).shade = true
-  tiles(26, 8).shade = true
-  tiles(27, 8).shade = true
-  tiles(25, 9).shade = true
-  tiles(26, 9).shade = true
-  tiles(27, 9).shade = true
-  tiles(25, 10).shade = true
-  tiles(26, 10).shade = true
-  tiles(27, 10).shade = true
-
-  tiles(23, 8).baseType = TileTypes.Rock
-  tiles(24, 8).baseType = TileTypes.Rock
-  tiles(24, 7).baseType = TileTypes.Rock
-
   load("maps/0.data")
 
   for {
