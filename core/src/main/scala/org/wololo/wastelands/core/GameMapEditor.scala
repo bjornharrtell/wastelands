@@ -17,8 +17,7 @@ class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
   /**
    * Perform action on a chosen map tile
    */
-  override def mapTileAction(coordinate: Coordinate) {
-  }
+  override def mapTileAction(coordinate: Coordinate) { }
   
   override def touchMove(coordinate: Coordinate) {
     tileType match {
@@ -26,12 +25,11 @@ class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
         val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
         val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
         map.tiles(mx, my).baseType = x.get
+        map.tiles(mx, my).subType = 0
         map.makeBorderAround((mx, my))
       }
-      case None => if (coordinate.distance(downAt)>tolerance) screen.scroll(previous-coordinate)
+      case None => super.touchMove(coordinate)
     }
-    
-    previous = coordinate
   }
   
   override def keyDown(keyCode: Int) {
