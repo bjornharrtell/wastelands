@@ -75,8 +75,8 @@ class GameMap extends Publisher with Subscriber {
   tiles(24, 8).baseType = TileTypes.Rock
   tiles(24, 7).baseType = TileTypes.Rock
 
-  //load()
-  
+  load("maps/0.data")
+
   for {
     y <- 0 until Height;
     x <- 0 until Width
@@ -84,8 +84,6 @@ class GameMap extends Publisher with Subscriber {
     makeBorder((x, y))
     tiles((x, y)).shade = true
   }
-  
-  
 
   def tiles(coordinate: Coordinate): Tile = {
     tiles(coordinate.y * Height + coordinate.x)
@@ -94,16 +92,16 @@ class GameMap extends Publisher with Subscriber {
   def tiles(x: Int, y: Int): Tile = {
     tiles(y * Height + x)
   }
-  
+
   def save() {
     val objectOutputStream = new ObjectOutputStream(new FileOutputStream("map.data"))
     objectOutputStream.writeObject(tiles);
     objectOutputStream.close();
   }
-  
-  def load() {
-    val objectInputStream = new ObjectInputStream(new FileInputStream("map.data"))
-    tiles = objectInputStream.readObject().asInstanceOf[Array[Tile]]
+
+  def load(filename: String = "map.data") {
+    val objectInputStream = new ObjectInputStream(new FileInputStream(filename))
+    objectInputStream.readObject().asInstanceOf[Array[Tile]].zipWithIndex.foreach { case (x, i) => tiles(i).copyFrom(x) }
     objectInputStream.close();
   }
 
@@ -117,7 +115,7 @@ class GameMap extends Publisher with Subscriber {
 
     if (tile.baseType != TileTypes.Base) tile.subType = calcSubType(coordinate, tile.baseType)
   }
-  
+
   def makeBorderAround(coordinate: Coordinate) {
     for (coordinate <- surroundingCoordinates(coordinate)) makeBorder(coordinate)
   }
@@ -234,20 +232,20 @@ class GameMap extends Publisher with Subscriber {
     }
   }
 
-  def surroundingCoordinates(position: Coordinate, range: Int = 1) : ArrayBuffer[Coordinate] = {
+  def surroundingCoordinates(position: Coordinate, range: Int = 1): ArrayBuffer[Coordinate] = {
     val array = new ArrayBuffer[Coordinate]
 
     for {
       y <- position.y - range to position.y + range;
       x <- position.x - range to position.x + range
     } {
-      val coordinate = (x,y)
+      val coordinate = (x, y)
       if (Bounds.contains(coordinate) && coordinate != position) array += coordinate
     }
-    
+
     array
   }
-  
+
   def surroundingTiles(position: Coordinate, range: Int = 1): ArrayBuffer[Tile] = {
     surroundingCoordinates(position, range).map((coordinate: Coordinate) => tiles(coordinate))
   }

@@ -6,8 +6,8 @@ object Tile {
   val Size = 32
 }
 
+@SerialVersionUID(1034565814679710344L)
 class Tile() extends Serializable {
-  
   /**
    * The tileset this tile belongs to.
    */
@@ -21,16 +21,26 @@ class Tile() extends Serializable {
    */
   var subType = 0
   
+  @transient
   var shade = false
   
+  @transient
   var shadeSubType = 0
+  
+  @transient
+  def copyFrom(tile: Tile) {
+    baseType = tile.baseType
+    subType = tile.subType
+  }
   
   /**
    * Tile can be occupied by one unit and only one
    * 
    * TODO: should be updated by event instead of inside Unit code?
    */
+  @transient
   var unit: Option[Unit] = None
   
+  @transient
   def isOccupied = unit.isDefined
 }
