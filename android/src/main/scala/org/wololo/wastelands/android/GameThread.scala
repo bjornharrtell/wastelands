@@ -1,16 +1,21 @@
 package org.wololo.wastelands.android
 import org.wololo.wastelands.core.Game
-
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.SurfaceHolder
+import android.view.MotionEvent
+import org.wololo.wastelands.core.Coordinate
+import org.wololo.wastelands.core.Publisher
+import org.wololo.wastelands.core.event.TouchEvent
 
-class GameThread(context: Context) extends Thread with SurfaceHolder.Callback with DalvikContext {
-
+class GameThread(context: Context) extends Thread with SurfaceHolder.Callback with DalvikContext with Publisher  {
+  type Pub = Game
+  
   var running = false
 
   val bitmapFactory = new AndroidBitmapFactory(context)
   val soundFactory = new AndroidSoundFactory(context)
+  val resourceFactory = new AndroidResourceFactory(context)
 
   var game: Game = null
 
@@ -31,6 +36,7 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
     screenWidth = holder.getSurfaceFrame.width()
     screenHeight = holder.getSurfaceFrame.height()
     game = new Game(this)
+    subscribe(game)
     running = true
     start()
   }
@@ -49,6 +55,14 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
       } catch {
         case e: InterruptedException =>
       }
+    }
+  }
+  
+  def handleAction(action:Int, coordinate: Coordinate) {
+    action match {
+      case MotionEvent.ACTION_DOWN => publish(new TouchEvent(coordinate, TouchEvent.DOWN))
+      case MotionEvent.ACTION_UP => publish(new TouchEvent(coordinate, TouchEvent.UP))
+      case MotionEvent.ACTION_MOVE => publish(new TouchEvent(coordinate, TouchEvent.MOVE))
     }
   }
 }

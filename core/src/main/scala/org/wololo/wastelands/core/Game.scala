@@ -14,7 +14,7 @@ class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
   var running = false
   var ticks = 0
 
-  val map = new GameMap
+  val map = new GameMap(this)
   val screen = new Screen(this)
 
   var selectedUnit: Option[Unit] = None

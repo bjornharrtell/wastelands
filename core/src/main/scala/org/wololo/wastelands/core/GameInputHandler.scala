@@ -19,6 +19,7 @@ trait GameInputHandler extends Subscriber {
   val tolerance = 5
   var previous: Coordinate = (0, 0)
   var downAt: Coordinate = (0, 0)
+  var hasScrolled = false
   
   def notify(pub: Publisher, event: Event) {
     event match {
@@ -36,15 +37,8 @@ trait GameInputHandler extends Subscriber {
   }
 
   def touchUp(coordinate: Coordinate) {
-  }
-  
-  def touchMove(coordinate: Coordinate) {
-    if (coordinate.distance(downAt)>tolerance) screen.scroll(previous-coordinate)
+    if (hasScrolled) return
     
-    previous = coordinate
-  }
-
-  def touchDown(coordinate: Coordinate) {
     var clickedUnit = false
 
     // process out visible and clicked units
@@ -60,6 +54,19 @@ trait GameInputHandler extends Subscriber {
       val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
       mapTileAction((mx, my))
     }
+  }
+  
+  def touchMove(coordinate: Coordinate) {
+    if (coordinate.distance(downAt)>tolerance) {
+      screen.scroll(previous-coordinate)
+      hasScrolled = true
+    }
+    
+    previous = coordinate
+  }
+
+  def touchDown(coordinate: Coordinate) {
+    hasScrolled = false
     
     downAt = coordinate
     previous = coordinate

@@ -8,4 +8,5 @@ trait JVMContext extends VMContext {
   val bitmapFactory: BitmapFactory = AWTBitmapFactory
   val canvasFactory: CanvasFactory = AWTCanvasFactory
   val soundFactory: SoundFactory = JVMSoundFactory
+  val resourceFactory: ResourceFactory = JVMResourceFactory
 }

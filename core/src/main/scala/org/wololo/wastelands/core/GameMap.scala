@@ -8,10 +8,11 @@ import java.io.ObjectOutputStream
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.FileInputStream
+import java.io.File
 
 case class TileOccupationEvent(val tile: Tile, val unit: Unit) extends Event
 
-class GameMap extends Publisher with Subscriber {
+class GameMap(game: Game) extends Publisher with Subscriber {
   type Pub = GameMap
 
   val Width = 64
@@ -62,7 +63,7 @@ class GameMap extends Publisher with Subscriber {
   }
 
   def load(filename: String = "map.data") {
-    val objectInputStream = new ObjectInputStream(new FileInputStream(filename))
+    val objectInputStream = new ObjectInputStream(game.vmContext.resourceFactory.getInputStream(new File(filename)))
     objectInputStream.readObject().asInstanceOf[Array[Tile]].zipWithIndex.foreach { case (x, i) => tiles(i).copyFrom(x) }
     objectInputStream.close();
   }

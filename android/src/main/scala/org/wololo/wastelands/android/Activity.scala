@@ -11,8 +11,7 @@ import org.wololo.wastelands.core.Publisher
 import org.wololo.wastelands.core.event.TouchEvent
 import org.wololo.wastelands.core.Coordinate
 
-
-class Activity extends android.app.Activity with OnTouchListener with Publisher {
+class Activity extends android.app.Activity with OnTouchListener {
   var gameThread: GameThread = null
 
   override def onCreate(savedInstanceState: Bundle) {
@@ -48,14 +47,12 @@ class Activity extends android.app.Activity with OnTouchListener with Publisher 
     for (h <- 0 until historySize) {
       val x = motionEvent.getHistoricalX(p, h).toInt
       val y = motionEvent.getHistoricalY(p, h).toInt
-      val coordinate = (x, y)
-      handleAction(action, coordinate)
+      gameThread.handleAction(action, (x, y))
     }
 
     val x = motionEvent.getX(p).toInt
     val y = motionEvent.getY(p).toInt
-    val coordinate = (x, y)
-    handleAction(action, coordinate)
+    gameThread.handleAction(action, (x, y))
 
     // sleep 16 milliseconds to avoid too much input CPU processing
     // goal is to get slightly more input events than target FPS which is 60
@@ -64,11 +61,4 @@ class Activity extends android.app.Activity with OnTouchListener with Publisher 
     true
   }
   
-  def handleAction(action:Int, coordinate: Coordinate) {
-    action match {
-      case MotionEvent.ACTION_DOWN => publish(new TouchEvent(coordinate, TouchEvent.DOWN))
-      case MotionEvent.ACTION_UP => publish(new TouchEvent(coordinate, TouchEvent.UP))
-      case MotionEvent.ACTION_MOVE => publish(new TouchEvent(coordinate, TouchEvent.MOVE))
-    }
-  }
 }
