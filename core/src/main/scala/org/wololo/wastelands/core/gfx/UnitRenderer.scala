@@ -8,12 +8,16 @@ import java.io.File
 
 class UnitRenderer(val screen: Screen) extends TileReader {
 
-  // TODO: create array of tilesets instead
-  val tileSet1 = fileToTiles(new File("tilesets/unit.png"), BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
-  tileSet1.map(tile => tileSet1.append(screen.bitmapFactory.createShadow(tile)))
-
-  val tileSet2 = fileToTiles(new File("tilesets/unit2.png"), BitmapTypes.Translucent, 8, 1, 16, screen.TileSize)
-  tileSet2.map(tile => tileSet2.append(screen.bitmapFactory.createShadow(tile)))
+  val tileSet = fileToTiles(new File("tilesets/unit.png"), BitmapTypes.Translucent, 8, 3, 16, screen.TileSize)
+  
+  val tileSetTestUnit1 = tileSet.slice(0, 8)
+  tileSetTestUnit1.map(tile => tileSetTestUnit1.append(screen.bitmapFactory.createShadow(tile)))
+  
+  val tileSetTestUnit2 = tileSet.slice(8, 16)
+  tileSetTestUnit2.map(tile => tileSetTestUnit2.append(screen.bitmapFactory.createShadow(tile)))
+  
+  val tileSetHarvester = tileSet.slice(16, 24)
+  tileSetHarvester.map(tile => tileSetHarvester.append(screen.bitmapFactory.createShadow(tile)))
   
   val selection = fileToTiles(new File("tilesets/other.png"), BitmapTypes.Translucent, 1, 1, 16, screen.TileSize)(0)
 
@@ -27,8 +31,9 @@ class UnitRenderer(val screen: Screen) extends TileReader {
 
     // TODO: should probably define all unit subtypes as int constants to use here instead
     val tileSet = unit match {
-      case x: TestUnit1 => tileSet1
-      case x: TestUnit2 => tileSet2
+      case x: TestUnit1 => tileSetTestUnit1
+      case x: TestUnit2 => tileSetTestUnit2
+      case x: Harvester => tileSetHarvester
     }
 
     if (unit.isOnScreen && unit.alive) {

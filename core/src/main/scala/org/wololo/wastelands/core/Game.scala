@@ -30,7 +30,8 @@ class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
       new TestUnit1(this, 1, (8, 8)),
       new TestUnit1(this, 1, (9, 11)),
       new TestUnit2(this, player, (5, 4)),
-      new TestUnit2(this, player, (6, 6)))
+      new TestUnit2(this, player, (6, 6)),
+      new Harvester(this, player, (5, 6)))
 
     for (unit <- units if unit.player == player) {
       map.removeShadeAround(unit.position)
