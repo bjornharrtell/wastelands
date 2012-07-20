@@ -14,5 +14,6 @@
 		<module>jvm</module>
 		<module>android</module>
 		<module>incubator</module>
+		<module>server</module>
 	</modules>
 </project>
