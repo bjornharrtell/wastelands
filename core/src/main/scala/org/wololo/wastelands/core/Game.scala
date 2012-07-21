@@ -8,123 +8,32 @@ import org.wololo.wastelands.core.event.TouchEvent
 
 import scala.actors._
 import scala.actors.Actor._
-import scala.actors.remote._
-import scala.actors.remote.RemoteActor._
 
-class GameActor extends Actor {
+case object Create extends Event
+case object End extends Event
+case class Join() extends Event
+case class Upload(map: TileMap) extends Event
+case class Joined(player: Player) extends Event
+case class UnitMove(unit: Unit) extends Event
+
+class Game extends Actor with GameState {
+  val map: TileMap = new TileMap()
+  val players = ArrayBuffer[OutputChannel[Any]]()
+  
+  def handleEvent(e: Event) {
+    println(e)
+    e match {
+      case Create => exit
+      case End => exit
+      case e: Join => 
+        sender ! Upload(map)
+        players += sender
+        players.foreach(_ ! Joined(sender.asInstanceOf[Player]))
+      case e: UnitMove => exit
+    }
+  }
+ 
   def act { loop { react {
-	case Exit => println("Shutdown event"); exit
+	case e:Event => handleEvent(e)
   }}}
-  
-  type Pub = Game
-
-  var running = false
-  var ticks = 0
-
-  val map = new GameMap(this)
-  val screen = new Screen(this)
-
-  var selectedUnit: Option[Unit] = None
-
-  var player = 0
-  
-  var units = ArrayBuffer[Unit]()
-  var projectiles = ArrayBuffer[Projectile]()
-  
-  def init() {
-    units += (new TestUnit1(this, 1, (3, 10)),
-      new TestUnit1(this, 1, (1, 2)),
-      new TestUnit1(this, 1, (8, 8)),
-      new TestUnit1(this, 1, (9, 11)),
-      new TestUnit2(this, player, (5, 4)),
-      new TestUnit2(this, player, (6, 6)),
-      new Harvester(this, player, (5, 6)))
-
-    for (unit <- units if unit.player == player) {
-      map.removeShadeAround(unit.position)
-    }
-
-    for (unit <- units) {
-      unit.subscribe(map)
-    }
-  }
-
-  def run() {
-    running = true
-
-    var lastTime = System.nanoTime
-    var unprocessed = 0.0
-    val nsPerTick = 1000000000.0 / 60.0
-    var frames = 0
-    var ticks = 0
-    var lastTimer1 = System.currentTimeMillis
-
-    init()
-
-    while (running) {
-      val now = System.nanoTime
-      unprocessed += (now - lastTime) / nsPerTick
-      lastTime = now
-      var shouldRender = false
-      while (unprocessed >= 1.0) {
-        ticks += 1
-        tick()
-        unprocessed -= 1
-        shouldRender = true
-      }
-
-      //Thread.sleep(2)
-
-      if (shouldRender) {
-        frames += 1
-
-        screen.render()
-        vmContext.render(screen.bitmap)
-      }
-
-      if (System.currentTimeMillis - lastTimer1 > 1000) {
-        lastTimer1 += 1000
-        //System.out.println(ticks + " ticks, " + frames + " fps")
-        frames = 0
-        ticks = 0
-      }
-    }
-  }
-
-  def tick() {
-
-    //units = units.withFilter(_.alive).map(_.tick)
-    projectiles = projectiles.withFilter(_.alive).map(_.tick)
-
-    ticks += 1
-  }
-
-  /**
-   * Perform action on a chosen map tile
-   */
-  def mapTileAction(coordinate: Coordinate) {
-    if (selectedUnit.isDefined) {
-      selectedUnit.get.moveTo(coordinate)
-    }
-  }
-
-  /**
-   * Perform action on a selectable unit
-   */
-  def unitAction(unit: Unit) {
-    if (selectedUnit.isDefined) {
-      if (unit == selectedUnit) {
-        return
-      } else if (unit.player != player) {
-        selectedUnit.get.attack(unit)
-      } else {
-        selectedUnit.get.unselect()
-        unit.select()
-        selectedUnit = Option(unit)
-      }
-    } else if (unit.player == player) {
-      unit.select()
-      selectedUnit = Option(unit)
-    }
-  }
 }

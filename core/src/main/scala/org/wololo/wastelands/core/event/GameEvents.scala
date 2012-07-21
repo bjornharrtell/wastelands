@@ -1,7 +1,8 @@
 package org.wololo.wastelands.core.event
 
-import org.wololo.wastelands.core.GameMap
+import org.wololo.wastelands.core.TileMap
 
-case object Exit extends Event
-case object CreateGame extends Event
-case class GameJoined(gameMap: GameMap) extends Event
+case object Create extends Event
+case object End extends Event
+case object Join extends Event
+case class Joined(map: TileMap) extends Event

@@ -2,6 +2,7 @@ package org.wololo.wastelands.core
 
 import org.wololo.wastelands.core.event.TouchEvent
 import org.wololo.wastelands.core.event.Event
+import org.wololo.wastelands.core.unit.Unit
 
 object KeyCode {
   val KEY_1: Int = 0
@@ -33,7 +34,7 @@ trait ClientInputHandler {
     if (hasScrolled) return
     
     var clickedUnit = false
-
+    
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
     for (unit <- units if unit.alive && unit.ScreenBounds.contains(coordinate)) {

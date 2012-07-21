@@ -1,7 +1,6 @@
 package org.wololo.wastelands.core
 import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Direction
-import org.wololo.wastelands.core.unit.TileStepEvent
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event
 import java.io.ObjectOutputStream
@@ -11,7 +10,7 @@ import java.io.FileInputStream
 import java.io.File
 import org.wololo.wastelands.vmlayer.VMContext
 
-class TileMap(vmContext: VMContext) {
+class TileMap() {
   val Width = 64
   val Height = 64
 
@@ -35,7 +34,7 @@ class TileMap(vmContext: VMContext) {
     27, 77, 27, 45, 12, 45, 20, 75, 50, 66, 50, 18, 8, 18, 29, 31, 1,
     47, 1, 22, 30, 22, 49, 31, 1, 47, 1)
 
-  load("maps/0.data")
+  //load("maps/0.data")
 
   for {
     y <- 0 until Height;
@@ -53,7 +52,7 @@ class TileMap(vmContext: VMContext) {
     tiles(y * Height + x)
   }
 
-  def save() {
+  /*def save() {
     val objectOutputStream = new ObjectOutputStream(new FileOutputStream("map.data"))
     objectOutputStream.writeObject(tiles);
     objectOutputStream.close();
@@ -63,7 +62,7 @@ class TileMap(vmContext: VMContext) {
     val objectInputStream = new ObjectInputStream(vmContext.resourceFactory.getInputStream(new File(filename)))
     objectInputStream.readObject().asInstanceOf[Array[Tile]].zipWithIndex.foreach { case (x, i) => tiles(i).copyFrom(x) }
     objectInputStream.close();
-  }
+  }*/
 
   /**
    * Calculates subtype for tile if it's suitable
