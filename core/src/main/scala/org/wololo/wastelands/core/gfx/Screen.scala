@@ -6,9 +6,9 @@ import org.wololo.wastelands.core._
 /**
  * Contains the state of the game screen.
  */
-class Screen(game: Game) {
+class Screen(client: Client) {
 
-  val vmContext = game.vmContext
+  val vmContext = client.vmContext
   val bitmapFactory = vmContext.bitmapFactory
   val canvasFactory = vmContext.canvasFactory
   
@@ -37,7 +37,7 @@ class Screen(game: Game) {
 
   System.out.println("TileSize:" + TileSize + " PixelSize:" + PixelSize)
 
-  val map = game.map
+  val map = client.map
 
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
@@ -86,8 +86,8 @@ class Screen(game: Game) {
     mapPixelOffset.y = calculateTilePixelOffset(screenOffset.y, mapOffset.y)
 
     tileRenderer.render(false)
-    game.units.foreach(unitRenderer.render(_))
-    game.projectiles.foreach(projectileRenderer.render(_))
+    client.units.foreach(unitRenderer.render(_))
+    client.projectiles.foreach(projectileRenderer.render(_))
     tileRenderer.render(true)
   }
 

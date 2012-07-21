@@ -9,12 +9,9 @@ import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.FileInputStream
 import java.io.File
+import org.wololo.wastelands.vmlayer.VMContext
 
-case class TileOccupationEvent(val tile: Tile, val unit: Unit) extends Event
-
-class GameMap(game: Game) extends Publisher with Subscriber {
-  type Pub = GameMap
-
+class TileMap(vmContext: VMContext) {
   val Width = 64
   val Height = 64
 
@@ -44,8 +41,8 @@ class GameMap(game: Game) extends Publisher with Subscriber {
     y <- 0 until Height;
     x <- 0 until Width
   } {
-    makeBorder((x, y))
-    tiles((x, y)).shade = true
+    makeBorder(x, y)
+    tiles(x, y).shade = true
   }
 
   def tiles(coordinate: Coordinate): Tile = {
@@ -63,7 +60,7 @@ class GameMap(game: Game) extends Publisher with Subscriber {
   }
 
   def load(filename: String = "map.data") {
-    val objectInputStream = new ObjectInputStream(game.vmContext.resourceFactory.getInputStream(new File(filename)))
+    val objectInputStream = new ObjectInputStream(vmContext.resourceFactory.getInputStream(new File(filename)))
     objectInputStream.readObject().asInstanceOf[Array[Tile]].zipWithIndex.foreach { case (x, i) => tiles(i).copyFrom(x) }
     objectInputStream.close();
   }
@@ -188,13 +185,6 @@ class GameMap(game: Game) extends Publisher with Subscriber {
     }
   }
 
-  def notify(pub: Publisher, event: Event) {
-    event match {
-      case x: TileStepEvent => onTileStep(x)
-      case _ =>
-    }
-  }
-
   def surroundingCoordinates(position: Coordinate, range: Int = 1): ArrayBuffer[Coordinate] = {
     val array = new ArrayBuffer[Coordinate]
 
@@ -211,12 +201,5 @@ class GameMap(game: Game) extends Publisher with Subscriber {
 
   def surroundingTiles(position: Coordinate, range: Int = 1): ArrayBuffer[Tile] = {
     surroundingCoordinates(position, range).map((coordinate: Coordinate) => tiles(coordinate))
-  }
-
-  def onTileStep(e: TileStepEvent) {
-    tiles(e.from).unit = None
-    tiles(e.to).unit = Option(e.unit)
-
-    publish(new TileOccupationEvent(tiles(e.to), e.unit))
   }
 }

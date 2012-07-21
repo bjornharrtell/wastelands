@@ -17,16 +17,9 @@ object ServerApp extends App {
 }
 
 class Client(server: AbstractActor) extends Actor { 
-  def act() {
-    server ! Connect
-    server ! Stop
-    
-    loop {
-      react {
-        case Shutdown => System.out.println("Shutdown event"); exit
-      }
-    }
-  }
+  def act { loop { react {
+	case Shutdown => System.out.println("Shutdown event"); exit
+  }}}
 }
 
 object Server extends Actor {

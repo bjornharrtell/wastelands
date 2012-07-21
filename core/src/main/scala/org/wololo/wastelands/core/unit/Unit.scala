@@ -17,16 +17,16 @@ case class OrderEvent() extends Event
 /**
  * Base abstract implementation for units
  */
-abstract class Unit(val game: Game, val player: Int, val position: Coordinate) extends Selectable with Publisher with Subscriber {
+abstract class Unit(val client: Client, val player: Int, val position: Coordinate) extends Selectable with Publisher with Subscriber {
   type Pub = Unit
 
-  val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
-  val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
+  val fireSound = client.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
+  val explodeSound = client.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
 
   var isOnScreen = false
   val ScreenBounds: Rect = (0, 0, 0, 0)
 
-  val map = game.map
+  val map = client.map
 
   map.tiles(position).unit = Option(this)
 
@@ -180,7 +180,7 @@ abstract class Unit(val game: Game, val player: Int, val position: Coordinate) e
   }
 
   def kill() {
-    game.map.tiles(position).unit = None
+    client.map.tiles(position).unit = None
     if (!explode && !exploding) {
       explode = true
       explodeSound.play()

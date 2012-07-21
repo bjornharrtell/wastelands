@@ -13,20 +13,13 @@ object KeyCode {
   val KEY_0: Int = 9
 }
 
-trait GameInputHandler extends Subscriber {
-  self : Game =>
+trait ClientInputHandler {
+  self : Client =>
   
   val tolerance = 5
   var previous: Coordinate = (0, 0)
   var downAt: Coordinate = (0, 0)
   var hasScrolled = false
-  
-  def notify(pub: Publisher, event: Event) {
-    event match {
-      case x: TouchEvent => touch(x)
-      case _ =>
-    }
-  }
   
   def touch(e: TouchEvent) {
     e.action match {
@@ -52,7 +45,7 @@ trait GameInputHandler extends Subscriber {
     if (!clickedUnit) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
-      mapTileAction((mx, my))
+      //mapTileAction((mx, my))
     }
   }
   

@@ -6,9 +6,16 @@ import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event
 import org.wololo.wastelands.core.event.TouchEvent
 
-case class TickEvent() extends Event
+import scala.actors._
+import scala.actors.Actor._
+import scala.actors.remote._
+import scala.actors.remote.RemoteActor._
 
-class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
+class GameActor extends Actor {
+  def act { loop { react {
+	case Exit => println("Shutdown event"); exit
+  }}}
+  
   type Pub = Game
 
   var running = false
@@ -85,7 +92,6 @@ class Game(val vmContext: VMContext) extends Publisher with GameInputHandler {
   }
 
   def tick() {
-    publish(new TickEvent)
 
     //units = units.withFilter(_.alive).map(_.tick)
     projectiles = projectiles.withFilter(_.alive).map(_.tick)
