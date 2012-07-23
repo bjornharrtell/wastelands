@@ -1,7 +1,6 @@
 package org.wololo.wastelands.core
 
-import org.wololo.wastelands.core.event.Event
-import org.wololo.wastelands.core.event.TouchEvent
+import org.wololo.wastelands.core.event._
 import org.wololo.wastelands.vmlayer.VMContext
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.unit.Unit
@@ -11,34 +10,15 @@ import org.wololo.wastelands.core.gfx.Screen
 
 
 class Client(val vmContext: VMContext) extends ClientInputHandler with GameState {
-  type Pub = Client
-  
   var selectedUnit: Option[Unit] = None
 
-  var player = 0
+  var player = new Player()
+  player.start
   
   var running = false
   val screen = new Screen(this)
-  
-  /*def init() {
-    units += (new TestUnit1(this, 1, (3, 10)),
-      new TestUnit1(this, 1, (1, 2)),
-      new TestUnit1(this, 1, (8, 8)),
-      new TestUnit1(this, 1, (9, 11)),
-      new TestUnit2(this, player, (5, 4)),
-      new TestUnit2(this, player, (6, 6)),
-      new Harvester(this, player, (5, 6)))
-
-    for (unit <- units if unit.player == player) {
-      map.removeShadeAround(unit.position)
-    }
-
-    for (unit <- units) {
-      unit.subscribe(map)
-    }
-  }*/
-
-  def run() {
+ 
+  def start() {
     running = true
 
     var lastTime = System.nanoTime
@@ -79,6 +59,8 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with GameState
   }
 
   def tick() {
+    
+    player ! Tick
 
     //units = units.withFilter(_.alive).map(_.tick)
     projectiles = projectiles.withFilter(_.alive).map(_.tick)
@@ -91,7 +73,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with GameState
    */
   def mapTileAction(coordinate: Coordinate) {
     if (selectedUnit.isDefined) {
-      selectedUnit.get.moveTo(coordinate)
+      player ! UnitMove(selectedUnit.get.id, coordinate)
     }
   }
 
