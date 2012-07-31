@@ -5,10 +5,10 @@ import scala.actors.Actor._
 import scala.actors.remote._
 import scala.actors.remote.RemoteActor._
 
-object Client extends App with Actor {
+object Client extends Actor {
   var server: AbstractActor = null
   
-  override def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = {
     println("Client starting...")
     println("Client connecting to server...")
     server = select(Node("localhost", 9000), 'server)
@@ -18,8 +18,8 @@ object Client extends App with Actor {
     while (true) {
       val input = Console.readLine("Client input: ")
       input match {
-        case "quit" => server ! Disconnect
-        case "shutdown" => server ! Shutdown
+        case "quit" => server ! Disconnect; exit
+        case "shutdown" => server ! Shutdown; exit
         case _ => println("Invalid input")
       }
     }

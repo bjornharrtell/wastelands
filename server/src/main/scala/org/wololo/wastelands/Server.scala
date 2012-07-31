@@ -7,7 +7,7 @@ import scala.actors.Actor._
 import scala.actors.remote._
 import scala.actors.remote.RemoteActor._
 
-object Server extends App with Actor {
+object Server extends App with Actor {  
   var clients:ArrayBuffer[OutputChannel[Any]] = null
   
   override def main(args: Array[String]): Unit = {
@@ -23,6 +23,7 @@ object Server extends App with Actor {
   }
   
   def disconnect(client: OutputChannel[Any]) {
+    // TODO: won't work since the "client" instance will be a different reference even if it's the same actual client
     clients -= client
     println("Clients connected: " + clients.length)
   }
