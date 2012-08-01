@@ -1,58 +1,53 @@
 package org.wololo.wastelands
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.HashMap
 
-import scala.actors._
-import scala.actors.Actor._
-import scala.actors.remote._
-import scala.actors.remote.RemoteActor._
+import akka.actor._
+import com.typesafe.config.ConfigFactory
 
-object Server extends App with Actor {  
-  var clients:ArrayBuffer[OutputChannel[Any]] = null
-  
+object Server extends App {
   override def main(args: Array[String]): Unit = {
-    clients = ArrayBuffer[OutputChannel[Any]]()
+    val system = ActorSystem("server", ConfigFactory.load.getConfig("server"))
+    system.registerOnTermination(System.exit(1))
     
-    println("Server starting...")
-    start
+    val serverActor = system.actorOf(Props[ServerActor], name="Server")
   }
 
-  def connect(client: OutputChannel[Any]) {
-    clients += client
-    println("Clients connected: " + clients.length)
-  }
-  
-  def disconnect(client: OutputChannel[Any]) {
-    // TODO: won't work since the "client" instance will be a different reference even if it's the same actual client
-    clients -= client
-    println("Clients connected: " + clients.length)
-  }
-  
-  def shutdown() {
-    clients.foreach(_ ! Shutdown)
-    exit
-  }
-  
-  def handleEvent(e: Event) {
-    println(e)
-    e match {
-      case Connect => connect(sender)
-      case Disconnect => disconnect(sender)
-      case Shutdown => shutdown()
+  class ServerActor extends Actor {
+    var clients: HashMap[Int, ActorRef] = HashMap.empty[Int, ActorRef]
+
+    def connect(id: Int, sender: ActorRef) {
+      sender ! Connected
+      clients += (id -> sender)
+      println("Clients connected: " + clients.size)
     }
-  }
 
-  def act(): Unit = {
-    println("Server listening to port 9000...")
-    alive(9000)
-    register('server, self)
-    
-    println("Server ready and awaiting connections....")
-    loop {
-      react {
-        case e: Event => handleEvent(e)
+    def disconnect(id: Int, sender: ActorRef) {
+      clients -= id
+      println("Clients connected: " + clients.size)
+    }
+
+    def shutdown() {
+      clients.values.foreach(_ ! Shutdown)
+      context.stop(self)
+      context.system.shutdown()
+    }
+
+    def handleEvent(e: Event) {
+      println(e)
+      e match {
+        case e: Connect => connect(e.id, sender)
+        case e: Connected =>
+        case e: Disconnect => disconnect(e.id, sender)
+        case e: Shutdown => shutdown()
       }
+    }
+
+    def receive = {
+      case e: Event => handleEvent(e)
     }
   }
 }
+
+
 

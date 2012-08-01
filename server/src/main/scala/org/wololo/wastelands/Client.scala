@@ -1,44 +1,58 @@
 package org.wololo.wastelands
 
-import scala.actors._
-import scala.actors.Actor._
-import scala.actors.remote._
-import scala.actors.remote.RemoteActor._
+import akka.actor._
+import com.typesafe.config.ConfigFactory
 
-object Client extends Actor {
-  var server: AbstractActor = null
+object Client extends App {
   
-  def main(args: Array[String]): Unit = {
-    println("Client starting...")
-    println("Client connecting to server...")
-    server = select(Node("localhost", 9000), 'server)
-    
-    start
+  override def main(args: Array[String]): Unit = {
+    val system = ActorSystem("client", ConfigFactory.load.getConfig("client"))
+    system.registerOnTermination(System.exit(1))
 
-    while (true) {
+    val clientActor = system.actorOf(Props[ClientActor])
+
+    var running = true
+
+    while (running) {
       val input = Console.readLine("Client input: ")
       input match {
-        case "quit" => server ! Disconnect; exit
-        case "shutdown" => server ! Shutdown; exit
+        case "quit" => clientActor ! Disconnect(0); running = false;
+        case "shutdown" => clientActor ! Shutdown(0); running = false;
         case _ => println("Invalid input")
       }
     }
   }
 
-  def handleEvent(e: Event) {
-    println(e)
-    e match {
-      case Shutdown => exit
+  class ClientActor extends Actor {
+    val id = hashCode;
+
+    val server = context.actorFor("akka://server@127.0.0.1:9000/user/Server")
+
+    server ! Connect(id)
+    
+    def disconnect() {
+      server ! Disconnect(id)
+      context.system.shutdown()
     }
-  }
 
-  def act() {
-    server ! Connect
+    def shutdown() {
+      server ! Shutdown(0)
+      context.system.shutdown()
+    }
 
-    loop {
-      react {
-        case e: Event => handleEvent(e)
+    def handleEvent(e: Event) {
+      println(e)
+      e match {
+        case e: Connected =>
+        case e: Disconnect => disconnect()
+        case e: Shutdown => shutdown()
+        case _ =>
       }
     }
+
+    def receive = {
+      case e: Event => handleEvent(e)
+    }
   }
+
 }
