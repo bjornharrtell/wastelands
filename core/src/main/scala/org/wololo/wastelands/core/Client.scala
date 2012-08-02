@@ -12,8 +12,8 @@ import org.wololo.wastelands.core.gfx.Screen
 class Client(val vmContext: VMContext) extends ClientInputHandler with GameState {
   var selectedUnit: Option[Unit] = None
 
+  // TODO: akkaify
   var player = new Player()
-  player.start
   
   var running = false
   val screen = new Screen(this)

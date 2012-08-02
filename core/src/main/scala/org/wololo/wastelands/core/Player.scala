@@ -1,9 +1,10 @@
 package org.wololo.wastelands.core
 
-import scala.actors._
-import scala.actors.Actor._
+import akka.actor._
+import com.typesafe.config.ConfigFactory
 import org.wololo.wastelands.core.unit.Order
-import org.wololo.wastelands.core.event._
+import org.wololo.wastelands.core.event
+import org.wololo.wastelands.core.event.Event
 
 class Player extends Actor {
 	val order: Order
@@ -11,11 +12,11 @@ class Player extends Actor {
 	def handleEvent(e: Event) {
     println(e)
     e match {
-      case e: UnitMove => exit
+      case e: event.Action => exit
     }
   }
  
-  def act { loop { react {
-	case e:Event => handleEvent(e)
-  }}}
+  def receive = {
+	case e: Event => handleEvent(e)
+  }
 }
