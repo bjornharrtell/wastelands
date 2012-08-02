@@ -1,44 +1,53 @@
 package org.wololo.wastelands
 
-import scala.actors._
-import scala.actors.Actor._
-import scala.actors.remote._
-import scala.actors.remote.RemoteActor._
+import scala.collection.mutable.HashMap
 
-case object Connect
-case object Event
-case object Stop
-case object Shutdown
+import akka.actor._
+import com.typesafe.config.ConfigFactory
 
-object ServerApp extends App {
+object Server extends App {
   override def main(args: Array[String]): Unit = {
-    Server.start
+    val system = ActorSystem("server", ConfigFactory.load.getConfig("server"))
+    system.registerOnTermination(System.exit(1))
+    
+    val serverActor = system.actorOf(Props[ServerActor], name="Server")
   }
-}
 
-class Client(server: AbstractActor) extends Actor { 
-  def act { loop { react {
-	case Shutdown => System.out.println("Shutdown event"); exit
-  }}}
-}
+  class ServerActor extends Actor {
+    var clients: HashMap[Int, ActorRef] = HashMap.empty[Int, ActorRef]
 
-object Server extends Actor {
-  override def act() : Unit = {
-    System.out.println("Server starting... " + Thread.currentThread().getId())
-    
-    alive(9000)
-    register('wastelandsServer, self)
-    
-    var oc: OutputChannel[Any] = null;
-    
-    loop {
-      react {
-        case Connect => oc = sender; System.out.println("Connect event")
-        case Stop => System.out.println("Exit event"); oc ! Shutdown; exit
+    def connect(id: Int, sender: ActorRef) {
+      sender ! Connected
+      clients += (id -> sender)
+      println("Clients connected: " + clients.size)
+    }
+
+    def disconnect(id: Int, sender: ActorRef) {
+      clients -= id
+      println("Clients connected: " + clients.size)
+    }
+
+    def shutdown() {
+      clients.values.foreach(_ ! Shutdown)
+      context.stop(self)
+      context.system.shutdown()
+    }
+
+    def handleEvent(e: Event) {
+      println(e)
+      e match {
+        case e: Connect => connect(e.id, sender)
+        case e: Connected =>
+        case e: Disconnect => disconnect(e.id, sender)
+        case e: Shutdown => shutdown()
       }
     }
-    
-    System.out.println("Server shutting down... " + Thread.currentThread().getId())
+
+    def receive = {
+      case e: Event => handleEvent(e)
+    }
   }
 }
+
+
 
