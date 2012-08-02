@@ -18,19 +18,21 @@ case class Touch(val coordinate: Coordinate, val action: Int) extends Event
 // Client/Server remote events
 case class Connect() extends Event
 case class Connected() extends Event
+case class Disconnect() extends Event
 case class Info() extends Event
 
 // Client/Server local events
 case class Tick(ticks: Int) extends Event
 
 // Game/Player remote events
-case class Create() extends Event
+case class Create(name: String) extends Event
+case class Created(game: ActorRef) extends Event
 case class End() extends Event
-case class Join(id: Int) extends Event
+case class Join() extends Event
 case class TileMapData(map: TileMap) extends Event
-case class Joined() extends Event
-case class CreateUnit() extends Event
-case class UnitCreated(id: Int, unitType: Int, player: Int, coordinate: Coordinate, direction: Direction) extends Event
+case class Joined(player: ActorRef) extends Event
+case class CreateUnit(unitType: Int, player: Int, position: Coordinate, direction: Direction) extends Event
+case class UnitCreated(unit: ActorRef, unitType: Int, position: Coordinate, direction: Direction) extends Event
 object Action {
   val MOVE = 0
   val TURN = 1

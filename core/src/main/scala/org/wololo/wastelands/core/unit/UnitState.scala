@@ -1,17 +1,15 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.core.Coordinate
 
-class UnitState(val player: Int, val position: Coordinate) {
-  val Velocity = 0.04
+trait UnitState {
+  val player: Int
+  val position: Coordinate
   var moveDistance = 0.0
-  var direction: Direction = Direction.fromTileIndex((math.random * 7 + 1).toInt)
-
-  val Range = 2
-  val AttackStrength = 2
+  var direction: Direction
   var alive = true
   var hp = 10
-  
-  val id = 0
-  
-  //var order: Order = new Guard(this)
+}
+
+class UnitClientState extends UnitState {
+  // TODO: add stuff relevant for clientside, like screen bbox etc.
 }

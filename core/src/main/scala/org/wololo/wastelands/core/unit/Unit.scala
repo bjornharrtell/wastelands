@@ -15,6 +15,17 @@ import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 
-abstract class Unit(player: Int, position: Coordinate) extends Actor {
-	val unitState: UnitState = new UnitState(player, position)
+abstract class Unit(player: ActorRef, position: Coordinate, direction: Direction) extends Actor with UnitState {
+  val Velocity = 0.04
+  val Range = 2
+  val AttackStrength = 2
+  
+  //var order: Order = new Guard(this)
+  
+  def receive = {
+    case e: event.Action =>
+    case e: event.ActionComplete =>
+    case e: event.Cooldown =>
+    case e: event.CooldownComplete =>
+  }
 }
