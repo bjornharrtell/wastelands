@@ -15,7 +15,7 @@ object Touch {
 case class Touch(val coordinate: Coordinate, val action: Int) extends Event
 
 // Client/Server local events
-case class Tick(ticks: Int) extends Event
+case class Tick() extends Event
 
 // Client/Player initiated events
 case class Connect() extends Event
@@ -33,7 +33,7 @@ case class Joined(player: ActorRef) extends Event
 case class TileMapData(map: TileMap) extends Event
 case class End() extends Event
 
-case class CreateUnit(unitType: Int, player: Int, position: Coordinate, direction: Direction) extends Event
+case class CreateUnit(unitType: Int, position: Coordinate, direction: Direction) extends Event
 case class UnitCreated(unit: ActorRef, unitType: Int, position: Coordinate, direction: Direction) extends Event
 
 // Unit order events

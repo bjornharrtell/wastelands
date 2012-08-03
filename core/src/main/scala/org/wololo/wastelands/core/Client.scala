@@ -10,12 +10,12 @@ import org.wololo.wastelands.core.gfx.Screen
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 
-class Client(val vmContext: VMContext) extends ClientInputHandler with GameClientState {
+class Client(val vmContext: VMContext) extends ClientInputHandler {
   var running = true
 
   var selectedUnit: Option[Unit] = None
 
-  val screen = new Screen(this)
+  
 
   var lastTime = System.nanoTime
   var unprocessed = 0.0
@@ -25,8 +25,12 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with GameClien
 
   val system = ActorSystem("client") //, ConfigFactory.load.getConfig("client"))
   
-  val server = system.actorOf(Props[Server])
-  val player = system.actorOf(Props(new Player(this, server)))
+  val server = system.actorOf(Props[Server], "Server")
+  
+  val gameState = new GameClientState()
+  val player = system.actorOf(Props(new Player(server, gameState)), "Player")
+  
+  val screen = new Screen(this)
 
   def run = {
     while (running) {
@@ -51,7 +55,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with GameClien
 
       if (System.currentTimeMillis - lastTimer1 > 1000) {
         lastTimer1 += 1000
-        //System.out.println(ticks + " ticks, " + frames + " fps")
+        //println(ticks + " ticks, " + frames + " fps")
         frames = 0
       }
     }
@@ -60,8 +64,8 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with GameClien
   }
 
   def tick() {
-	server ! Tick
-    player ! Tick
+	//server ! Tick
+    //player ! Tick
   }
 
 }

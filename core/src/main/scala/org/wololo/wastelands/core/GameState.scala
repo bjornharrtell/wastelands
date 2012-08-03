@@ -5,14 +5,17 @@ import org.wololo.wastelands.core.unit.Unit
 import akka.actor.ActorRef
 import scala.collection.mutable.HashMap
 import org.wololo.wastelands.core.unit.UnitClientState
+import org.wololo.wastelands.core.event.Event
 
 trait GameState {
+  val events = ArrayBuffer[Event]()
+  
   var map: TileMap = new TileMap()
   var ticks = 0
   var units = ArrayBuffer[ActorRef]()
 }
 
-trait GameClientState extends GameState {
+class GameClientState extends GameState {
   var projectiles = ArrayBuffer[Projectile]()
   
   var unitStates = HashMap[ActorRef, UnitClientState]()

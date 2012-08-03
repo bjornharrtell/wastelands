@@ -4,20 +4,14 @@ import akka.actor._
 import scala.collection.mutable.ArrayBuffer
 import com.typesafe.config.ConfigFactory
 
-class Server extends Actor {
-  val clients = ArrayBuffer[ActorRef]()
-  val games = ArrayBuffer[ActorRef]()
-
-  def receive = {
-    case e: event.Create => create(sender, e.name)
-    case e: event.Connect => sender ! event.Connected
-    case e: event.Disconnect => clients -= sender
-  }
-
-  def create(client: ActorRef, name: String) = {
-    // TODO: handle errors, like duplicate name
-    val game = context.actorOf(Props[Game], name = name)
-    client ! event.Created(game)
-    games += game
+class Server extends Actor  {
+  def receive = akka.event.LoggingReceive {
+    case e: event.Create =>
+      val game = context.actorOf(Props[Game], e.name)
+      val cpuPlayer = context.actorOf(Props(new CpuPlayer(context.self, game, new GameClientState())), "CpuPlayer")
+      sender ! event.Created(game)
+    case e: event.Connect =>
+      sender ! event.Connected()
+    case e: event.Tick =>
   }
 }

@@ -37,7 +37,7 @@ class Screen(client: Client) {
 
   System.out.println("TileSize:" + TileSize + " PixelSize:" + PixelSize)
 
-  val map = client.map
+  val map = client.gameState.map
 
   val MapScreenWidth = map.Width * TileSize
   val MapScreenHeight = map.Height * TileSize
@@ -85,8 +85,8 @@ class Screen(client: Client) {
     mapPixelOffset.y = calculateTilePixelOffset(screenOffset.y, mapOffset.y)
 
     tileRenderer.render(false)
-    client.unitStates.values.foreach(unitRenderer.render(_))
-    client.projectiles.foreach(projectileRenderer.render(_))
+    client.gameState.unitStates.values.foreach(unitRenderer.render(_))
+    client.gameState.projectiles.foreach(projectileRenderer.render(_))
     tileRenderer.render(true)
   }
 

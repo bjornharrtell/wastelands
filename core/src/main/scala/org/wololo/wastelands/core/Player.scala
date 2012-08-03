@@ -1,20 +1,22 @@
 package org.wololo.wastelands.core
 
 import akka.actor._
-import com.typesafe.config.ConfigFactory
-import org.wololo.wastelands.core.unit.Order
-import org.wololo.wastelands.core.event.Event
 
-class Player(client: Client, server: ActorRef) extends Actor with GameClientState {
-  var game: ActorRef = null
-  
-  server ! event.Create("NewGame")
-  
-  def receive = {
+class Player(server: ActorRef, gameState: GameClientState) extends Actor {
+  server ! new event.Connect()
+
+  def receive = akka.event.LoggingReceive {
+    case e: event.Connected =>
+      server ! event.Create("NewGame")
     case e: event.Created => 
-      game = e.game
+      e.game ! event.Join()
+    case e: event.Joined =>
+    
     case e: event.TileMapData =>
-      this.map = e.map
+      //gameState.map = e.map
+    case e: event.UnitCreated =>
+      gameState.map.removeShadeAround(e.position)
     case e: event.Move => println(e)
+    case e: event.Tick => println(e)
   }
 }
