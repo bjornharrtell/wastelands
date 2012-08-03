@@ -1,34 +1,10 @@
 package org.wololo.wastelands.core.unit
-import org.wololo.wastelands.core.Subscriber
-import org.wololo.wastelands.core.Publisher
 import org.wololo.wastelands.core.event.Event
 
-case class ActionCompleteEvent(action: Action) extends Event
-
-abstract class Action(val order: Order, val unit: Unit) extends Publisher with Subscriber {
-  type Pub = Action
-  
-  val Type: Int
-  
-  val CooldownTicks = 30
-  
-  def execute() {
-    // subscribe this action to game to get tick events
-	unit.game.subscribe(this)
-
-    // subscribe unit to action
-    subscribe(unit)
-  }
-
-  def notify(pub: Publisher, event: Event) {
-    onTick()
-  }
-  
-  def complete() {
-    unit.game.removeSubscription(this)
-    publish(new ActionCompleteEvent(this))
-    removeSubscriptions()
-  }
-  
-  def onTick()
+object Action {
+  val Move = 0
+  val Turn = 1
+  val Fire = 2
 }
+
+class Action(val actionType: Int, val length: Int)

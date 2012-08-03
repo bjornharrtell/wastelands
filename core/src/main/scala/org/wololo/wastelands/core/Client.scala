@@ -7,59 +7,64 @@ import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.TestUnit1
 import org.wololo.wastelands.core.unit.Projectile
 import org.wololo.wastelands.core.gfx.Screen
+import akka.actor._
+import com.typesafe.config.ConfigFactory
 
-
-class Client(val vmContext: VMContext) extends ClientInputHandler with GameState {
-  var selectedUnit: Option[Unit] = None
-
-  // TODO: akkaify
-  var player = new Player()
+class Client(val vmContext: VMContext) extends ClientInputHandler with GameClientState {
+  var running = true
   
-  var running = false
+  var selectedUnit: Option[Unit] = None
+  
   val screen = new Screen(this)
- 
-  def start() {
-    running = true
+  
+  var lastTime = System.nanoTime
+  var unprocessed = 0.0
+  val nsPerTick = 1000000000.0 / 60.0
+  var frames = 0
+  var lastTimer1 = System.currentTimeMillis
 
-    var lastTime = System.nanoTime
-    var unprocessed = 0.0
-    val nsPerTick = 1000000000.0 / 60.0
-    var frames = 0
-    var ticks = 0
-    var lastTimer1 = System.currentTimeMillis
+  val system = ActorSystem("client", ConfigFactory.load.getConfig("client"))
+  system.registerOnTermination(System.exit(1))
 
-    while (running) {
-      val now = System.nanoTime
-      unprocessed += (now - lastTime) / nsPerTick
-      lastTime = now
-      var shouldRender = false
-      while (unprocessed >= 1.0) {
-        ticks += 1
-        tick()
-        unprocessed -= 1
-        shouldRender = true
-      }
+  val player = system.actorOf(Props[Player])
 
-      //Thread.sleep(2)
+  while (running) {
+    val now = System.nanoTime
+    unprocessed += (now - lastTime) / nsPerTick
+    lastTime = now
+    var shouldRender = false
+    while (unprocessed >= 1.0) {
+      ticks += 1
+      tick()
+      unprocessed -= 1
+      shouldRender = true
+    }
 
-      if (shouldRender) {
-        frames += 1
+    //Thread.sleep(2)
 
-        screen.render()
-        vmContext.render(screen.bitmap)
-      }
+    if (shouldRender) {
+      frames += 1
 
-      if (System.currentTimeMillis - lastTimer1 > 1000) {
-        lastTimer1 += 1000
-        //System.out.println(ticks + " ticks, " + frames + " fps")
-        frames = 0
-        ticks = 0
-      }
+      screen.render()
+      vmContext.render(screen.bitmap)
+    }
+
+    if (System.currentTimeMillis - lastTimer1 > 1000) {
+      lastTimer1 += 1000
+      //System.out.println(ticks + " ticks, " + frames + " fps")
+      frames = 0
+      ticks = 0
+    }
+  }
+
+  class Player extends Actor {
+    def receive = {
+      case e: event.Move => println(e)
     }
   }
 
   def tick() {
-    
+
     player ! Tick
 
     //units = units.withFilter(_.alive).map(_.tick)
@@ -68,32 +73,4 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with GameState
     ticks += 1
   }
 
-  /**
-   * Perform action on a chosen map tile
-   */
-  def mapTileAction(coordinate: Coordinate) {
-    if (selectedUnit.isDefined) {
-      player ! UnitMove(selectedUnit.get.id, coordinate)
-    }
-  }
-
-  /**
-   * Perform action on a selectable unit
-   */
-  def unitAction(unit: Unit) {
-    if (selectedUnit.isDefined) {
-      if (unit == selectedUnit) {
-        return
-      } else if (unit.player != player) {
-        selectedUnit.get.attack(unit)
-      } else {
-        selectedUnit.get.unselect()
-        unit.select()
-        selectedUnit = Option(unit)
-      }
-    } else if (unit.player == player) {
-      unit.select()
-      selectedUnit = Option(unit)
-    }
-  }
 }

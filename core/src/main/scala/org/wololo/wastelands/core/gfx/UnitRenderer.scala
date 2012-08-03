@@ -26,7 +26,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
   
   private var explosions = new ArrayBuffer[UnitExplosionRenderer]
   
-  def render(unit: Unit) {
+  def render(unit: UnitClientState) {
     calcOffset(unit)
 
     // TODO: should probably define all unit subtypes as int constants to use here instead
@@ -56,7 +56,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     })
   }
 
-  def calcOffset(unit: Unit) {
+  def calcOffset(unit: UnitClientState) {
     var mapOffset = unit.position - screen.mapOffset
 
     // bail if unit not in current visible part of map
@@ -70,12 +70,13 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     offset += screen.mapPixelOffset
 
     // if unit is moving, add move distance as pixels to offset
-    if (unit.moveDistance > 0.0) {
-      offset.x += (screen.TileSize * unit.direction.x * unit.moveDistance).toInt
-      offset.y += (screen.TileSize * unit.direction.y * unit.moveDistance).toInt
-    }
+    // TODO: use action and ticks to calculate distance
+    //if (unit.moveDistance > 0.0) {
+    //  offset.x += (screen.TileSize * unit.direction.x * unit.moveDistance).toInt
+    //  offset.y += (screen.TileSize * unit.direction.y * unit.moveDistance).toInt
+    //}
 
     unit.isOnScreen = true
-    unit.ScreenBounds.setTo(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
+    unit.screenBounds.setTo(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
   }
 }

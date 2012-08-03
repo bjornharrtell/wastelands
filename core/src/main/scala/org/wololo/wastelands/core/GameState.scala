@@ -3,6 +3,8 @@ import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.unit.Projectile
 import org.wololo.wastelands.core.unit.Unit
 import akka.actor.ActorRef
+import scala.collection.mutable.HashMap
+import org.wololo.wastelands.core.unit.UnitClientState
 
 trait GameState {
   val map: TileMap = new TileMap()
@@ -10,6 +12,10 @@ trait GameState {
   var units = ArrayBuffer[ActorRef]()
 }
 
-class GameClientState extends GameState {
+trait GameClientState extends GameState {
   var projectiles = ArrayBuffer[Projectile]()
+  
+  var unitStates = HashMap[ActorRef, UnitClientState]()
+  
+  // TODO: need to keep UnitState instances togheter with the unit actorrefs
 }

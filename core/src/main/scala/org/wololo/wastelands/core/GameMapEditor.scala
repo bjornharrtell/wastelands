@@ -4,20 +4,20 @@ import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event
-import org.wololo.wastelands.core.event.TouchEvent
+import org.wololo.wastelands.core.event.Touch
 
-class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
+class GameMapEditor(vmContext: VMContext) extends Client(vmContext) {
   
   var tileType: Option[Int] = None
   
-  override def init() {
+  def init() {
     map.tiles.foreach(tile => { tile.shade = false })
   }
   
   /**
    * Perform action on a chosen map tile
    */
-  override def mapTileAction(coordinate: Coordinate) { }
+  //override def mapTileAction(coordinate: Coordinate) { }
   
   override def touchMove(coordinate: Coordinate) {
     tileType match {
@@ -39,8 +39,8 @@ class GameMapEditor(vmContext: VMContext) extends Game(vmContext) {
       case KeyCode.KEY_3 => tileType = Option(TileTypes.Dunes)
       case KeyCode.KEY_4 => tileType = Option(TileTypes.Rock)
       case KeyCode.KEY_5 => tileType = Option(TileTypes.Spice)
-      case KeyCode.KEY_9 => map.save()
-      case KeyCode.KEY_0 => map.load()
+      //case KeyCode.KEY_9 => map.save()
+      //case KeyCode.KEY_0 => map.load()
       case _ =>
     }
   }

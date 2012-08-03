@@ -1,6 +1,6 @@
 package org.wololo.wastelands.core
 
-import org.wololo.wastelands.core.event.TouchEvent
+import org.wololo.wastelands.core.event.Touch
 import org.wololo.wastelands.core.event.Event
 import org.wololo.wastelands.core.unit.Unit
 
@@ -22,11 +22,11 @@ trait ClientInputHandler {
   var downAt: Coordinate = (0, 0)
   var hasScrolled = false
   
-  def touch(e: TouchEvent) {
+  def touch(e: Touch) {
     e.action match {
-      case TouchEvent.DOWN => touchDown(e.coordinate)
-      case TouchEvent.MOVE => touchMove(e.coordinate)
-      case TouchEvent.UP => touchUp(e.coordinate)
+      case Touch.DOWN => touchDown(e.coordinate)
+      case Touch.MOVE => touchMove(e.coordinate)
+      case Touch.UP => touchUp(e.coordinate)
     }
   }
 
@@ -37,8 +37,8 @@ trait ClientInputHandler {
     
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    for (unit <- units if unit.alive && unit.ScreenBounds.contains(coordinate)) {
-      unitAction(unit)
+    for (unit <- unitStates.values if unit.alive && unit.screenBounds.contains(coordinate)) {
+      //unitAction(unit)
       clickedUnit = true
     }
 

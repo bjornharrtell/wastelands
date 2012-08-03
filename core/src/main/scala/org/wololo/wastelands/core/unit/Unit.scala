@@ -1,31 +1,69 @@
 package org.wololo.wastelands.core.unit
 
 import org.wololo.wastelands.core._
-import org.wololo.wastelands.core.unit.order.Move
-import org.wololo.wastelands.core.unit.order.Attack
-import org.wololo.wastelands.core.unit.order.Guard
-import org.wololo.wastelands.core.unit.action.MoveStep
-import org.wololo.wastelands.core.unit.action.Turn
-import org.wololo.wastelands.core.unit.action.Fire
 import java.io.File
 import org.wololo.wastelands.core.event
 import org.wololo.wastelands.core.event.Event
 import scala.collection.mutable.ArrayBuffer
-
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 
-abstract class Unit(player: ActorRef, position: Coordinate, direction: Direction) extends Actor with UnitState {
+abstract class Unit(val player: ActorRef, val gameState:GameState, val position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
-  
-  //var order: Order = new Guard(this)
-  
+
+  /**
+   * When events are received, mutate state then trigger any events as a result of that state change 
+   */
   def receive = {
-    case e: event.Action =>
-    case e: event.ActionComplete =>
-    case e: event.Cooldown =>
-    case e: event.CooldownComplete =>
+    case e: Event =>
+      mutate(e)
+      
+      e match {
+        case e: event.Move => move
+        case e: event.Tick => tick
+      }
+    // TODO: propagate events to players (but not ticks!) 
+    //  - probably need to receive all events at top level actor Game since we need to send to all players
+    //    - would make sense to categorize events further
   }
+
+  /**
+   * Action to take on given move order or action complete with active move over
+   *
+   * If there is no current active action and no cooldown for move or turn actions,
+   * try to generate a new action which can no (target reached), turn or move action event.
+   */
+  def move = {
+    if (action.isEmpty &&
+      cooldowns.forall(cooldown =>
+        cooldown.actionType == Action.Move ||
+          cooldown.actionType == Action.Turn)) {
+
+      val target = Option(Direction(0, -1)) //unit.game.map.calcDirection(unit.position, destination)
+
+      if (target.isDefined) {
+        if (direction != target.get) {
+          self ! event.Turn(target.get)
+        } else {
+          self ! event.MoveTileStep
+        }
+      }
+    }
+  }
+
+  def actionComplete = {
+    order match {
+      case Order.Move => move
+    }
+  }
+
+  def tick() {
+    if (gameState.ticks - actionStart >= actionLength) {
+      self ! event.Cooldown(action.get)
+      self ! event.ActionComplete
+    }
+  }
+
 }

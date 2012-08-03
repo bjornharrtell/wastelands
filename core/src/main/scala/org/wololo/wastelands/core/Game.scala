@@ -28,15 +28,9 @@ class Game() extends Actor with GameState {
     case e: event.CreateUnit =>
       var unit: ActorRef = null
       e.unitType match {
-        case UnitTypes.TestUnit1 => unit = context.actorOf(Props(new TestUnit1(sender, e.position, e.direction)))
+        case UnitTypes.TestUnit1 => unit = context.actorOf(Props(new TestUnit1(sender, this, e.position, e.direction)))
       }
       units += unit
       players.filterNot(_ == sender).foreach(_ ! UnitCreated(unit, e.unitType, e.position, e.direction))
-  }
-  
-  def move(e: event.Action) {
-    // TODO: change state of unit
-
-    // TODO: figure out how to best handle what comes after: ticks -> move complete -> cooldown
   }
 }

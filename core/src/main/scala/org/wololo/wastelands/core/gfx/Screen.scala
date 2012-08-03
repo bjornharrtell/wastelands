@@ -86,7 +86,7 @@ class Screen(client: Client) {
     mapPixelOffset.y = calculateTilePixelOffset(screenOffset.y, mapOffset.y)
 
     tileRenderer.render(false)
-    client.units.foreach(unitRenderer.render(_))
+    client.unitStates.values.foreach(unitRenderer.render(_))
     client.projectiles.foreach(projectileRenderer.render(_))
     tileRenderer.render(true)
   }
