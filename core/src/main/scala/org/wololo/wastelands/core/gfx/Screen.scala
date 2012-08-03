@@ -51,8 +51,7 @@ class Screen(client: Client) {
   
  
   private var projectileRenderer = new ProjectileRenderer(this)
-
-
+  
   // screen pixel scroll offset
   var screenOffset: Coordinate = (0, 0)
 

@@ -14,14 +14,12 @@ import java.awt.GraphicsEnvironment
 import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.GameMapEditor
 import org.wololo.wastelands.core.Coordinate
-import org.wololo.wastelands.core.Publisher
-import org.wololo.wastelands.core.event.TouchEvent
+import org.wololo.wastelands.core.event.Touch
 import org.wololo.wastelands.core.KeyCode
+import org.wololo.wastelands.core.Client
 
-object Client extends Runnable with WindowListener with MouseListener with MouseMotionListener with KeyListener with JVMContext with Publisher {
-  type Pub = Client.type
-  
-  var game: Game = null
+object JVMClient extends JVMContext with WindowListener with MouseListener with MouseMotionListener with KeyListener {
+  var client: Client = null
 
   val device = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
   var gc = device.getDefaultConfiguration
@@ -31,22 +29,16 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   var isFullscreen = false
   var canRender = true
 
-  override def run() {
-    try {
-      game = new Game(this)
-      subscribe(game)
-      game.run()
-    } finally {
-      mainFrame.dispose()
-      JVMSoundFactory.dispose()
-    }
-  }
-
   def main(args: Array[String]) {
     mainFrame = newFrame
     mainFrame.setVisible(true)
     
-    new Thread(this).start()
+    client = new Client(this)
+    
+    client.run
+    
+    mainFrame.dispose()
+    JVMSoundFactory.dispose()
   }
 
   def newFrame: Frame = {
@@ -125,7 +117,7 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
   }
 
   def windowClosing(e: WindowEvent) {
-    game.running = false
+    client.running = false
   }
 
   def windowOpened(e: WindowEvent) {}
@@ -140,16 +132,16 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
     if (keyCode == KeyEvent.VK_F11) {
       toggleFullscreen()
     } else if (keyCode == KeyEvent.VK_Q) {
-      game.running = false
+      client.running = false
     } else {
       keyCode match {
-        case KeyEvent.VK_1 => game.keyDown(KeyCode.KEY_1)
-        case KeyEvent.VK_2 => game.keyDown(KeyCode.KEY_2)
-        case KeyEvent.VK_3 => game.keyDown(KeyCode.KEY_3)
-        case KeyEvent.VK_4 => game.keyDown(KeyCode.KEY_4)
-        case KeyEvent.VK_5 => game.keyDown(KeyCode.KEY_5)
-        case KeyEvent.VK_9 => game.keyDown(KeyCode.KEY_9)
-        case KeyEvent.VK_0 => game.keyDown(KeyCode.KEY_0)
+        case KeyEvent.VK_1 => client.keyDown(KeyCode.KEY_1)
+        case KeyEvent.VK_2 => client.keyDown(KeyCode.KEY_2)
+        case KeyEvent.VK_3 => client.keyDown(KeyCode.KEY_3)
+        case KeyEvent.VK_4 => client.keyDown(KeyCode.KEY_4)
+        case KeyEvent.VK_5 => client.keyDown(KeyCode.KEY_5)
+        case KeyEvent.VK_9 => client.keyDown(KeyCode.KEY_9)
+        case KeyEvent.VK_0 => client.keyDown(KeyCode.KEY_0)
         case _ =>
       }
     }
@@ -157,11 +149,11 @@ object Client extends Runnable with WindowListener with MouseListener with Mouse
 
   def keyReleased(e: KeyEvent) {}
   def keyTyped(e: KeyEvent) {}
-  def mouseDragged(e: MouseEvent) = publish(new TouchEvent((e.getX, e.getY), TouchEvent.MOVE))
+  def mouseDragged(e: MouseEvent) = client.touch(Touch((e.getX, e.getY), Touch.MOVE))
   def mouseMoved(e: MouseEvent) {}
   def mouseClicked(e: MouseEvent) {}
   def mouseEntered(e: MouseEvent) {}
   def mouseExited(e: MouseEvent) {}
-  def mousePressed(e: MouseEvent) = publish(new TouchEvent((e.getX, e.getY), TouchEvent.DOWN))
-  def mouseReleased(e: MouseEvent) = publish(new TouchEvent((e.getX, e.getY), TouchEvent.UP))
+  def mousePressed(e: MouseEvent) = client.touch(Touch((e.getX, e.getY), Touch.DOWN))
+  def mouseReleased(e: MouseEvent) = client.touch(Touch((e.getX, e.getY), Touch.UP))
 }

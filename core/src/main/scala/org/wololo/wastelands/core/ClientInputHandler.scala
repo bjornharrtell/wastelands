@@ -30,7 +30,7 @@ trait ClientInputHandler {
     }
   }
 
-  def touchUp(coordinate: Coordinate) {
+  private def touchUp(coordinate: Coordinate) {
     if (hasScrolled) return
     
     var clickedUnit = false
@@ -59,7 +59,7 @@ trait ClientInputHandler {
     previous = coordinate
   }
 
-  def touchDown(coordinate: Coordinate) {
+  private def touchDown(coordinate: Coordinate) {
     hasScrolled = false
     
     downAt = coordinate

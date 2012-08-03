@@ -7,7 +7,7 @@ import scala.collection.mutable.HashMap
 import org.wololo.wastelands.core.unit.UnitClientState
 
 trait GameState {
-  val map: TileMap = new TileMap()
+  var map: TileMap = new TileMap()
   var ticks = 0
   var units = ArrayBuffer[ActorRef]()
 }

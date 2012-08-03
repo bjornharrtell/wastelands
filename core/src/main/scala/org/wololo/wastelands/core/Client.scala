@@ -12,65 +12,56 @@ import com.typesafe.config.ConfigFactory
 
 class Client(val vmContext: VMContext) extends ClientInputHandler with GameClientState {
   var running = true
-  
+
   var selectedUnit: Option[Unit] = None
-  
+
   val screen = new Screen(this)
-  
+
   var lastTime = System.nanoTime
   var unprocessed = 0.0
   val nsPerTick = 1000000000.0 / 60.0
   var frames = 0
   var lastTimer1 = System.currentTimeMillis
 
-  val system = ActorSystem("client", ConfigFactory.load.getConfig("client"))
-  system.registerOnTermination(System.exit(1))
+  val system = ActorSystem("client") //, ConfigFactory.load.getConfig("client"))
+  
+  val server = system.actorOf(Props[Server])
+  val player = system.actorOf(Props(new Player(this, server)))
 
-  val player = system.actorOf(Props[Player])
+  def run = {
+    while (running) {
+      val now = System.nanoTime
+      unprocessed += (now - lastTime) / nsPerTick
+      lastTime = now
+      var shouldRender = false
+      while (unprocessed >= 1.0) {
+        tick()
+        unprocessed -= 1
+        shouldRender = true
+      }
 
-  while (running) {
-    val now = System.nanoTime
-    unprocessed += (now - lastTime) / nsPerTick
-    lastTime = now
-    var shouldRender = false
-    while (unprocessed >= 1.0) {
-      ticks += 1
-      tick()
-      unprocessed -= 1
-      shouldRender = true
+      //Thread.sleep(2)
+
+      if (shouldRender) {
+        frames += 1
+
+        screen.render()
+        vmContext.render(screen.bitmap)
+      }
+
+      if (System.currentTimeMillis - lastTimer1 > 1000) {
+        lastTimer1 += 1000
+        //System.out.println(ticks + " ticks, " + frames + " fps")
+        frames = 0
+      }
     }
-
-    //Thread.sleep(2)
-
-    if (shouldRender) {
-      frames += 1
-
-      screen.render()
-      vmContext.render(screen.bitmap)
-    }
-
-    if (System.currentTimeMillis - lastTimer1 > 1000) {
-      lastTimer1 += 1000
-      //System.out.println(ticks + " ticks, " + frames + " fps")
-      frames = 0
-      ticks = 0
-    }
-  }
-
-  class Player extends Actor {
-    def receive = {
-      case e: event.Move => println(e)
-    }
+    
+    system.shutdown()
   }
 
   def tick() {
-
+	server ! Tick
     player ! Tick
-
-    //units = units.withFilter(_.alive).map(_.tick)
-    projectiles = projectiles.withFilter(_.alive).map(_.tick)
-
-    ticks += 1
   }
 
 }
