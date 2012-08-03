@@ -5,6 +5,8 @@ import akka.actor._
 class Player(server: ActorRef, gameState: GameClientState) extends Actor {
   server ! new event.Connect()
 
+  // TODO: consider listening to events on a dedicated system to change state instead of expecting events to be relayed here.
+  
   def receive = akka.event.LoggingReceive {
     case e: event.Connected =>
       server ! event.Create("NewGame")
