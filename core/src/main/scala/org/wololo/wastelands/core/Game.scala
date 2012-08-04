@@ -4,6 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.UnitCreated
 import org.wololo.wastelands.core.unit.TestUnit1
 import org.wololo.wastelands.core.unit.TestUnit2
+import org.wololo.wastelands.core.unit.Harvester
 import org.wololo.wastelands.core.unit.UnitTypes
 
 import akka.actor._
@@ -25,8 +26,9 @@ class Game() extends Actor with GameState {
       var unit = e.unitType match {
         case UnitTypes.TestUnit1 => context.actorOf(Props(new TestUnit1(sender, this, e.position, e.direction)))
         case UnitTypes.TestUnit2 => context.actorOf(Props(new TestUnit2(sender, this, e.position, e.direction)))
+        case UnitTypes.Harvester => context.actorOf(Props(new Harvester(sender, this, e.position, e.direction)))
       }
       units += unit
-      players.filterNot(_ == sender).foreach(_ ! UnitCreated(unit, e.unitType, e.position, e.direction))
+      players.foreach(_ ! UnitCreated(unit, sender, e.unitType, e.position, e.direction))
   }
 }

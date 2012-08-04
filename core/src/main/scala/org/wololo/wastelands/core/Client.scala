@@ -15,8 +15,6 @@ class Client(val vmContext: VMContext) extends ClientInputHandler {
 
   var selectedUnit: Option[Unit] = None
 
-  
-
   var lastTime = System.nanoTime
   var unprocessed = 0.0
   val nsPerTick = 1000000000.0 / 60.0
@@ -24,12 +22,8 @@ class Client(val vmContext: VMContext) extends ClientInputHandler {
   var lastTimer1 = System.currentTimeMillis
 
   val system = ActorSystem("client") //, ConfigFactory.load.getConfig("client"))
-  val systemServer = ActorSystem("server") //, ConfigFactory.load.getConfig("client"))
   
-  
-  
-  val server = systemServer.actorOf(Props[Server], "Server")
-  
+  val server = system.actorOf(Props[Server], "Server")
   val gameState = new GameClientState()
   val player = system.actorOf(Props(new Player(server, gameState)), "Player")
   

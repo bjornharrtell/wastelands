@@ -14,6 +14,7 @@ object Direction {
     Direction(-1, -1))
     
   def fromTileIndex(tileIndex: Int) = Directions(tileIndex).clone()
+  def random = Direction.fromTileIndex((math.random * 7 + 1).toInt)
 }
 
 case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {

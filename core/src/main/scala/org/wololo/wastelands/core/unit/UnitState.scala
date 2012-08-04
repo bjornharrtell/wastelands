@@ -11,6 +11,7 @@ trait UnitState {
   val gameState: GameState
   
   val player: ActorRef
+  val unitType: Int
   val position: Coordinate
   var direction: Direction
   var alive = true
@@ -55,7 +56,7 @@ trait UnitState {
 
 }
 
-class UnitClientState(val player: ActorRef, val gameState: GameState, val position: Coordinate, var direction: Direction) extends UnitState with Selectable {
+class UnitClientState(val player: ActorRef, val gameState: GameState, val unitType: Int, val position: Coordinate, var direction: Direction) extends UnitState with Selectable {
   // TODO: add stuff relevant for clientside, like screen bbox etc.
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false

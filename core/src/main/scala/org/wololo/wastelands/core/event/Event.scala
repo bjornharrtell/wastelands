@@ -34,7 +34,7 @@ case class TileMapData(map: TileMap) extends Event
 case class End() extends Event
 
 case class CreateUnit(unitType: Int, position: Coordinate, direction: Direction) extends Event
-case class UnitCreated(unit: ActorRef, unitType: Int, position: Coordinate, direction: Direction) extends Event
+case class UnitCreated(unit: ActorRef, player: ActorRef, unitType: Int, position: Coordinate, direction: Direction) extends Event
 
 // Unit order events
 case class Move(destination: Coordinate) extends Event
