@@ -28,7 +28,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
       vmContext.render(screen.bitmap)
     case e: event.Touch => touch(e)
     case e: event.Tick =>
-      server.forward(e)
+      //server.forward(e)
       handlePlayerEvent(e)
     case e: Event => handlePlayerEvent(e)
   }
