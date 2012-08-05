@@ -22,17 +22,20 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, val position
 
       e match {
         case e: event.ActionComplete =>
-          println("ActionComplete")
           self ! event.Cooldown(e.actionType)
+          gameState.players.foreach(_ ! e)
         case e: event.CooldownComplete =>
+          gameState.players.foreach(_ ! e)
           // TODO: handle other orders than move
           move()
-        case e: event.Move => move()
+        case e: event.Turn =>
+          gameState.players.foreach(_ ! e)
+        case e: event.Move =>
+          move()
+          gameState.players.foreach(_ ! e)
         case e: event.Tick => tick()
         case _ =>
       }
-
-      gameState.players.foreach(_ ! e)
   }
 
   /**
@@ -63,14 +66,20 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, val position
    * Generated timed events (ActionComplete and CooldownComplete) if their duration has elapsed
    */
   def tick() = {
+    // TODO: additional ticks are triggered before ActionComplete sets action to None... must mutate state here instead of ActionComplete (but the exact same thing must happen at clientside..)
     if (action.isDefined && gameState.ticks - actionStart >= actionLength) {
       self ! event.ActionComplete(action.get)
+      action = None
+      
     }
+    val cooldownsToRemove = ArrayBuffer[Cooldown]()
     cooldowns.foreach(cooldown => {
       if (gameState.ticks - cooldown.start >= cooldown.length) {
         self ! event.CooldownComplete(cooldown.actionType)
+        cooldownsToRemove += cooldown
       }
     })
+    cooldowns --= cooldownsToRemove
   }
 
 }

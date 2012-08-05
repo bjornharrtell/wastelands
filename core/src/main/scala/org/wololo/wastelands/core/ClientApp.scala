@@ -31,7 +31,7 @@ trait ClientApp {
         shouldRender = true
       }
 
-      //Thread.sleep(2)
+      Thread.sleep(2)
 
       if (shouldRender) {
         frames += 1

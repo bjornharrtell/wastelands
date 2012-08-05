@@ -17,6 +17,6 @@ class CpuPlayer(game:ActorRef) extends Player with GameState {
     //gameState.map = e.map
     case e: event.CreateUnit =>
       map.removeShadeAround(e.position)
-    case e: event.Move => println(e)
+    case e: event.Move =>
   }
 }
