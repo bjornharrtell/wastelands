@@ -6,12 +6,14 @@ import org.wololo.wastelands.core.unit.UnitTypes
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.event.Event
 
-trait Player extends Actor {
+trait Player extends Actor with ActorLogging {
   this: GameState =>
 
   var game: ActorRef = null
 
   def handlePlayerEvent(e: Event) = {
+    if (!e.isInstanceOf[event.Tick]) println("Player received " + e)
+    
     e match {
       case e: event.Created =>
         game = e.game
@@ -24,15 +26,16 @@ trait Player extends Actor {
           game ! event.CreateUnit(UnitTypes.Harvester, (5, 6), Direction.random)
         }
       case e: event.TileMapData =>
-      // TODO: use map data...
-      //gameState.map = e.map
+        // TODO: use map data...
+        //gameState.map = e.map
       case e: event.UnitCreated =>
         if (self == e.player) map.removeShadeAround(e.position)
         var unitState = new UnitClientState(e.unit, e.player, this, e.unitType, e.position, e.direction)
         units += (e.unit -> unitState)
       case e: event.Turn =>
         units.get(sender).get.mutate(e)
-        
+      case e: event.MoveTileStep =>
+        units.get(sender).get.mutate(e)
       case e: event.Tick =>
         ticks += 1
       case _ =>

@@ -10,7 +10,7 @@ import org.wololo.wastelands.core.unit.UnitTypes
 import akka.actor._
 
 class Game() extends Actor with GameState {
-  def receive = akka.event.LoggingReceive {
+  def receive = akka.event.LoggingReceive { 
     case e: event.Join =>
       events.foreach(sender ! _)
       events += e
@@ -19,7 +19,6 @@ class Game() extends Actor with GameState {
       players.foreach(_ ! event.Joined(sender))
     case e: event.CreateUnit =>
       events += e
-      map.removeShadeAround(e.position)
       var unit = e.unitType match {
         case UnitTypes.TestUnit1 => context.actorOf(Props(new TestUnit1(sender, this, e.position, e.direction)))
         case UnitTypes.TestUnit2 => context.actorOf(Props(new TestUnit2(sender, this, e.position, e.direction)))

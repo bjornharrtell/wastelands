@@ -20,9 +20,9 @@ class ProjectileRenderer(val screen: Screen) extends TileReader {
       return
     }
 
-    offset.setTo(mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
+    offset = (mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
 
-    offset += screen.mapPixelOffset
+    offset = offset + screen.mapPixelOffset
 
     val ox = ((projectile.toPos.x - projectile.fromPos.x) * (projectile.distance/projectile.targetDistance) * screen.TileSize).toInt
     val oy = ((projectile.toPos.y - projectile.fromPos.y) * (projectile.distance/projectile.targetDistance) * screen.TileSize).toInt

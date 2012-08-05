@@ -66,7 +66,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
       return
     }
 
-    offset.setTo(mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
+    offset = (mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
 
     offset += screen.mapPixelOffset
 

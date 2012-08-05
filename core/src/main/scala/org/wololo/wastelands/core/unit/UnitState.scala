@@ -6,6 +6,9 @@ import org.wololo.wastelands.core.event
 import akka.actor._
 import org.wololo.wastelands.core.GameState
 import org.wololo.wastelands.core.Rect
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import akka.event.LoggingAdapter
 
 trait UnitState {
   val gameState: GameState
@@ -13,7 +16,7 @@ trait UnitState {
   val self: ActorRef
   val player: ActorRef
   val unitType: Int
-  val position: Coordinate
+  var position: Coordinate
   var direction: Direction
   var alive = true
   var hp = 10
@@ -26,12 +29,20 @@ trait UnitState {
   var actionLength: Int = 0
   var cooldowns = ArrayBuffer[Cooldown]()
 
-  def mutate(e: Event) {
-    e match {
-      case e: event.Move => move(e.destination)
-      case e: event.Attack => attack(e.target)
-      case e: event.Guard => guard()
+  def mutate: PartialFunction[Event, scala.Unit] = {
+      case e: event.Move =>
+        move(e.destination)
+      case e: event.Attack =>
+        attack(e.target)
+      case e: event.Guard =>
+        guard()
       case e: event.MoveTileStep =>
+        position = position + direction
+        // TODO: only remove shade if the unit belongs to the active player
+        gameState.map.removeShadeAround(position)
+        action = Option(Action.Move)
+        actionStart = gameState.ticks
+      	actionLength = 50
       case e: event.Turn =>
       	direction = direction.turnTowards(e.target)
       	action = Option(Action.Turn)
@@ -39,13 +50,13 @@ trait UnitState {
       	actionLength = 0
       case e: event.Cooldown =>
         // TODO: get duration from action type
-        cooldowns += new Cooldown(e.actionType, gameState.ticks, 15)
+        cooldowns += new Cooldown(e.actionType, gameState.ticks, 30)
       case e: event.CooldownComplete =>
         // TODO: cleanup cooldowns...
       case e: event.ActionComplete =>
+        // TODO: set order to none (guard?) if its goal is complete
         action = None
       case e: event.Tick =>
-    }
   }
 
   private def move(destination: Coordinate) {
@@ -56,7 +67,6 @@ trait UnitState {
   private def attack(target: ActorRef) {
     order = Order.Attack
     this.target = Option(target)
-
   }
 
   private def guard() {
@@ -65,7 +75,7 @@ trait UnitState {
 
 }
 
-class UnitClientState(val self: ActorRef, val player: ActorRef, val gameState: GameState, val unitType: Int, val position: Coordinate, var direction: Direction) extends UnitState with Selectable {
+class UnitClientState(val self: ActorRef, val player: ActorRef, val gameState: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
   // TODO: add stuff relevant for clientside, like screen bbox etc.
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false

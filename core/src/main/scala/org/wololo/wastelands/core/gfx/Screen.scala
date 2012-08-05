@@ -67,10 +67,9 @@ class Screen(client: Client) {
 
     val maxx = MapScreenWidth - ((TilesWidth + 1) * TileSize)
     val maxy = MapScreenHeight - ((TilesHeight + 1) * TileSize)
-    screenOffset.x = if (screenOffset.x < 0) 0 else screenOffset.x
-    screenOffset.x = if (screenOffset.x > maxx) maxx else screenOffset.x
-    screenOffset.y = if (screenOffset.y < 0) 0 else screenOffset.y
-    screenOffset.y = if (screenOffset.y > maxy) maxy else screenOffset.y
+    // TODO: must be able to write this bounds logic in a more sane way...
+    screenOffset = (if (screenOffset.x < 0) 0 else screenOffset.x, if (screenOffset.y < 0) 0 else screenOffset.y)
+    screenOffset = (if (screenOffset.x > maxx) maxx else screenOffset.x, if (screenOffset.y > maxy) maxy else screenOffset.y)
   }
 
   /**
@@ -78,12 +77,10 @@ class Screen(client: Client) {
    */
   def render() {
     //calculate the tile index for x and y axis
-    mapOffset.x = calculateTileIndex(screenOffset.x)
-    mapOffset.y = calculateTileIndex(screenOffset.y)
+    mapOffset = (calculateTileIndex(screenOffset.x), calculateTileIndex(screenOffset.y))
 
     //calculate the tile pixel offset for x and y axis
-    mapPixelOffset.x = calculateTilePixelOffset(screenOffset.x, mapOffset.x)
-    mapPixelOffset.y = calculateTilePixelOffset(screenOffset.y, mapOffset.y)
+    mapPixelOffset = (calculateTilePixelOffset(screenOffset.x, mapOffset.x), calculateTilePixelOffset(screenOffset.y, mapOffset.y))
 
     tileRenderer.render(false)
     client.units.values.foreach(unitState => unitRenderer.render(unitState.asInstanceOf[UnitClientState]))

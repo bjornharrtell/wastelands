@@ -7,6 +7,7 @@ import scala.collection.mutable.HashMap
 import org.wololo.wastelands.core.unit.UnitClientState
 import org.wololo.wastelands.core.event.Event
 import org.wololo.wastelands.core.unit.UnitState
+import org.slf4j.LoggerFactory
 
 trait GameState {
   val events = ArrayBuffer[Event]()

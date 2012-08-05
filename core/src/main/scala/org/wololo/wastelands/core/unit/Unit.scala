@@ -7,8 +7,9 @@ import org.wololo.wastelands.core.event.Event
 import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import com.typesafe.config.ConfigFactory
+import org.slf4j.LoggerFactory
 
-abstract class Unit(val player: ActorRef, val gameState: GameState, val position: Coordinate, var direction: Direction) extends Actor with UnitState {
+abstract class Unit(val player: ActorRef, val gameState: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState { 
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
@@ -16,23 +17,29 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, val position
   /**
    * When events are received, mutate state then trigger any events as a result of that state change
    */
-  def receive = akka.event.LoggingReceive {
+  def receive = {
     case e: Event =>
+      if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
+      
       mutate(e)
 
       e match {
         case e: event.ActionComplete =>
           self ! event.Cooldown(e.actionType)
-          gameState.players.foreach(_ ! e)
+          gameState.players.foreach(_.forward(e))
+        case e: event.Cooldown =>
+          gameState.players.foreach(_.forward(e))
         case e: event.CooldownComplete =>
-          gameState.players.foreach(_ ! e)
           // TODO: handle other orders than move
           move()
+          gameState.players.foreach(_.forward(e))
         case e: event.Turn =>
-          gameState.players.foreach(_ ! e)
+          gameState.players.foreach(_.forward(e))
+        case e: event.MoveTileStep =>
+          gameState.players.foreach(_.forward(e))
         case e: event.Move =>
           move()
-          gameState.players.foreach(_ ! e)
+          gameState.players.foreach(_.forward(e))
         case e: event.Tick => tick()
         case _ =>
       }
@@ -56,7 +63,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, val position
         if (direction != target.get) {
           self ! event.Turn(target.get)
         } else {
-          self ! event.MoveTileStep
+          self ! event.MoveTileStep()
         }
       }
     }
