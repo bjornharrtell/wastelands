@@ -36,6 +36,12 @@ trait Player extends Actor with ActorLogging {
         units.get(sender).get.mutate(e)
       case e: event.MoveTileStep =>
         units.get(sender).get.mutate(e)
+      case e: event.Cooldown =>
+        units.get(sender).get.mutate(e)
+      case e: event.ActionComplete =>
+        units.get(sender).get.mutate(e)
+      case e: event.CooldownComplete =>
+        units.get(sender).get.mutate(e)
       case e: event.Tick =>
         ticks += 1
       case _ =>

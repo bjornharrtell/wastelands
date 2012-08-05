@@ -9,23 +9,23 @@ import java.io.File
 class UnitRenderer(val screen: Screen) extends TileReader {
 
   val tileSet = fileToTiles(new File("tilesets/unit.png"), BitmapTypes.Translucent, 8, 3, 16, screen.TileSize)
-  
+
   val tileSetTestUnit1 = tileSet.slice(0, 8)
   tileSetTestUnit1.map(tile => tileSetTestUnit1.append(screen.bitmapFactory.createShadow(tile)))
-  
+
   val tileSetTestUnit2 = tileSet.slice(8, 16)
   tileSetTestUnit2.map(tile => tileSetTestUnit2.append(screen.bitmapFactory.createShadow(tile)))
-  
+
   val tileSetHarvester = tileSet.slice(16, 24)
   tileSetHarvester.map(tile => tileSetHarvester.append(screen.bitmapFactory.createShadow(tile)))
-  
+
   val selection = fileToTiles(new File("tilesets/other.png"), BitmapTypes.Translucent, 1, 1, 16, screen.TileSize)(0)
 
   // current render offset in pixels
   private var offset: Coordinate = (0, 0)
-  
+
   private var explosions = new ArrayBuffer[UnitExplosionRenderer]
-  
+
   def render(unit: UnitClientState) {
     calcOffset(unit)
 
@@ -40,7 +40,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
       screen.canvas.drawImage(tileSet(unit.direction.toTileIndex + 8), offset.x - 3, offset.y + 3)
       screen.canvas.drawImage(tileSet(unit.direction.toTileIndex), offset.x, offset.y)
       if (unit.selected) screen.canvas.drawImage(selection, offset.x, offset.y)
-      
+
     }
 
     if (unit.explode) {
@@ -48,7 +48,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
       unit.exploding = true
       explosions += new UnitExplosionRenderer(screen, unit, offset.clone)
     }
-    
+
     explosions.foreach(explosion => {
       if (!explosion.render) {
         explosions -= explosion
@@ -65,17 +65,22 @@ class UnitRenderer(val screen: Screen) extends TileReader {
       unit.isOnScreen = false
       return
     }
+    
+    // need to "move" unit back to previous location if moving since the unit position is changed before animating the move 
+    // TODO: should be able to refactor this to not check for move action twice...
+    if (unit.action.isDefined && unit.action.get == Action.Move) {
+      mapOffset -= unit.direction
+    }
 
     offset = (mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
 
     offset += screen.mapPixelOffset
 
     // if unit is moving, add move distance as pixels to offset
-    // TODO: use action and ticks to calculate distance
-    //if (unit.moveDistance > 0.0) {
-    //  offset.x += (screen.TileSize * unit.direction.x * unit.moveDistance).toInt
-    //  offset.y += (screen.TileSize * unit.direction.y * unit.moveDistance).toInt
-    //}
+    if (unit.action.isDefined && unit.action.get == Action.Move) {
+      val moveDistance = (unit.gameState.ticks - unit.actionStart).toDouble / unit.actionLength
+      offset += ((screen.TileSize * unit.direction.x * moveDistance).toInt, (screen.TileSize * unit.direction.y * moveDistance).toInt)
+    }
 
     unit.isOnScreen = true
     unit.screenBounds.setTo(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
