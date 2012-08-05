@@ -8,40 +8,46 @@ import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 
-abstract class Unit(val player: ActorRef, val gameState:GameState, val position: Coordinate, var direction: Direction) extends Actor with UnitState {
+abstract class Unit(val player: ActorRef, val gameState: GameState, val position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
 
   /**
-   * When events are received, mutate state then trigger any events as a result of that state change 
+   * When events are received, mutate state then trigger any events as a result of that state change
    */
   def receive = akka.event.LoggingReceive {
     case e: Event =>
       mutate(e)
-      
+
       e match {
-        case e: event.Move => move(e.destination)
-        case e: event.Tick => tick
+        case e: event.ActionComplete =>
+          println("ActionComplete")
+          self ! event.Cooldown(e.actionType)
+        case e: event.CooldownComplete =>
+          // TODO: handle other orders than move
+          move()
+        case e: event.Move => move()
+        case e: event.Tick => tick()
         case _ =>
       }
-      
+
       gameState.players.foreach(_ ! e)
   }
 
   /**
-   * Action to take on given move order or action complete with active move over
+   * Action to take on given move order or cooldown complete with active move over
    *
    * If there is no current active action and no cooldown for move or turn actions,
    * try to generate a new action which can no (target reached), turn or move action event.
    */
-  def move(destination: Coordinate) = {
+  def move() = {
     if (action.isEmpty &&
       cooldowns.forall(cooldown =>
         cooldown.actionType == Action.Move ||
           cooldown.actionType == Action.Turn)) {
 
-      val target = gameState.map.calcDirection(position, destination)
+      val target = gameState.map.calcDirection(position, destination.get)
 
       if (target.isDefined) {
         if (direction != target.get) {
@@ -53,17 +59,18 @@ abstract class Unit(val player: ActorRef, val gameState:GameState, val position:
     }
   }
 
-  def actionComplete = {
-    order match {
-      case Order.Move =>
+  /**
+   * Generated timed events (ActionComplete and CooldownComplete) if their duration has elapsed
+   */
+  def tick() = {
+    if (action.isDefined && gameState.ticks - actionStart >= actionLength) {
+      self ! event.ActionComplete(action.get)
     }
-  }
-
-  def tick() {
-    if (gameState.ticks - actionStart >= actionLength) {
-      self ! event.Cooldown(action.get)
-      self ! event.ActionComplete
-    }
+    cooldowns.foreach(cooldown => {
+      if (gameState.ticks - cooldown.start >= cooldown.length) {
+        self ! event.CooldownComplete(cooldown.actionType)
+      }
+    })
   }
 
 }

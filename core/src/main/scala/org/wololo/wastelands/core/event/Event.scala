@@ -16,6 +16,7 @@ case class Touch(val coordinate: Coordinate, val action: Int) extends Event
 
 // Client/Server local events
 case class Tick() extends Event
+case class Render() extends Event
 
 // Client/Player initiated events
 case class Connect() extends Event

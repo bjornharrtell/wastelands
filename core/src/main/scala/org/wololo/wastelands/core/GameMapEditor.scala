@@ -11,7 +11,7 @@ class GameMapEditor(vmContext: VMContext) extends Client(vmContext) {
   var tileType: Option[Int] = None
   
   def init() {
-    gameState.map.tiles.foreach(tile => { tile.shade = false })
+    map.tiles.foreach(tile => { tile.shade = false })
   }
   
   /**
@@ -24,9 +24,9 @@ class GameMapEditor(vmContext: VMContext) extends Client(vmContext) {
       case x: Some[Int] => {
         val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
         val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
-        gameState.map.tiles(mx, my).baseType = x.get
-        gameState.map.tiles(mx, my).subType = 0
-        gameState.map.makeBorderAround((mx, my))
+        map.tiles(mx, my).baseType = x.get
+        map.tiles(mx, my).subType = 0
+        map.makeBorderAround((mx, my))
       }
       case None => super.touchMove(coordinate)
     }

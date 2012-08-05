@@ -34,7 +34,17 @@ trait UnitState {
       case e: event.MoveTileStep =>
       case e: event.Turn =>
       	direction = direction.turnTowards(e.target)
-      case e: event.ActionComplete => actionComplete()
+      	action = Option(Action.Turn)
+      	actionStart = gameState.ticks
+      	actionLength = 0
+      case e: event.Cooldown =>
+        // TODO: get duration from action type
+        cooldowns += new Cooldown(e.actionType, gameState.ticks, 15)
+      case e: event.CooldownComplete =>
+        // TODO: cleanup cooldowns...
+      case e: event.ActionComplete =>
+        action = None
+      case e: event.Tick =>
     }
   }
 
@@ -51,10 +61,6 @@ trait UnitState {
 
   private def guard() {
     order = Order.Guard
-  }
-
-  private def actionComplete() {
-    // TODO: change state
   }
 
 }

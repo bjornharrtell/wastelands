@@ -3,7 +3,7 @@ import akka.actor.ActorRef
 import org.wololo.wastelands.core.unit.UnitTypes
 import org.wololo.wastelands.core.unit.Direction
 
-class CpuPlayer(server: ActorRef, game: ActorRef, gameState: GameClientState) extends Player(server, gameState) {
+class CpuPlayer(game:ActorRef) extends Player with GameState {
 
   game ! event.Join()
 
@@ -16,7 +16,7 @@ class CpuPlayer(server: ActorRef, game: ActorRef, gameState: GameClientState) ex
     case e: event.TileMapData =>
     //gameState.map = e.map
     case e: event.CreateUnit =>
-      gameState.map.removeShadeAround(e.position)
+      map.removeShadeAround(e.position)
     case e: event.Move => println(e)
   }
 }

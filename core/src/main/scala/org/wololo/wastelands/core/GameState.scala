@@ -6,20 +6,21 @@ import akka.actor.ActorRef
 import scala.collection.mutable.HashMap
 import org.wololo.wastelands.core.unit.UnitClientState
 import org.wololo.wastelands.core.event.Event
+import org.wololo.wastelands.core.unit.UnitState
 
 trait GameState {
   val events = ArrayBuffer[Event]()
   
   val players: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
-  var map: TileMap = new TileMap()
+  val map: TileMap = new TileMap()
   var ticks = 0
-  var units = ArrayBuffer[ActorRef]()
+  
+  val projectiles = ArrayBuffer[Projectile]()
+  
+  val units = HashMap[ActorRef, UnitState]()
 }
 
-class GameClientState extends GameState {
-  var projectiles = ArrayBuffer[Projectile]()
-  
-  var unitStates = HashMap[ActorRef, UnitClientState]()
-  
-  // TODO: need to keep UnitState instances togheter with the unit actorrefs
+
+trait GameClientState extends GameState {
+  //override val units = HashMap[ActorRef, UnitClientState]()
 }

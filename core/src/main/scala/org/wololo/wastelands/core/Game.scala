@@ -13,7 +13,6 @@ class Game() extends Actor with GameState {
   def receive = akka.event.LoggingReceive {
     case e: event.Join =>
       events.foreach(sender ! _)
-      
       events += e
       sender ! event.TileMapData(map)
       players += sender
@@ -26,7 +25,9 @@ class Game() extends Actor with GameState {
         case UnitTypes.TestUnit2 => context.actorOf(Props(new TestUnit2(sender, this, e.position, e.direction)))
         case UnitTypes.Harvester => context.actorOf(Props(new Harvester(sender, this, e.position, e.direction)))
       }
-      units += unit
       players.foreach(_ ! UnitCreated(unit, sender, e.unitType, e.position, e.direction))
+    case e: event.Tick =>
+      ticks += 1
+      context.children.foreach(_.forward(e))
   }
 }

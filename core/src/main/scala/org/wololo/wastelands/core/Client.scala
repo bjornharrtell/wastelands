@@ -11,85 +11,51 @@ import akka.actor._
 import com.typesafe.config.ConfigFactory
 import org.wololo.wastelands.core.unit.UnitClientState
 
-class Client(val vmContext: VMContext) extends ClientInputHandler {
-  var running = true
-
-  var selectedUnit: Option[ActorRef] = None
-
-  var lastTime = System.nanoTime
-  var unprocessed = 0.0
-  val nsPerTick = 1000000000.0 / 60.0
-  var frames = 0
-  var lastTimer1 = System.currentTimeMillis
-
-  val system = ActorSystem("client") //, ConfigFactory.load.getConfig("client"))
-  
-  val server = system.actorOf(Props[Server], "Server")
-  val gameState = new GameClientState()
-  val player = system.actorOf(Props(new Player(server, gameState)), "Player")
-  
+class Client(val vmContext: VMContext) extends ClientInputHandler with Player with GameClientState {
   val screen = new Screen(this)
+  var selectedUnit: Option[UnitClientState] = None
 
-  def run = {
-    while (running) {
-      val now = System.nanoTime
-      unprocessed += (now - lastTime) / nsPerTick
-      lastTime = now
-      var shouldRender = false
-      while (unprocessed >= 1.0) {
-        tick()
-        unprocessed -= 1
-        shouldRender = true
-      }
+  val server = context.actorOf(Props[Server], "Server")
 
-      //Thread.sleep(2)
+  server ! Connect()
 
-      if (shouldRender) {
-        frames += 1
-
-        screen.render()
-        vmContext.render(screen.bitmap)
-      }
-
-      if (System.currentTimeMillis - lastTimer1 > 1000) {
-        lastTimer1 += 1000
-        //println(ticks + " ticks, " + frames + " fps")
-        frames = 0
-      }
-    }
-    
-    system.shutdown()
+  override def receive = akka.event.LoggingReceive {
+    case e: event.Connected =>
+      // TODO: present user choices for creating/joining games
+      server ! event.Create("NewGame")
+    case e: event.Render =>
+      screen.render()
+      vmContext.render(screen.bitmap)
+    case e: event.Touch => touch(e)
+    case e: event.Tick =>
+      server.forward(e)
+    case e: Event => handlePlayerEvent(e)
   }
 
-  def tick() {
-	//server ! Tick
-    //player ! Tick
-  }
-  
   /**
-   * Perform action on a chosen map tile
+   * Take action as a result of a chosen tile and current state
    */
   def mapTileAction(coordinate: Coordinate) {
-    selectedUnit.get ! event.Move(coordinate)
+    if (selectedUnit.isDefined) {
+      selectedUnit.get.self ! event.Move(coordinate)
+    }
   }
 
   /**
-   * Perform action on a selectable unit
+   * Take action as a result of a chosen unit and current state
    */
   def unitAction(unit: UnitClientState) {
     if (selectedUnit.isDefined) {
-      if (unit == selectedUnit) {
-        return
-      } else if (unit.player != player) {
-        selectedUnit.get ! event.Attack(unit.self)
+      if (unit.player != self) {
+        selectedUnit.get.self ! event.Attack(unit.self)
       } else {
-        gameState.unitStates.get(selectedUnit.get).get.unselect()
+        selectedUnit.get.unselect()
         unit.select()
-        selectedUnit = Option(unit.self)
+        selectedUnit = Option(unit)
       }
-    } else if (unit.player == player) {
+    } else if (unit.player == self) {
       unit.select()
-      selectedUnit = Option(unit.self)
+      selectedUnit = Option(unit)
     }
   }
 
