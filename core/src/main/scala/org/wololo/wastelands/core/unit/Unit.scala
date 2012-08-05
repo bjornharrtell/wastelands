@@ -69,8 +69,8 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, val position
     // TODO: additional ticks are triggered before ActionComplete sets action to None... must mutate state here instead of ActionComplete (but the exact same thing must happen at clientside..)
     if (action.isDefined && gameState.ticks - actionStart >= actionLength) {
       self ! event.ActionComplete(action.get)
+      // hack for todo above.. suboptimal since it will happen later too
       action = None
-      
     }
     val cooldownsToRemove = ArrayBuffer[Cooldown]()
     cooldowns.foreach(cooldown => {
@@ -79,6 +79,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, val position
         cooldownsToRemove += cooldown
       }
     })
+    // hack for todo above.. suboptimal since it will happen later too (but does not yet)
     cooldowns --= cooldownsToRemove
   }
 
