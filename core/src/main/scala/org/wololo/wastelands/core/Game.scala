@@ -14,7 +14,7 @@ class Game() extends Actor with GameState {
     case e: event.Join =>
       events.foreach(sender ! _)
       events += e
-      sender ! event.TileMapData(map)
+      //sender ! event.TileMapData(map)
       players += sender
       players.foreach(_ ! event.Joined(sender))
     case e: event.CreateUnit =>

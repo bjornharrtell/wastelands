@@ -2,13 +2,14 @@ package org.wololo.wastelands.core
 
 import akka.actor._
 import org.wololo.wastelands.vmlayer.VMContext
+import com.typesafe.config.ConfigFactory
 
 trait ClientApp {
   this: VMContext =>
     
   var running = false
   
-  val system = ActorSystem("client")
+  val system = ActorSystem("client", ConfigFactory.load.getConfig("client"))
   val client = system.actorOf(Props(new Client(this)), "Player")
 
   def run() = {

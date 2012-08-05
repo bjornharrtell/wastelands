@@ -15,7 +15,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
   val screen = new Screen(this)
   var selectedUnit: Option[UnitClientState] = None
 
-  val server = context.actorOf(Props[Server], "Server")
+  val server = context.actorFor("akka://server@127.0.0.1:9000/user/Server")
 
   server ! Connect()
 
