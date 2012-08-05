@@ -17,10 +17,10 @@ import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.event.Touch
 import org.wololo.wastelands.core.KeyCode
 import org.wololo.wastelands.core.Client
+import akka.actor._
+import org.wololo.wastelands.core.ClientApp
 
-object JVMClient extends JVMContext with WindowListener with MouseListener with MouseMotionListener with KeyListener {
-  var client: Client = null
-
+object JVMClient extends JVMContext with ClientApp with WindowListener with MouseListener with MouseMotionListener with KeyListener {
   val device = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
   var gc = device.getDefaultConfiguration
 
@@ -33,9 +33,7 @@ object JVMClient extends JVMContext with WindowListener with MouseListener with 
     mainFrame = newFrame
     mainFrame.setVisible(true)
     
-    client = new Client(this)
-    
-    client.run
+    run()
     
     mainFrame.dispose()
     JVMSoundFactory.dispose()
@@ -117,7 +115,7 @@ object JVMClient extends JVMContext with WindowListener with MouseListener with 
   }
 
   def windowClosing(e: WindowEvent) {
-    client.running = false
+    running = false
   }
 
   def windowOpened(e: WindowEvent) {}
@@ -132,16 +130,16 @@ object JVMClient extends JVMContext with WindowListener with MouseListener with 
     if (keyCode == KeyEvent.VK_F11) {
       toggleFullscreen()
     } else if (keyCode == KeyEvent.VK_Q) {
-      client.running = false
+      running = false
     } else {
       keyCode match {
-        case KeyEvent.VK_1 => client.keyDown(KeyCode.KEY_1)
+        /*case KeyEvent.VK_1 => client.keyDown(KeyCode.KEY_1)
         case KeyEvent.VK_2 => client.keyDown(KeyCode.KEY_2)
         case KeyEvent.VK_3 => client.keyDown(KeyCode.KEY_3)
         case KeyEvent.VK_4 => client.keyDown(KeyCode.KEY_4)
         case KeyEvent.VK_5 => client.keyDown(KeyCode.KEY_5)
         case KeyEvent.VK_9 => client.keyDown(KeyCode.KEY_9)
-        case KeyEvent.VK_0 => client.keyDown(KeyCode.KEY_0)
+        case KeyEvent.VK_0 => client.keyDown(KeyCode.KEY_0)*/
         case _ =>
       }
     }
@@ -149,11 +147,11 @@ object JVMClient extends JVMContext with WindowListener with MouseListener with 
 
   def keyReleased(e: KeyEvent) {}
   def keyTyped(e: KeyEvent) {}
-  def mouseDragged(e: MouseEvent) = client.touch(Touch((e.getX, e.getY), Touch.MOVE))
+  def mouseDragged(e: MouseEvent) = client ! Touch((e.getX, e.getY), Touch.MOVE)
   def mouseMoved(e: MouseEvent) {}
   def mouseClicked(e: MouseEvent) {}
   def mouseEntered(e: MouseEvent) {}
   def mouseExited(e: MouseEvent) {}
-  def mousePressed(e: MouseEvent) = client.touch(Touch((e.getX, e.getY), Touch.DOWN))
-  def mouseReleased(e: MouseEvent) = client.touch(Touch((e.getX, e.getY), Touch.UP))
+  def mousePressed(e: MouseEvent) = client ! Touch((e.getX, e.getY), Touch.DOWN)
+  def mouseReleased(e: MouseEvent) = client ! Touch((e.getX, e.getY), Touch.UP)
 }
