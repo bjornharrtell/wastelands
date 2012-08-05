@@ -33,4 +33,8 @@ class Coordinate(var x: Int, var y: Int) {
     x += dx
     y += dy
   }
+  
+  override def toString: String = {
+    "["+x+","+y+"]"
+  } 
 }

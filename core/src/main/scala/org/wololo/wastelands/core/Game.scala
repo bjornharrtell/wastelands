@@ -10,8 +10,6 @@ import org.wololo.wastelands.core.unit.UnitTypes
 import akka.actor._
 
 class Game() extends Actor with GameState {
-  val players: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
-  
   def receive = akka.event.LoggingReceive {
     case e: event.Join =>
       events.foreach(sender ! _)

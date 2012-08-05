@@ -16,17 +16,17 @@ abstract class Unit(val player: ActorRef, val gameState:GameState, val position:
   /**
    * When events are received, mutate state then trigger any events as a result of that state change 
    */
-  def receive = {
+  def receive = akka.event.LoggingReceive {
     case e: Event =>
       mutate(e)
       
       e match {
-        case e: event.Move => move
+        case e: event.Move => move(e.destination)
         case e: event.Tick => tick
+        case _ =>
       }
-    // TODO: propagate events to players (but not ticks!) 
-    //  - probably need to receive all events at top level actor Game since we need to send to all players
-    //    - would make sense to categorize events further
+      
+      gameState.players.foreach(_ ! e)
   }
 
   /**
@@ -35,13 +35,13 @@ abstract class Unit(val player: ActorRef, val gameState:GameState, val position:
    * If there is no current active action and no cooldown for move or turn actions,
    * try to generate a new action which can no (target reached), turn or move action event.
    */
-  def move = {
+  def move(destination: Coordinate) = {
     if (action.isEmpty &&
       cooldowns.forall(cooldown =>
         cooldown.actionType == Action.Move ||
           cooldown.actionType == Action.Turn)) {
 
-      val target = Option(Direction(0, -1)) //unit.game.map.calcDirection(unit.position, destination)
+      val target = gameState.map.calcDirection(position, destination)
 
       if (target.isDefined) {
         if (direction != target.get) {
@@ -55,7 +55,7 @@ abstract class Unit(val player: ActorRef, val gameState:GameState, val position:
 
   def actionComplete = {
     order match {
-      case Order.Move => move
+      case Order.Move =>
     }
   }
 

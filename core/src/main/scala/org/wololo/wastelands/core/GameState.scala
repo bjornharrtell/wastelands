@@ -10,6 +10,7 @@ import org.wololo.wastelands.core.event.Event
 trait GameState {
   val events = ArrayBuffer[Event]()
   
+  val players: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
   var map: TileMap = new TileMap()
   var ticks = 0
   var units = ArrayBuffer[ActorRef]()

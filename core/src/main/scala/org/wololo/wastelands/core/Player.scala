@@ -9,26 +9,29 @@ class Player(server: ActorRef, gameState: GameClientState) extends Actor {
   server ! new event.Connect()
 
   var game: ActorRef = null
-  
+
   def receive = akka.event.LoggingReceive {
     case e: event.Connected =>
       server ! event.Create("NewGame")
-    case e: event.Created => 
+    case e: event.Created =>
       game = e.game
       game ! event.Join()
     case e: event.Joined =>
-      // TODO: create units from scenario definition
-      game ! event.CreateUnit(UnitTypes.TestUnit2, (5, 4), Direction.random)
-      game ! event.CreateUnit(UnitTypes.TestUnit2, (6, 6), Direction.random)
-      game ! event.CreateUnit(UnitTypes.Harvester, (5, 6), Direction.random)
+      if (self == e.player) {
+        // TODO: create units from scenario definition
+        game ! event.CreateUnit(UnitTypes.TestUnit2, (5, 4), Direction.random)
+        game ! event.CreateUnit(UnitTypes.TestUnit2, (6, 6), Direction.random)
+        game ! event.CreateUnit(UnitTypes.Harvester, (5, 6), Direction.random)
+      }
     case e: event.TileMapData =>
       // TODO: use map data...
       //gameState.map = e.map
     case e: event.UnitCreated =>
       if (self == e.player) gameState.map.removeShadeAround(e.position)
-      var unitState = new UnitClientState(e.player, gameState, e.unitType, e.position, e.direction)
+      var unitState = new UnitClientState(e.unit, e.player, gameState, e.unitType, e.position, e.direction)
       gameState.unitStates += (e.unit -> unitState)
-    case e: event.Move => println(e)
+    case e: event.Turn =>
+      gameState.unitStates.get(sender).get.mutate(e)
     case e: event.Tick => println(e)
   }
 }

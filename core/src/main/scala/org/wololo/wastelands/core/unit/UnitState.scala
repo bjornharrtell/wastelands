@@ -10,6 +10,7 @@ import org.wololo.wastelands.core.Rect
 trait UnitState {
   val gameState: GameState
   
+  val self: ActorRef
   val player: ActorRef
   val unitType: Int
   val position: Coordinate
@@ -31,6 +32,8 @@ trait UnitState {
       case e: event.Attack => attack(e.target)
       case e: event.Guard => guard()
       case e: event.MoveTileStep =>
+      case e: event.Turn =>
+      	direction = direction.turnTowards(e.target)
       case e: event.ActionComplete => actionComplete()
     }
   }
@@ -56,7 +59,7 @@ trait UnitState {
 
 }
 
-class UnitClientState(val player: ActorRef, val gameState: GameState, val unitType: Int, val position: Coordinate, var direction: Direction) extends UnitState with Selectable {
+class UnitClientState(val self: ActorRef, val player: ActorRef, val gameState: GameState, val unitType: Int, val position: Coordinate, var direction: Direction) extends UnitState with Selectable {
   // TODO: add stuff relevant for clientside, like screen bbox etc.
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false

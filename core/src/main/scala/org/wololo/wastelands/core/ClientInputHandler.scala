@@ -38,7 +38,7 @@ trait ClientInputHandler {
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
     for (unit <- gameState.unitStates.values if unit.alive && unit.screenBounds.contains(coordinate)) {
-      //unitAction(unit)
+      unitAction(unit)
       clickedUnit = true
     }
 
@@ -46,7 +46,7 @@ trait ClientInputHandler {
     if (!clickedUnit) {
       val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
       val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
-      //mapTileAction((mx, my))
+      mapTileAction((mx, my))
     }
   }
   
