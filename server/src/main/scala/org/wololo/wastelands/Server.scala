@@ -1,9 +1,9 @@
 package org.wololo.wastelands
 
 import scala.collection.mutable.HashMap
-
 import akka.actor._
 import com.typesafe.config.ConfigFactory
+import scala.collection.mutable.ArrayBuffer
 
 object Server extends App {
   override def main(args: Array[String]): Unit = {
@@ -14,21 +14,21 @@ object Server extends App {
   }
 
   class ServerActor extends Actor {
-    var clients: HashMap[Int, ActorRef] = HashMap.empty[Int, ActorRef]
+    var clients = ArrayBuffer[ActorRef]()
 
-    def connect(id: Int, sender: ActorRef) {
-      sender ! Connected
-      clients += (id -> sender)
+    def connect(sender: ActorRef) {
+      sender ! Connected()
+      clients += sender
       println("Clients connected: " + clients.size)
     }
 
-    def disconnect(id: Int, sender: ActorRef) {
-      clients -= id
+    def disconnect(sender: ActorRef) {
+      clients -= sender
       println("Clients connected: " + clients.size)
     }
 
     def shutdown() {
-      clients.values.foreach(_ ! Shutdown)
+      clients.foreach(_ ! Shutdown())
       context.stop(self)
       context.system.shutdown()
     }
@@ -36,9 +36,9 @@ object Server extends App {
     def handleEvent(e: Event) {
       println(e)
       e match {
-        case e: Connect => connect(e.id, sender)
+        case e: Connect => connect(sender)
         case e: Connected =>
-        case e: Disconnect => disconnect(e.id, sender)
+        case e: Disconnect => disconnect(sender)
         case e: Shutdown => shutdown()
       }
     }

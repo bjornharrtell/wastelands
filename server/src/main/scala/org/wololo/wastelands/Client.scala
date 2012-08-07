@@ -16,8 +16,8 @@ object Client extends App {
     while (running) {
       val input = Console.readLine("Client input: ")
       input match {
-        case "quit" => clientActor ! Disconnect(0); running = false;
-        case "shutdown" => clientActor ! Shutdown(0); running = false;
+        case "quit" => clientActor ! Disconnect(); running = false;
+        case "shutdown" => clientActor ! Shutdown(); running = false;
         case _ => println("Invalid input")
       }
     }
@@ -28,15 +28,15 @@ object Client extends App {
 
     val server = context.actorFor("akka://server@127.0.0.1:9000/user/Server")
 
-    server ! Connect(id)
+    server ! Connect()
     
     def disconnect() {
-      server ! Disconnect(id)
+      server ! Disconnect()
       context.system.shutdown()
     }
 
     def shutdown() {
-      server ! Shutdown(0)
+      server ! Shutdown()
       context.system.shutdown()
     }
 
