@@ -70,23 +70,22 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 				<version>3.3.0</version>
 				<configuration>
 					<sdk>
-						<platform>8</platform>
+						<platform>10</platform>
 					</sdk>
-					<lazyLibraryUnpack>false</lazyLibraryUnpack>
+					<lazyLibraryUnpack>true</lazyLibraryUnpack>
 					<emulator>
 						<avd>22</avd>
 					</emulator>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
 					<proguard>
 						<skip>false</skip>
-						<!--proguardJarPath>proguard.jar</proguardJarPath -->
 					</proguard>
 				</configuration>
 				<extensions>true</extensions>
