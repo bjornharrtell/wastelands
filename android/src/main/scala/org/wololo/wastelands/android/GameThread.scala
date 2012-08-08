@@ -1,18 +1,15 @@
 package org.wololo.wastelands.android
-import org.wololo.wastelands.core.Game
-import android.content.Context
-import android.graphics.Bitmap
-import android.view.SurfaceHolder
-import android.view.MotionEvent
+
+import org.wololo.wastelands.core.event.Touch
+import org.wololo.wastelands.core.ClientApp
 import org.wololo.wastelands.core.Coordinate
-import org.wololo.wastelands.core.Publisher
-import org.wololo.wastelands.core.event.TouchEvent
+import org.wololo.wastelands.core.Game
 
-class GameThread(context: Context) extends Thread with SurfaceHolder.Callback with DalvikContext with Publisher  {
-  type Pub = Game
-  
-  var running = false
+import android.content.Context
+import android.view.MotionEvent
+import android.view.SurfaceHolder
 
+class GameThread(context: Context) extends Thread with SurfaceHolder.Callback with DalvikContext with ClientApp  {
   val bitmapFactory = new AndroidBitmapFactory(context)
   val soundFactory = new AndroidSoundFactory(context)
   val resourceFactory = new AndroidResourceFactory(context)
@@ -22,7 +19,7 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
   var surfaceHolder: SurfaceHolder = null
 
   override def run() {
-    game.run()
+    super.run()
   }
 
   def render(id: Int) {
@@ -35,8 +32,6 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
     surfaceHolder = holder
     screenWidth = holder.getSurfaceFrame.width()
     screenHeight = holder.getSurfaceFrame.height()
-    game = new Game(this)
-    subscribe(game)
     running = true
     start()
   }
@@ -60,9 +55,9 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
   
   def handleAction(action:Int, coordinate: Coordinate) {
     action match {
-      case MotionEvent.ACTION_DOWN => publish(new TouchEvent(coordinate, TouchEvent.DOWN))
-      case MotionEvent.ACTION_UP => publish(new TouchEvent(coordinate, TouchEvent.UP))
-      case MotionEvent.ACTION_MOVE => publish(new TouchEvent(coordinate, TouchEvent.MOVE))
+      case MotionEvent.ACTION_DOWN => client ! Touch(coordinate, Touch.DOWN)
+      case MotionEvent.ACTION_UP => client ! Touch(coordinate, Touch.UP)
+      case MotionEvent.ACTION_MOVE => client ! Touch(coordinate, Touch.MOVE)
     }
   }
 }

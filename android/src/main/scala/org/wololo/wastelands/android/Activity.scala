@@ -1,15 +1,12 @@
 package org.wololo.wastelands.android
 
+import android.media.AudioManager
 import android.os.Bundle
 import android.view.View.OnTouchListener
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
-import android.media.AudioManager
 import android.view.Window
-import org.wololo.wastelands.core.Publisher
-import org.wololo.wastelands.core.event.TouchEvent
-import org.wololo.wastelands.core.Coordinate
 
 class Activity extends android.app.Activity with OnTouchListener {
   var gameThread: GameThread = null
