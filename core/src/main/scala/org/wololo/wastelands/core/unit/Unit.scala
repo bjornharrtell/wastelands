@@ -7,7 +7,6 @@ import org.wololo.wastelands.core.event.Event
 import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import com.typesafe.config.ConfigFactory
-import org.slf4j.LoggerFactory
 
 abstract class Unit(val player: ActorRef, val gameState: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState { 
   val Velocity = 0.04

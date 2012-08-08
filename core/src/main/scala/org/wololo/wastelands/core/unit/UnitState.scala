@@ -6,8 +6,6 @@ import org.wololo.wastelands.core.event
 import akka.actor._
 import org.wololo.wastelands.core.GameState
 import org.wololo.wastelands.core.Rect
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import akka.event.LoggingAdapter
 
 trait UnitState {
