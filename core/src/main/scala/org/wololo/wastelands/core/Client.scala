@@ -15,7 +15,9 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
   val screen = new Screen(this)
   var selectedUnit: Option[UnitClientState] = None
 
-  val server = context.actorFor("akka://server@127.0.0.1:9000/user/Server")
+  // NOTE: local or remote server...
+  val server = context.actorOf(Props[Server])
+  //val server = context.actorFor("akka://server@192.168.0.100:9000/user/Server")
 
   server ! Connect()
 
@@ -28,7 +30,8 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
       vmContext.render(screen.bitmap)
     case e: event.Touch => touch(e)
     case e: event.Tick =>
-      //server.forward(e)
+      // NOTE: need to forward ticks to server if it's a local actor (actorOf above)
+      server.forward(e)
       handlePlayerEvent(e)
     case e: Event => handlePlayerEvent(e)
   }

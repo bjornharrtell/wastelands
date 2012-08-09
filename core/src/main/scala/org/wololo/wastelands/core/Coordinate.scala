@@ -4,6 +4,7 @@ object Coordinate {
   implicit def tuple2Coordinate(tuple: (Int, Int)): Coordinate = new Coordinate(tuple._1, tuple._2)
 }
 
+@SerialVersionUID(2001L) 
 class Coordinate(val x: Int, val y: Int) extends Serializable {
   def ==(tuple: (Int, Int)) = x == tuple._1 && y == tuple._2
   def !=(tuple: (Int, Int)) = !(this == tuple)

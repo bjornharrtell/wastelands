@@ -17,6 +17,7 @@ object Direction {
   def random = Direction.fromTileIndex((math.random * 7 + 1).toInt)
 }
 
+@SerialVersionUID(2002L) 
 case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   import Direction._
   

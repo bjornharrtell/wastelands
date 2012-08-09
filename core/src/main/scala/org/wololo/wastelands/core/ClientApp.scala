@@ -6,10 +6,19 @@ import com.typesafe.config.ConfigFactory
 
 trait ClientApp {
   this: VMContext =>
-    
+
   var running = false
-  
-  val system = ActorSystem("client", ConfigFactory.load.getConfig("client"))
+
+  val config = ConfigFactory.parseString(
+    """
+    akka {
+      actor {
+        provider = "akka.remote.RemoteActorRefProvider"
+      }
+    }
+    """)
+
+  val system = ActorSystem("client", ConfigFactory.load(config))
   val client = system.actorOf(Props(new Client(this)), "Player")
 
   def run() = {
