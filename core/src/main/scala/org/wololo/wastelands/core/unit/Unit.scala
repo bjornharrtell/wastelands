@@ -14,9 +14,13 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
   val AttackStrength = 2
 
   /**
-   * When events are received, mutate state then trigger any events as a result of that state change
+   * When events are received:
+   * 1. mutate state
+   * 2. trigger any events as a result of the state change
+   * 3. forward event to other players
    */
   def receive = {
+    case e: event.Tick => tick()
     case e: event.UnitEvent =>
       if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
 
@@ -26,27 +30,35 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
         case e: event.ActionComplete =>
           self ! event.Cooldown(e.actionType)
         case e: event.Cooldown =>
-        case e: event.CooldownComplete =>
-          // TODO: handle other orders than move
-          move()
+        case e: event.CooldownComplete => triggerOrder(order)
         case e: event.Turn =>
         case e: event.MoveTileStep =>
-        case e: event.Order => e.order match {
-          case e: Move => move()
-          case e: Attack =>
-          case e: Guard =>
-        }
+        case e: event.Order => triggerOrder(e.order)
       }
 
       // forward unit event to each player
       // TODO: should not forward to originating player?
       gameState.players.foreach(_.forward(e))
-
-    case e: event.Tick => tick()
   }
 
   /**
-   * Action to take on given move order or cooldown complete with active move over
+   * Trigger eventual events from order
+   * 
+   * Should be run when:
+   * 1. order is given
+   * 2. action is complete without cooldown
+   * 3. when cooldown is complete
+   */
+  def triggerOrder(order: Order) {
+    order match {
+      case e: Move => move()
+      case e: Attack =>
+      case e: Guard =>
+    }
+  }
+
+  /**
+   * Action to take from move order
    *
    * If there is no current active action and no cooldown for move or turn actions,
    * try to generate a new action which can no (target reached), turn or move action event.
@@ -62,6 +74,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
         if (direction != target.get) {
           self ! event.Turn(target.get)
         } else {
+          // TODO: check that tile to be moved to is not occupied...
           self ! event.MoveTileStep()
         }
       }
