@@ -17,7 +17,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * When events are received, mutate state then trigger any events as a result of that state change
    */
   def receive = {
-    case e: Event =>
+    case e: event.UnitEvent =>
       if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
 
       mutate(e)
@@ -25,23 +25,24 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
       e match {
         case e: event.ActionComplete =>
           self ! event.Cooldown(e.actionType)
-          gameState.players.foreach(_.forward(e))
         case e: event.Cooldown =>
-          gameState.players.foreach(_.forward(e))
         case e: event.CooldownComplete =>
           // TODO: handle other orders than move
           move()
-          gameState.players.foreach(_.forward(e))
         case e: event.Turn =>
-          gameState.players.foreach(_.forward(e))
         case e: event.MoveTileStep =>
-          gameState.players.foreach(_.forward(e))
-        case e: event.Move =>
-          move()
-          gameState.players.foreach(_.forward(e))
-        case e: event.Tick => tick()
-        case _ =>
+        case e: event.Order => e.order match {
+          case e: Move => move()
+          case e: Attack =>
+          case e: Guard =>
+        }
       }
+
+      // forward unit event to each player
+      // TODO: should not forward to originating player?
+      gameState.players.foreach(_.forward(e))
+
+    case e: event.Tick => tick()
   }
 
   /**
@@ -55,7 +56,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
       cooldowns.forall(_.actionType != Action.Move) &&
       cooldowns.forall(_.actionType != Action.Turn)) {
 
-      val target = gameState.map.calcDirection(position, destination.get)
+      val target = gameState.map.calcDirection(position, order.asInstanceOf[Move].destination)
 
       if (target.isDefined) {
         if (direction != target.get) {
@@ -71,7 +72,8 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * Generated timed events (ActionComplete and CooldownComplete) if their duration has elapsed
    */
   def tick() = {
-    // TODO: additional ticks are triggered before ActionComplete sets action to None... must mutate state here instead of ActionComplete (but the exact same thing must happen at clientside..)
+    // TODO: additional ticks might be triggered before ActionComplete sets action to None which can cause problems so 
+    // must mutate state here instead of ActionComplete (but the exact same thing must happen at clientside..)
     if (action.isDefined && gameState.ticks - actionStart >= actionLength) {
       self ! event.ActionComplete(action.get)
       // hack for todo above.. suboptimal since it will happen later too

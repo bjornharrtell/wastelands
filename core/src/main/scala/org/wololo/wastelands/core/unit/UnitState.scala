@@ -10,7 +10,7 @@ import akka.event.LoggingAdapter
 
 trait UnitState {
   val gameState: GameState
-  
+
   val self: ActorRef
   val player: ActorRef
   val unitType: Int
@@ -19,56 +19,53 @@ trait UnitState {
   var alive = true
   var hp = 10
 
-  var order = Order.Guard
-  var target: Option[ActorRef] = None
-  var destination: Option[Coordinate] = None
+  var order: Order = Guard()
   var action: Option[Int] = None
   var actionStart: Int = 0
   var actionLength: Int = 0
   var cooldowns = ArrayBuffer[Cooldown]()
 
   def mutate: PartialFunction[Event, scala.Unit] = {
-      case e: event.Move =>
-        move(e.destination)
-      case e: event.Attack =>
-        attack(e.target)
-      case e: event.Guard =>
-        guard()
-      case e: event.MoveTileStep =>
-        position = position + direction
-        // TODO: only remove shade if the unit belongs to the active player
-        gameState.map.removeShadeAround(position)
-        action = Option(Action.Move)
-        actionStart = gameState.ticks
-      	actionLength = 50
-      case e: event.Turn =>
-      	direction = direction.turnTowards(e.target)
-      	action = Option(Action.Turn)
-      	actionStart = gameState.ticks
-      	actionLength = 0
-      case e: event.Cooldown =>
-        // TODO: get duration from action type
-        cooldowns += new Cooldown(e.actionType, gameState.ticks, 30)
-      case e: event.CooldownComplete =>
-        // TODO: cleanup cooldowns...
-      case e: event.ActionComplete =>
-        // TODO: set order to none (guard?) if its goal is complete
-        action = None
-      case e: event.Tick =>
+    case e: event.Order => mutateOrder(e.order)
+    case e: event.MoveTileStep =>
+      position = position + direction
+      // TODO: only remove shade if the unit belongs to the active player
+      gameState.map.removeShadeAround(position)
+      action = Option(Action.Move)
+      actionStart = gameState.ticks
+      actionLength = 50
+    case e: event.Turn =>
+      direction = direction.turnTowards(e.target)
+      action = Option(Action.Turn)
+      actionStart = gameState.ticks
+      actionLength = 0
+    case e: event.Cooldown =>
+      // TODO: get duration from action type
+      cooldowns += new Cooldown(e.actionType, gameState.ticks, 30)
+    case e: event.CooldownComplete =>
+    // TODO: cleanup cooldowns...
+    case e: event.ActionComplete =>
+      // TODO: set order to none (guard?) if its goal is complete
+      action = None
+    case e: event.Tick =>
   }
 
-  private def move(destination: Coordinate) {
-    order = Order.Move
-    this.destination = Option(destination)
+  private def mutateOrder(order: Order) = {
+    this.order = order
+    order match {
+      case o: Move => move(o)
+      case o: Attack => attack(o)
+      case o: Guard => guard(o)
+    }
   }
 
-  private def attack(target: ActorRef) {
-    order = Order.Attack
-    this.target = Option(target)
+  private def move(order: Move) {
   }
 
-  private def guard() {
-    order = Order.Guard
+  private def attack(order: Attack) {
+  }
+
+  private def guard(order: Guard) {
   }
 
 }

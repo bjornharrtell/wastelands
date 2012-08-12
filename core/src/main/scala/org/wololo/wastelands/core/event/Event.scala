@@ -2,9 +2,11 @@ package org.wololo.wastelands.core.event
 import org.wololo.wastelands.core.TileMap
 import akka.actor.ActorRef
 import org.wololo.wastelands.core.Coordinate
+import org.wololo.wastelands.core.unit
 import org.wololo.wastelands.core.unit.Direction
 
 sealed trait Event
+sealed trait UnitEvent extends Event
 
 // UI input events
 object Touch {
@@ -37,15 +39,11 @@ object Touch {
 @SerialVersionUID(1014L) case class CreateUnit(unitType: Int, position: Coordinate, direction: Direction) extends Event
 @SerialVersionUID(1015L) case class UnitCreated(unit: ActorRef, player: ActorRef, unitType: Int, position: Coordinate, direction: Direction) extends Event
 
-// Unit order events
-@SerialVersionUID(1016L) case class Move(destination: Coordinate) extends Event
-@SerialVersionUID(1017L) case class Attack(target: ActorRef) extends Event
-@SerialVersionUID(1018L) case class Guard() extends Event
-
-// Unit action events
-@SerialVersionUID(1019L) case class MoveTileStep() extends Event
-@SerialVersionUID(1020L) case class Turn(target: Direction) extends Event
-@SerialVersionUID(1021L) case class Fire() extends Event
-@SerialVersionUID(1022L) case class ActionComplete(actionType: Int) extends Event
-@SerialVersionUID(1023L) case class Cooldown(actionType: Int) extends Event
-@SerialVersionUID(1024L) case class CooldownComplete(actionType: Int) extends Event
+// Unit events
+@SerialVersionUID(1016L) case class Order(order: unit.Order) extends UnitEvent
+@SerialVersionUID(1019L) case class MoveTileStep() extends UnitEvent
+@SerialVersionUID(1020L) case class Turn(target: Direction) extends UnitEvent
+@SerialVersionUID(1021L) case class Fire() extends UnitEvent
+@SerialVersionUID(1022L) case class ActionComplete(actionType: Int) extends UnitEvent
+@SerialVersionUID(1023L) case class Cooldown(actionType: Int) extends UnitEvent
+@SerialVersionUID(1024L) case class CooldownComplete(actionType: Int) extends UnitEvent

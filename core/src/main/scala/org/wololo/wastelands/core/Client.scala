@@ -3,9 +3,7 @@ package org.wololo.wastelands.core
 import org.wololo.wastelands.core.event._
 import org.wololo.wastelands.vmlayer.VMContext
 import scala.collection.mutable.ArrayBuffer
-import org.wololo.wastelands.core.unit.Unit
-import org.wololo.wastelands.core.unit.TestUnit1
-import org.wololo.wastelands.core.unit.Projectile
+import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx.Screen
 import akka.actor._
 import com.typesafe.config.ConfigFactory
@@ -41,7 +39,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
    */
   def mapTileAction(coordinate: Coordinate) {
     if (selectedUnit.isDefined) {
-      selectedUnit.get.self ! event.Move(coordinate)
+      selectedUnit.get.self ! event.Order(Move(coordinate))
     }
   }
 
@@ -51,7 +49,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
   def unitAction(unit: UnitClientState) {
     if (selectedUnit.isDefined) {
       if (unit.player != self) {
-        selectedUnit.get.self ! event.Attack(unit.self)
+        selectedUnit.get.self ! event.Order(Attack(unit.self))
       } else {
         selectedUnit.get.unselect()
         unit.select()

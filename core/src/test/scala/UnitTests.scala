@@ -1,6 +1,5 @@
 import org.junit.Test
-import org.wololo.wastelands.core.unit.Direction
-import org.wololo.wastelands.core.unit.TestUnit1
+import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.GameState
 import org.wololo.wastelands.core.Player
@@ -37,7 +36,7 @@ class BasicTests extends TestKit(ActorSystem("test")) {
 
     assert(testUnit.underlyingActor.position == (1,1))
     
-    testUnit ! event.Move(2,2)
+    testUnit ! event.Order(Move(2,2))
     
     // tick game state forward to allow for three turns 
     // TODO: turn cooldown should be read from unit type constants
@@ -60,7 +59,7 @@ class BasicTests extends TestKit(ActorSystem("test")) {
 
     assert(testUnit.underlyingActor.position == (1,1))
     
-    testUnit ! event.Move(2,1)
+    testUnit ! event.Order(Move(2,1))
     
     testUnit ! event.Tick()
     testUnit ! event.Tick()
@@ -68,7 +67,7 @@ class BasicTests extends TestKit(ActorSystem("test")) {
     
     assert(testUnit.underlyingActor.direction == (1,0))
     
-    testUnit ! event.Move(5,5)
+    testUnit ! event.Order(Move(5,5))
     
     testUnit ! event.Tick()
     testUnit ! event.Tick()
