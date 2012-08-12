@@ -20,33 +20,34 @@ trait UnitState {
   var hp = 10
 
   var order: Order = Guard()
+  // TODO: consider idle action to get rid of optional stuff...
   var action: Option[Action] = None
   var cooldowns = ArrayBuffer[Cooldown]()
 
   def mutate: PartialFunction[Event, scala.Unit] = {
-    case e: event.Order => mutateOrder(e.order)
-    case e: event.Action => mutateAction(e.action)
-    case e: event.Cooldown =>
-      // TODO: get duration from action type
-      cooldowns += new Cooldown(e.action, gameState.ticks)
-    case e: event.CooldownComplete =>
-    // TODO: cleanup cooldowns...
+    case e: event.Order =>
+      this.order = e.order
+      e.order match {
+        case o: Move => move(o)
+        case o: Attack => attack(o)
+        case o: Guard => guard(o)
+      }
+    case e: event.Action =>
+      e.action.start = gameState.ticks
+      this.action = Option(e.action)
+      e.action match {
+        case a: MoveTileStep => moveTileStep(a)
+        case a: Turn => turn(a)
+        case a: Fire => fire(a)
+      }
+    case e: event.Cooldown => //cooldowns += new Cooldown(e.action, gameState.ticks)
+    // TODO: check if case class comparison is ok here...
+    case e: event.CooldownComplete => //cooldowns -- cooldowns.filter(_.action == e.action)
     case e: event.ActionComplete =>
       // TODO: set order to none (guard?) if its goal is complete
-      action = None
+      //action = None
     case e: event.Tick =>
   }
-
-  private def mutateOrder(order: Order) = {
-    this.order = order
-    order match {
-      case o: Move => move(o)
-      case o: Attack => attack(o)
-      case o: Guard => guard(o)
-    }
-  }
-  
-  
 
   private def move(order: Move) {
   }
@@ -56,21 +57,11 @@ trait UnitState {
 
   private def guard(order: Guard) {
   }
-  
-  private def mutateAction(action: Action) = {
-    action.start = gameState.ticks
-    this.action = Option(action)
-    action match {
-      case a: MoveTileStep => moveTileStep(a)
-      case a: Turn => turn(a)
-      case a: Fire => fire(a)
-    }
-  }
-  
+
   private def moveTileStep(action: MoveTileStep) {
     position = position + direction
-      // TODO: only remove shade if the unit belongs to the active player
-      gameState.map.removeShadeAround(position)
+    // TODO: only remove shade if the unit belongs to the active player
+    gameState.map.removeShadeAround(position)
   }
 
   private def turn(action: Turn) {

@@ -27,7 +27,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
       mutate(e)
 
       e match {
-        case e: event.Action =>
+        case e: event.Action => gameState.players.foreach(_.forward(e))
         case e: event.ActionComplete => self ! event.Cooldown(e.action)
         case e: event.Cooldown =>
         case e: event.CooldownComplete => triggerOrder(order)
@@ -37,7 +37,8 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
       // forward unit event to each player
       // TODO: should not forward to originating player?
       // TODO: have clientside take care of ActionComplete, Cooldown and CooldownComplete since they are deterministic.. ?
-      gameState.players.foreach(_.forward(e))
+      // TODO: also, these events seem to all be timed stuff so perhaps the tick handler at respective side should just do the state change without events...?
+      //gameState.players.foreach(_.forward(e))
   }
 
   /**
@@ -89,6 +90,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
       self ! event.ActionComplete(action.get)
       // HACK: make sure no additional ActionComplete is triggered since ticks might be queued...
       // suboptimal since it will happen later too
+      cooldowns += new Cooldown(action.get, gameState.ticks)
       action = None
     }
     val cooldownsToRemove = ArrayBuffer[Cooldown]()
