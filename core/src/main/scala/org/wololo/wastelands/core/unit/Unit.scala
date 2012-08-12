@@ -8,7 +8,7 @@ import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 
-abstract class Unit(val player: ActorRef, val gameState: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState { 
+abstract class Unit(val player: ActorRef, val gameState: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
@@ -19,7 +19,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
   def receive = {
     case e: Event =>
       if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
-      
+
       mutate(e)
 
       e match {
@@ -52,9 +52,8 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    */
   def move() = {
     if (action.isEmpty &&
-      cooldowns.forall(cooldown =>
-        cooldown.actionType == Action.Move ||
-          cooldown.actionType == Action.Turn)) {
+      cooldowns.forall(_.actionType != Action.Move) &&
+      cooldowns.forall(_.actionType != Action.Turn)) {
 
       val target = gameState.map.calcDirection(position, destination.get)
 
