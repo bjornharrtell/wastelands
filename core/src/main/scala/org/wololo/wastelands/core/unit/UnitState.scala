@@ -20,28 +20,15 @@ trait UnitState {
   var hp = 10
 
   var order: Order = Guard()
-  var action: Option[Int] = None
-  var actionStart: Int = 0
-  var actionLength: Int = 0
+  var action: Option[Action] = None
   var cooldowns = ArrayBuffer[Cooldown]()
 
   def mutate: PartialFunction[Event, scala.Unit] = {
     case e: event.Order => mutateOrder(e.order)
-    case e: event.MoveTileStep =>
-      position = position + direction
-      // TODO: only remove shade if the unit belongs to the active player
-      gameState.map.removeShadeAround(position)
-      action = Option(Action.Move)
-      actionStart = gameState.ticks
-      actionLength = 50
-    case e: event.Turn =>
-      direction = direction.turnTowards(e.target)
-      action = Option(Action.Turn)
-      actionStart = gameState.ticks
-      actionLength = 0
+    case e: event.Action => mutateAction(e.action)
     case e: event.Cooldown =>
       // TODO: get duration from action type
-      cooldowns += new Cooldown(e.actionType, gameState.ticks, 30)
+      cooldowns += new Cooldown(e.action, gameState.ticks)
     case e: event.CooldownComplete =>
     // TODO: cleanup cooldowns...
     case e: event.ActionComplete =>
@@ -58,6 +45,8 @@ trait UnitState {
       case o: Guard => guard(o)
     }
   }
+  
+  
 
   private def move(order: Move) {
   }
@@ -66,6 +55,29 @@ trait UnitState {
   }
 
   private def guard(order: Guard) {
+  }
+  
+  private def mutateAction(action: Action) = {
+    action.start = gameState.ticks
+    this.action = Option(action)
+    action match {
+      case a: MoveTileStep => moveTileStep(a)
+      case a: Turn => turn(a)
+      case a: Fire => fire(a)
+    }
+  }
+  
+  private def moveTileStep(action: MoveTileStep) {
+    position = position + direction
+      // TODO: only remove shade if the unit belongs to the active player
+      gameState.map.removeShadeAround(position)
+  }
+
+  private def turn(action: Turn) {
+    direction = direction.turnTowards(action.target)
+  }
+
+  private def fire(action: Fire) {
   }
 
 }

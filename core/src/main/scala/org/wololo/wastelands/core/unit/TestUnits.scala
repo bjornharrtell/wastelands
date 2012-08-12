@@ -4,6 +4,7 @@ import org.wololo.wastelands.core._
 import java.io.File
 import akka.actor.ActorRef
 
+// TODO: have types be traits to be mixed into both unit actors and unit state...?
 object UnitTypes {
   val TestUnit1 = 0
   val TestUnit2 = 1

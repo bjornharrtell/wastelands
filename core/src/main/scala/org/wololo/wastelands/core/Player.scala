@@ -32,9 +32,7 @@ trait Player extends Actor with ActorLogging {
         if (self == e.player) map.removeShadeAround(e.position)
         var unitState = new UnitClientState(e.unit, e.player, this, e.unitType, e.position, e.direction)
         units += (e.unit -> unitState)
-      case e: event.Turn =>
-        units.get(sender).get.mutate(e)
-      case e: event.MoveTileStep =>
+      case e: event.Action =>
         units.get(sender).get.mutate(e)
       case e: event.Cooldown =>
         units.get(sender).get.mutate(e)
@@ -42,7 +40,7 @@ trait Player extends Actor with ActorLogging {
         units.get(sender).get.mutate(e)
       case e: event.CooldownComplete =>
         units.get(sender).get.mutate(e)
-      case e: event.Tick =>
+      case e: event.Tick =>        
         ticks += 1
       case _ =>
     }

@@ -1,10 +1,10 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.core.event.Event
 
-object Action {
-  val Move = 0
-  val Turn = 1
-  val Fire = 2
+sealed trait Action {
+  var start:Int = 0
 }
 
-class Action(val actionType: Int, val length: Int)
+@SerialVersionUID(4016L) case class MoveTileStep() extends Action
+@SerialVersionUID(4017L) case class Turn(target: Direction) extends Action
+@SerialVersionUID(4018L) case class Fire() extends Action

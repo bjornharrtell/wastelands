@@ -22,28 +22,27 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
   def receive = {
     case e: event.Tick => tick()
     case e: event.UnitEvent =>
-      if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
+      println("Unit received " + e)
 
       mutate(e)
 
       e match {
-        case e: event.ActionComplete =>
-          self ! event.Cooldown(e.actionType)
+        case e: event.Action =>
+        case e: event.ActionComplete => self ! event.Cooldown(e.action)
         case e: event.Cooldown =>
         case e: event.CooldownComplete => triggerOrder(order)
-        case e: event.Turn =>
-        case e: event.MoveTileStep =>
         case e: event.Order => triggerOrder(e.order)
       }
 
       // forward unit event to each player
       // TODO: should not forward to originating player?
+      // TODO: have clientside take care of ActionComplete, Cooldown and CooldownComplete since they are deterministic.. ?
       gameState.players.foreach(_.forward(e))
   }
 
   /**
    * Trigger eventual events from order
-   * 
+   *
    * Should be run when:
    * 1. order is given
    * 2. action is complete without cooldown
@@ -51,9 +50,9 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    */
   def triggerOrder(order: Order) {
     order match {
-      case e: Move => move()
-      case e: Attack =>
-      case e: Guard =>
+      case o: Move => move(o)
+      case o: Attack =>
+      case o: Guard =>
     }
   }
 
@@ -63,19 +62,19 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * If there is no current active action and no cooldown for move or turn actions,
    * try to generate a new action which can no (target reached), turn or move action event.
    */
-  def move() = {
+  def move(order: Move) = {
     if (action.isEmpty &&
-      cooldowns.forall(_.actionType != Action.Move) &&
-      cooldowns.forall(_.actionType != Action.Turn)) {
+      cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
+      cooldowns.forall(!_.action.isInstanceOf[Turn])) {
 
-      val target = gameState.map.calcDirection(position, order.asInstanceOf[Move].destination)
+      val target = gameState.map.calcDirection(position, order.destination)
 
       if (target.isDefined) {
         if (direction != target.get) {
-          self ! event.Turn(target.get)
+          self ! event.Action(Turn(target.get))
         } else {
           // TODO: check that tile to be moved to is not occupied...
-          self ! event.MoveTileStep()
+          self ! event.Action(MoveTileStep())
         }
       }
     }
@@ -85,17 +84,18 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * Generated timed events (ActionComplete and CooldownComplete) if their duration has elapsed
    */
   def tick() = {
-    // TODO: additional ticks might be triggered before ActionComplete sets action to None which can cause problems so 
-    // must mutate state here instead of ActionComplete (but the exact same thing must happen at clientside..)
-    if (action.isDefined && gameState.ticks - actionStart >= actionLength) {
+    // TODO: action length from unittype
+    if (action.isDefined && gameState.ticks - action.get.start >= 50) {
       self ! event.ActionComplete(action.get)
-      // hack for todo above.. suboptimal since it will happen later too
+      // HACK: make sure no additional ActionComplete is triggered since ticks might be queued...
+      // suboptimal since it will happen later too
       action = None
     }
     val cooldownsToRemove = ArrayBuffer[Cooldown]()
     cooldowns.foreach(cooldown => {
-      if (gameState.ticks - cooldown.start >= cooldown.length) {
-        self ! event.CooldownComplete(cooldown.actionType)
+      // TODO: cooldown length from unittype/action
+      if (gameState.ticks - cooldown.start >= 30) {
+        self ! event.CooldownComplete(cooldown.action)
         cooldownsToRemove += cooldown
       }
     })

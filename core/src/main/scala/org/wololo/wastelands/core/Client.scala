@@ -39,7 +39,8 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
    */
   def mapTileAction(coordinate: Coordinate) {
     if (selectedUnit.isDefined) {
-      selectedUnit.get.self ! event.Order(Move(coordinate))
+      selectedUnit.get.order = Move(coordinate)
+      selectedUnit.get.self ! event.Order(selectedUnit.get.order)
     }
   }
 
@@ -49,7 +50,8 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
   def unitAction(unit: UnitClientState) {
     if (selectedUnit.isDefined) {
       if (unit.player != self) {
-        selectedUnit.get.self ! event.Order(Attack(unit.self))
+        selectedUnit.get.order = Attack(unit.self)
+        selectedUnit.get.self ! event.Order(selectedUnit.get.order)
       } else {
         selectedUnit.get.unselect()
         unit.select()
