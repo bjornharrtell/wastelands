@@ -40,7 +40,7 @@ class BasicTests extends TestKit(ActorSystem("test")) {
     
     // tick game state forward to allow for three turns 
     // TODO: turn cooldown should be read from unit type constants
-    for (i <- 1 to 5*3) {
+    for (i <- 1 to 6*3) {
       BasicTests.game.underlyingActor.ticks += 1
       testUnit ! event.Tick()
     }

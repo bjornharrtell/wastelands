@@ -20,9 +20,13 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * 3. forward event to other players
    */
   def receive = {
-    case e: event.Tick => if (tick()) triggerOrder(order)
-    case e: event.Order => order(e); triggerOrder(e.order)
-    case e: event.Action => action(e); gameState.players.foreach(_.forward(e))
+    case e: event.Event =>
+      println("Unit received " + e)
+      e match {
+        case e: event.Tick => if (tick()) triggerOrder(order)
+        case e: event.Order => order(e); triggerOrder(e.order)
+        case e: event.Action => action(e); gameState.players.foreach(_.forward(e))
+      }
   }
 
   /**
@@ -56,7 +60,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
 
       if (target.isDefined) {
         if (direction != target.get) {
-          
+
           self ! event.Action(Turn(target.get))
         } else {
           // TODO: check that tile to be moved to is not occupied...
