@@ -21,7 +21,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    */
   def receive = {
     case e: event.Event =>
-      println("Unit received " + e)
+      if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
       e match {
         case e: event.Tick => if (tick()) triggerOrder(order)
         case e: event.Order => order(e); triggerOrder(e.order)
