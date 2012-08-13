@@ -40,13 +40,6 @@ trait UnitState {
         case a: Turn => turn(a)
         case a: Fire => fire(a)
       }
-    case e: event.Cooldown => //cooldowns += new Cooldown(e.action, gameState.ticks)
-    // TODO: check if case class comparison is ok here...
-    case e: event.CooldownComplete => //cooldowns -- cooldowns.filter(_.action == e.action)
-    case e: event.ActionComplete =>
-      // TODO: set order to none (guard?) if its goal is complete
-      //action = None
-    case e: event.Tick =>
   }
 
   private def move(order: Move) {
@@ -69,6 +62,25 @@ trait UnitState {
   }
 
   private def fire(action: Fire) {
+  }
+  
+  /**
+   * Tick
+   * 
+   * Check if duration has elapsed for actions and cooldowns. Create cooldown if
+   * action has elapsed, remove cooldown if cooldown has elapsed.
+   */
+  def tick() = {
+    // TODO: action length from unittype
+    if (action.isDefined && gameState.ticks - action.get.start >= 50) {
+      cooldowns += new Cooldown(action.get, gameState.ticks)
+      action = None
+    }
+
+    // TODO: cooldown length from unittype
+    val cooldownsToRemove = cooldowns.filter(gameState.ticks - _.start >= 30)
+    cooldowns --= cooldownsToRemove
+    cooldownsToRemove.length > 0
   }
 
 }

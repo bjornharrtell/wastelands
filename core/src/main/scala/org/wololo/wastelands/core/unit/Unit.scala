@@ -20,7 +20,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * 3. forward event to other players
    */
   def receive = {
-    case e: event.Tick => tick()
+    case e: event.Tick => if (tick()) triggerOrder(order)
     case e: event.UnitEvent =>
       println("Unit received " + e)
 
@@ -28,21 +28,12 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
 
       e match {
         case e: event.Action => gameState.players.foreach(_.forward(e))
-        case e: event.ActionComplete => self ! event.Cooldown(e.action)
-        case e: event.Cooldown =>
-        case e: event.CooldownComplete => triggerOrder(order)
         case e: event.Order => triggerOrder(e.order)
       }
-
-      // forward unit event to each player
-      // TODO: should not forward to originating player?
-      // TODO: have clientside take care of ActionComplete, Cooldown and CooldownComplete since they are deterministic.. ?
-      // TODO: also, these events seem to all be timed stuff so perhaps the tick handler at respective side should just do the state change without events...?
-      //gameState.players.foreach(_.forward(e))
   }
 
   /**
-   * Trigger eventual events from order
+   * Trigger eventual action from order
    *
    * Should be run when:
    * 1. order is given
@@ -79,30 +70,6 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
         }
       }
     }
-  }
-
-  /**
-   * Generated timed events (ActionComplete and CooldownComplete) if their duration has elapsed
-   */
-  def tick() = {
-    // TODO: action length from unittype
-    if (action.isDefined && gameState.ticks - action.get.start >= 50) {
-      self ! event.ActionComplete(action.get)
-      // HACK: make sure no additional ActionComplete is triggered since ticks might be queued...
-      // suboptimal since it will happen later too
-      cooldowns += new Cooldown(action.get, gameState.ticks)
-      action = None
-    }
-    val cooldownsToRemove = ArrayBuffer[Cooldown]()
-    cooldowns.foreach(cooldown => {
-      // TODO: cooldown length from unittype/action
-      if (gameState.ticks - cooldown.start >= 30) {
-        self ! event.CooldownComplete(cooldown.action)
-        cooldownsToRemove += cooldown
-      }
-    })
-    // hack for todo above.. suboptimal since it will happen later too (but does not yet)
-    cooldowns --= cooldownsToRemove
   }
 
 }

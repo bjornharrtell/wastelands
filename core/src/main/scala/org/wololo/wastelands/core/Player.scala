@@ -34,12 +34,6 @@ trait Player extends Actor with ActorLogging {
         units += (e.unit -> unitState)
       case e: event.Action =>
         units.get(sender).get.mutate(e)
-      case e: event.Cooldown =>
-        units.get(sender).get.mutate(e)
-      case e: event.ActionComplete =>
-        units.get(sender).get.mutate(e)
-      case e: event.CooldownComplete =>
-        units.get(sender).get.mutate(e)
       case e: event.Tick =>        
         ticks += 1
       case _ =>

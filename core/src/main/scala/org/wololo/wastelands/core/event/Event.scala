@@ -42,6 +42,3 @@ object Touch {
 // Unit events
 @SerialVersionUID(1016L) case class Order(order: unit.Order) extends UnitEvent
 @SerialVersionUID(1019L) case class Action(action: unit.Action) extends UnitEvent
-@SerialVersionUID(1022L) case class ActionComplete(action: unit.Action) extends UnitEvent
-@SerialVersionUID(1023L) case class Cooldown(action: unit.Action) extends UnitEvent
-@SerialVersionUID(1024L) case class CooldownComplete(action: unit.Action) extends UnitEvent
