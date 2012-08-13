@@ -25,17 +25,17 @@ trait UnitState {
   
   def getActionLength(action: Action) : Int = action match {
     case a: MoveTileStep => unitType match {
-      case UnitTypes.TestUnit1 => 20
-      case UnitTypes.TestUnit2 => 40
-      case UnitTypes.Harvester => 60
+      case UnitTypes.TestUnit1 => 30
+      case UnitTypes.TestUnit2 => 50
+      case UnitTypes.Harvester => 150
     }
     case a: Turn => 0
     case a: Fire => 0
   }
   
   def getCooldownLength(cooldown: Cooldown) : Int = cooldown.action match {
-    case a: MoveTileStep => 10
-    case a: Turn => 5
+    case a: MoveTileStep => 15
+    case a: Turn => 15
     case a: Fire => 50
   }
 
