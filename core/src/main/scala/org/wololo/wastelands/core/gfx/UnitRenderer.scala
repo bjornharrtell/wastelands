@@ -80,9 +80,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     if (unit.action.isInstanceOf[MoveTileStep]) {
       // TODO: action length from unittype
       var moveDistance = (unit.gameState.ticks - unit.action.start).toDouble / 50
-      // HACK: set moveDistance to max 1.0 .. will be higher since ticks will happen clientside before server announces that action has ended 
-      if (moveDistance>1.0) moveDistance = 1.0 
-      //println(unit.gameState.ticks +" " + unit.action.get.start +" " + moveDistance)
+      //println(unit.gameState.ticks +" " + unit.action.start +" " + moveDistance)
       offset += ((screen.TileSize * unit.direction.x * moveDistance).toInt, (screen.TileSize * unit.direction.y * moveDistance).toInt)
     }
 

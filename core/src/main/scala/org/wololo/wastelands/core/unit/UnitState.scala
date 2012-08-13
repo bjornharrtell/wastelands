@@ -20,26 +20,26 @@ trait UnitState {
   var hp = 10
 
   var order: Order = Guard()
-  // TODO: consider idle action to get rid of optional stuff...
   var action: Action = Idle()
   var cooldowns = ArrayBuffer[Cooldown]()
 
-  def mutate: PartialFunction[Event, scala.Unit] = {
-    case e: event.Order =>
-      this.order = e.order
-      e.order match {
-        case o: Move => move(o)
-        case o: Attack => attack(o)
-        case o: Guard => guard(o)
-      }
-    case e: event.Action =>
-      e.action.start = gameState.ticks
-      this.action = e.action
-      e.action match {
-        case a: MoveTileStep => moveTileStep(a)
-        case a: Turn => turn(a)
-        case a: Fire => fire(a)
-      }
+  def order(e: event.Order) {
+    order = e.order
+    order match {
+      case o: Move => move(o)
+      case o: Attack => attack(o)
+      case o: Guard => guard(o)
+    }
+  }
+
+  def action(e: event.Action) {
+    action = e.action
+    action.start = gameState.ticks
+    action match {
+      case a: MoveTileStep => moveTileStep(a)
+      case a: Turn => turn(a)
+      case a: Fire => fire(a)
+    }
   }
 
   private def move(order: Move) {
@@ -63,10 +63,10 @@ trait UnitState {
 
   private def fire(action: Fire) {
   }
-  
+
   /**
    * Tick
-   * 
+   *
    * Check if duration has elapsed for actions and cooldowns. Create cooldown if
    * action has elapsed, remove cooldown if cooldown has elapsed.
    */

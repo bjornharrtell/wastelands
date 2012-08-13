@@ -15,7 +15,7 @@ trait Player extends Actor with ActorLogging {
     if (!e.isInstanceOf[event.Tick]) println("Player received " + e)
     
     e match {
-      case e: event.Created =>
+      case e: event.GameCreated =>
         game = e.game
         game ! event.Join()
       case e: event.Joined =>
@@ -33,9 +33,10 @@ trait Player extends Actor with ActorLogging {
         var unitState = new UnitClientState(e.unit, e.player, this, e.unitType, e.position, e.direction)
         units += (e.unit -> unitState)
       case e: event.Action =>
-        units.get(sender).get.mutate(e)
+        units.get(sender).get.action(e)
       case e: event.Tick =>        
         ticks += 1
+        units.values.foreach(_.tick())
       case _ =>
     }
   }

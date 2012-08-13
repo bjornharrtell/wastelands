@@ -21,15 +21,8 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    */
   def receive = {
     case e: event.Tick => if (tick()) triggerOrder(order)
-    case e: event.UnitEvent =>
-      println("Unit received " + e)
-
-      mutate(e)
-
-      e match {
-        case e: event.Action => gameState.players.foreach(_.forward(e))
-        case e: event.Order => triggerOrder(e.order)
-      }
+    case e: event.Order => order(e); triggerOrder(e.order)
+    case e: event.Action => action(e); gameState.players.foreach(_.forward(e))
   }
 
   /**
