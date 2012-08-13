@@ -37,6 +37,4 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   }
   
   override def copy: Direction = (x, y)
-
-  //override def clone: Direction = new Direction(dx, dy)
 }
