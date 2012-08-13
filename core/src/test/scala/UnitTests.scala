@@ -49,6 +49,30 @@ class BasicTests extends TestKit(ActorSystem("test")) {
   }
   
   /**
+   * Check collision logic
+   */
+  @Test
+  def TestUnitMoveCollision = {
+    BasicTests.game = TestActorRef[Game]
+    val player = TestActorRef[TestPlayer]
+    val testUnit1 = TestActorRef(new TestUnit1(player, BasicTests.game.underlyingActor, (1,1), Direction.Directions(0)))
+    val testUnit2 = TestActorRef(new TestUnit1(player, BasicTests.game.underlyingActor, (1,2), Direction.Directions(0)))
+
+    testUnit1 ! event.Order(Move(1,2))
+    
+    // tick game state forward to allow for three turns 
+    // TODO: turn cooldown should be read from unit type constants
+    for (i <- 1 to 60*3) {
+      // TODO: should be able to tick the game.. but it hasn't got the units as children!
+      BasicTests.game.underlyingActor.ticks += 1
+      testUnit1 ! event.Tick()
+      testUnit2 ! event.Tick()
+    }
+    println(testUnit1.underlyingActor.position)
+    assert(testUnit1.underlyingActor.position == (1,1))
+  }
+  
+  /**
    * Check that turn cooldowns are delaying turns properly
    */
   @Test

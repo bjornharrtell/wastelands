@@ -39,7 +39,7 @@ class Tile() extends Serializable {
    * TODO: should be updated by event instead of inside Unit code?
    */
   @transient
-  var unit: Option[Unit] = None
+  var unit: Option[UnitState] = None
   
   @transient
   def isOccupied = unit.isDefined

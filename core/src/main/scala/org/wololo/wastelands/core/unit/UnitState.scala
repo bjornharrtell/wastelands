@@ -23,6 +23,8 @@ trait UnitState {
   var action: Action = Idle()
   var cooldowns = ArrayBuffer[Cooldown]()
   
+  gameState.map.tiles(position).unit = Option(this)
+  
   def getActionLength(action: Action) : Int = action match {
     case a: MoveTileStep => unitType match {
       case UnitTypes.TestUnit1 => 30
@@ -68,9 +70,12 @@ trait UnitState {
   }
 
   private def moveTileStep(action: MoveTileStep) {
+    gameState.map.tiles(position).unit = None
     position = position + direction
     // TODO: only remove shade if the unit belongs to the active player
     gameState.map.removeShadeAround(position)
+    gameState.map.tiles(position).unit = Option(this)
+    
   }
 
   private def turn(action: Turn) {
