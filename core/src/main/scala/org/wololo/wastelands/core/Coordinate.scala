@@ -20,6 +20,7 @@ class Coordinate(val x: Int, val y: Int) {
 
   override def equals(other: Any) = other match {
     case other: Coordinate => x == other.x && y == other.y
+    case other: (Int, Int) => x == other._1 && y == other._2
     case _ => false
   }
 }

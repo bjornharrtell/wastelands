@@ -56,6 +56,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
 
       if (target.isDefined) {
         if (direction != target.get) {
+          
           self ! event.Action(Turn(target.get))
         } else {
           // TODO: check that tile to be moved to is not occupied...

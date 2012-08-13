@@ -2,6 +2,7 @@ package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.core.event.Event
 
 sealed trait Action {
+  // NOTE: mutable start since it is reset on the clientside
   var start:Int = 0
 }
 

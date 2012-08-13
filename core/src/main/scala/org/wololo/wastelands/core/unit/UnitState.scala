@@ -22,6 +22,22 @@ trait UnitState {
   var order: Order = Guard()
   var action: Action = Idle()
   var cooldowns = ArrayBuffer[Cooldown]()
+  
+  def getActionLength(action: Action) : Int = action match {
+    case a: MoveTileStep => unitType match {
+      case UnitTypes.TestUnit1 => 20
+      case UnitTypes.TestUnit2 => 40
+      case UnitTypes.Harvester => 60
+    }
+    case a: Turn => 0
+    case a: Fire => 0
+  }
+  
+  def getCooldownLength(cooldown: Cooldown) : Int = cooldown.action match {
+    case a: MoveTileStep => 10
+    case a: Turn => 5
+    case a: Fire => 50
+  }
 
   def order(e: event.Order) {
     order = e.order
@@ -71,14 +87,12 @@ trait UnitState {
    * action has elapsed, remove cooldown if cooldown has elapsed.
    */
   def tick() = {
-    // TODO: action length from unittype
-    if (!action.isInstanceOf[Idle] && gameState.ticks - action.start >= 50) {
+    if (!action.isInstanceOf[Idle] && gameState.ticks - action.start >= getActionLength(action)) {
       cooldowns += new Cooldown(action, gameState.ticks)
       action = Idle()
     }
 
-    // TODO: cooldown length from unittype
-    val cooldownsToRemove = cooldowns.filter(gameState.ticks - _.start >= 30)
+    val cooldownsToRemove = cooldowns.filter(cooldown => gameState.ticks - cooldown.start >= getCooldownLength(cooldown))
     cooldowns --= cooldownsToRemove
     cooldownsToRemove.length > 0
   }
@@ -86,7 +100,6 @@ trait UnitState {
 }
 
 class UnitClientState(val self: ActorRef, val player: ActorRef, val gameState: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
-  // TODO: add stuff relevant for clientside, like screen bbox etc.
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false
   var exploding = false
