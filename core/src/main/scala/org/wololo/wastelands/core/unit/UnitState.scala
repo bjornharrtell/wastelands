@@ -21,7 +21,7 @@ trait UnitState {
 
   var order: Order = Guard()
   // TODO: consider idle action to get rid of optional stuff...
-  var action: Option[Action] = None
+  var action: Action = Idle()
   var cooldowns = ArrayBuffer[Cooldown]()
 
   def mutate: PartialFunction[Event, scala.Unit] = {
@@ -34,7 +34,7 @@ trait UnitState {
       }
     case e: event.Action =>
       e.action.start = gameState.ticks
-      this.action = Option(e.action)
+      this.action = e.action
       e.action match {
         case a: MoveTileStep => moveTileStep(a)
         case a: Turn => turn(a)
@@ -72,9 +72,9 @@ trait UnitState {
    */
   def tick() = {
     // TODO: action length from unittype
-    if (action.isDefined && gameState.ticks - action.get.start >= 50) {
-      cooldowns += new Cooldown(action.get, gameState.ticks)
-      action = None
+    if (!action.isInstanceOf[Idle] && gameState.ticks - action.start >= 50) {
+      cooldowns += new Cooldown(action, gameState.ticks)
+      action = Idle()
     }
 
     // TODO: cooldown length from unittype

@@ -8,3 +8,4 @@ sealed trait Action {
 @SerialVersionUID(4016L) case class MoveTileStep() extends Action
 @SerialVersionUID(4017L) case class Turn(target: Direction) extends Action
 @SerialVersionUID(4018L) case class Fire() extends Action
+@SerialVersionUID(4019L) case class Idle() extends Action

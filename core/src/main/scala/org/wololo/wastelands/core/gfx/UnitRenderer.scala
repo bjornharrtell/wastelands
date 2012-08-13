@@ -68,7 +68,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     
     // need to "move" unit back to previous location if moving since the unit position is changed before animating the move 
     // TODO: should be able to refactor this to not check for move action twice...
-    if (unit.action.isDefined && unit.action.get.isInstanceOf[MoveTileStep]) {
+    if (unit.action.isInstanceOf[MoveTileStep]) {
       mapOffset -= unit.direction
     }
 
@@ -77,9 +77,9 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     offset += screen.mapPixelOffset
 
     // if unit is moving, add move distance as pixels to offset
-    if (unit.action.isDefined && unit.action.get.isInstanceOf[MoveTileStep]) {
+    if (unit.action.isInstanceOf[MoveTileStep]) {
       // TODO: action length from unittype
-      var moveDistance = (unit.gameState.ticks - unit.action.get.start).toDouble / 50
+      var moveDistance = (unit.gameState.ticks - unit.action.start).toDouble / 50
       // HACK: set moveDistance to max 1.0 .. will be higher since ticks will happen clientside before server announces that action has ended 
       if (moveDistance>1.0) moveDistance = 1.0 
       //println(unit.gameState.ticks +" " + unit.action.get.start +" " + moveDistance)

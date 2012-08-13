@@ -55,7 +55,7 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * try to generate a new action which can no (target reached), turn or move action event.
    */
   def move(order: Move) = {
-    if (action.isEmpty &&
+    if (action.isInstanceOf[Idle] &&
       cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
       cooldowns.forall(!_.action.isInstanceOf[Turn])) {
 
