@@ -31,11 +31,11 @@ object Touch {
 
 // Player initiated events
 @SerialVersionUID(1007L) case class Join() extends Event
-@SerialVersionUID(1014L) case class CreateUnit(unitType: Int, position: Coordinate, direction: Direction) extends Event
+@SerialVersionUID(1014L) case class CreateUnit(unitType: Int, position: (Int, Int), direction: (Int, Int)) extends Event
 
 // Game initiated events
 @SerialVersionUID(1011L) case class Joined(player: ActorRef) extends Event
-@SerialVersionUID(1015L) case class UnitCreated(unit: ActorRef, player: ActorRef, unitType: Int, position: Coordinate, direction: Direction) extends Event
+@SerialVersionUID(1015L) case class UnitCreated(unit: ActorRef, player: ActorRef, unitType: Int, position: (Int, Int), direction: (Int, Int)) extends Event
 @SerialVersionUID(1012L) case class TileMapData(map: TileMap) extends Event
 
 // Unit events

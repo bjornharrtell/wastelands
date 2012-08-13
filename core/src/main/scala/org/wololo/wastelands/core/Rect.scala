@@ -5,6 +5,9 @@ object Rect {
 }
 
 class Rect(var x1: Int, var y1: Int, var x2: Int, var y2: Int) {
+  def contains(x: Int, y: Int) : Boolean = {
+    x >= x1 && x <= x2 && y >= y1 && y <= y2
+  }
   def contains(coordinate: Coordinate) : Boolean = {
     coordinate.x >= x1 && coordinate.x <= x2 && coordinate.y >= y1 && coordinate.y <= y2
   }

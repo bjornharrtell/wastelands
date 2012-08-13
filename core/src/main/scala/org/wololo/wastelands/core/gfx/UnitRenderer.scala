@@ -22,7 +22,8 @@ class UnitRenderer(val screen: Screen) extends TileReader {
   val selection = fileToTiles(new File("tilesets/other.png"), BitmapTypes.Translucent, 1, 1, 16, screen.TileSize)(0)
 
   // current render offset in pixels
-  private var offset: Coordinate = (0, 0)
+  private var x = 0
+  private var y = 0
 
   private var explosions = new ArrayBuffer[UnitExplosionRenderer]
 
@@ -37,16 +38,16 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     }
 
     if (unit.isOnScreen && unit.alive) {
-      screen.canvas.drawImage(tileSet(unit.direction.toTileIndex + 8), offset.x - 3, offset.y + 3)
-      screen.canvas.drawImage(tileSet(unit.direction.toTileIndex), offset.x, offset.y)
-      if (unit.selected) screen.canvas.drawImage(selection, offset.x, offset.y)
-
+      // TODO: render shadows in a step before *all* units, to make them always draw under unit graphics...
+      screen.canvas.drawImage(tileSet(unit.direction.toTileIndex + 8), x - 3, y + 3)
+      screen.canvas.drawImage(tileSet(unit.direction.toTileIndex), x, y)
+      if (unit.selected) screen.canvas.drawImage(selection, x, y)
     }
 
     if (unit.explode) {
       unit.explode = false
       unit.exploding = true
-      explosions += new UnitExplosionRenderer(screen, unit, offset.clone)
+      explosions += new UnitExplosionRenderer(screen, unit, (x,y))
     }
 
     explosions.foreach(explosion => {
@@ -58,10 +59,11 @@ class UnitRenderer(val screen: Screen) extends TileReader {
   }
 
   def calcOffset(unit: UnitClientState) {
-    var mapOffset = unit.position - screen.mapOffset
+    var mx = unit.position.x - screen.mapOffset.x
+    var my = unit.position.y - screen.mapOffset.y
 
     // bail if unit not in current visible part of map
-    if (!screen.MapBounds.contains(mapOffset)) {
+    if (!screen.MapBounds.contains(mx, my)) {
       unit.isOnScreen = false
       return
     }
@@ -69,22 +71,26 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     // need to "move" unit back to previous location if moving since the unit position is changed before animating the move 
     // TODO: should be able to refactor this to not check for move action twice...
     if (unit.action.isInstanceOf[MoveTileStep]) {
-      mapOffset -= unit.direction
+      mx -= unit.direction.x
+      my -= unit.direction.y
     }
 
-    offset = (mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
-
-    offset += screen.mapPixelOffset
+    x = mx * screen.TileSize
+    y = my * screen.TileSize
 
     // if unit is moving, add move distance as pixels to offset
     if (unit.action.isInstanceOf[MoveTileStep]) {
       // TODO: action length from unittype
       var moveDistance = (unit.gameState.ticks - unit.action.start).toDouble / 50
       //println(unit.gameState.ticks +" " + unit.action.start +" " + moveDistance)
-      offset += ((screen.TileSize * unit.direction.x * moveDistance).toInt, (screen.TileSize * unit.direction.y * moveDistance).toInt)
+      x += (screen.TileSize * unit.direction.x * moveDistance).toInt
+      y += (screen.TileSize * unit.direction.y * moveDistance).toInt
     }
+    
+    x += screen.mapPixelOffset.x
+    y += screen.mapPixelOffset.y
 
     unit.isOnScreen = true
-    unit.screenBounds.setTo(offset.x, offset.y, offset.x + screen.TileSize, offset.y + screen.TileSize)
+    unit.screenBounds.setTo(x, y, x + screen.TileSize, y + screen.TileSize)
   }
 }

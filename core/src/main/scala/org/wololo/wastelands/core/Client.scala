@@ -19,7 +19,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
 
   server ! Connect()
 
-  override def receive = akka.event.LoggingReceive {
+  override def receive = {
     case e: event.Connected =>
       // TODO: present user choices for creating/joining games
       server ! event.CreateGame("NewGame")

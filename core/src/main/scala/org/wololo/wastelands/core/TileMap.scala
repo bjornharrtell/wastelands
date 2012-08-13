@@ -166,13 +166,13 @@ class TileMap() {
       val dx = math.signum(delta.x)
       val dy = math.signum(delta.y)
 
-      var direction = Direction(dx, dy)
+      var direction = new Direction(dx, dy)
 
       // if direction is obstructed try left/right
       if (tiles(from + direction).isOccupied) {
         direction = direction.leftOf
         if (tiles(from + direction).isOccupied) {
-          direction = Direction(dx, dy)
+          direction = new Direction(dx, dy)
           direction = direction.rightOf
           if (tiles(from + direction).isOccupied) return None
         }

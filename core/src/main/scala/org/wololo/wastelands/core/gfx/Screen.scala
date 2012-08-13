@@ -50,7 +50,6 @@ class Screen(client: Client) {
   val tileRenderer = new TileRenderer(this)
   val unitRenderer = new UnitRenderer(this)
   
- 
   private var projectileRenderer = new ProjectileRenderer(this)
   
   // screen pixel scroll offset

@@ -4,20 +4,21 @@ import org.wololo.wastelands.core._
 
 object Direction {
   val Directions = Array(
-    Direction(0, -1),
-    Direction(1, -1),
-    Direction(1, 0),
-    Direction(1, 1),
-    Direction(0, 1),
-    Direction(-1, 1),
-    Direction(-1, 0),
-    Direction(-1, -1))
+    new Direction(0, -1),
+    new Direction(1, -1),
+    new Direction(1, 0),
+    new Direction(1, 1),
+    new Direction(0, 1),
+    new Direction(-1, 1),
+    new Direction(-1, 0),
+    new Direction(-1, -1))
     
-  def fromTileIndex(tileIndex: Int) = Directions(tileIndex).clone()
+  def fromTileIndex(tileIndex: Int) = Directions(tileIndex).copy
   def random = Direction.fromTileIndex((math.random * 7 + 1).toInt)
+  implicit def tuple2Direction(tuple: (Int, Int)): Direction = new Direction(tuple._1, tuple._2)
+  implicit def direction2Tuple(direction: Direction): (Int, Int) = (direction.x, direction.y)
 }
 
-@SerialVersionUID(2002L) 
 case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   import Direction._
   
@@ -34,6 +35,8 @@ case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
 
     if ((delta & 7) > 4) rightOf else leftOf
   }
+  
+  override def copy: Direction = (x, y)
 
-  override def clone: Direction = new Direction(dx, dy)
+  //override def clone: Direction = new Direction(dx, dy)
 }

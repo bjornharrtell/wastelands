@@ -3,8 +3,8 @@ import org.wololo.wastelands.core.Game
 
 class Projectile(game: Game, fromUnit: Unit, toUnit: Unit) {
 
-  val fromPos = fromUnit.position.clone()
-  val toPos = toUnit.position.clone()
+  val fromPos = fromUnit.position.copy
+  val toPos = toUnit.position.copy
 
   var distance = 0.0
   var targetDistance = toPos.distance(fromPos)
