@@ -19,7 +19,7 @@ object Direction {
   implicit def direction2Tuple(direction: Direction): (Int, Int) = (direction.x, direction.y)
 }
 
-case class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
+class Direction(dx: Int, dy: Int) extends Coordinate(dx, dy) {
   import Direction._
   
   require(dx >= -1 && dx < 2)

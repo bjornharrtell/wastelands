@@ -5,10 +5,6 @@ object Coordinate {
 }
 
 class Coordinate(val x: Int, val y: Int) {
-  def ==(tuple: (Int, Int)) = x == tuple._1 && y == tuple._2
-  def !=(tuple: (Int, Int)) = !(this == tuple)
-  def ==(coordinate: Coordinate) = x == coordinate.x && y == coordinate.y
-  def !=(coordinate: Coordinate) = !(this == coordinate)
   def +(coordinate: Coordinate): Coordinate = (x + coordinate.x, y + coordinate.y)
   def -(coordinate: Coordinate): Coordinate = (x - coordinate.x, y - coordinate.y)
 
@@ -17,12 +13,13 @@ class Coordinate(val x: Int, val y: Int) {
   }
 
   def copy: Coordinate = (x, y)
-  
+
   override def toString: String = {
-    "["+x+","+y+"]"
+    "[" + x + "," + y + "]"
   }
-  
-  def equals(other: Coordinate): Boolean = {
-    return this == other
+
+  override def equals(other: Any) = other match {
+    case other: Coordinate => x == other.x && y == other.y
+    case _ => false
   }
 }
