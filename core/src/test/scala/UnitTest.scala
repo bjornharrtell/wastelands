@@ -19,7 +19,7 @@ class TestClient extends GamePlayerState {
 }
 
 @RunWith(classOf[JUnitRunner])
-class UnitTests extends TestKit(ActorSystem("test")) with Specification {
+class UnitTest extends TestKit(ActorSystem("test")) with Specification {
 
   "A unit at [1,1] with direction [0,-1]" should {
     "be at [2,2] after ticks" in new testgame {
