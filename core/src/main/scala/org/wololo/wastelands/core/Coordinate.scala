@@ -2,6 +2,7 @@ package org.wololo.wastelands.core
 
 object Coordinate {
   implicit def tuple2Coordinate(tuple: (Int, Int)): Coordinate = new Coordinate(tuple._1, tuple._2)
+  implicit def coordinate2Tuple(coordinate: Coordinate): (Int, Int) = (coordinate.x, coordinate.y)
 }
 
 class Coordinate(val x: Int, val y: Int) {

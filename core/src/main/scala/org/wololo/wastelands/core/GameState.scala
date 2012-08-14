@@ -10,17 +10,13 @@ import org.wololo.wastelands.core.unit.UnitState
 
 trait GameState {
   val events = ArrayBuffer[Event]()
-  
-  val players: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
+  val players= ArrayBuffer[ActorRef]()
   val map: TileMap = new TileMap()
   var ticks = 0
-  
-  val projectiles = ArrayBuffer[Projectile]()
-  
-  val units = HashMap[ActorRef, UnitState]()
 }
 
 
-trait GameClientState extends GameState {
-  //override val units = HashMap[ActorRef, UnitClientState]()
+trait GamePlayerState extends GameState {
+  val units = HashMap[ActorRef, UnitClientState]()
+  val projectiles = ArrayBuffer[Projectile]()
 }

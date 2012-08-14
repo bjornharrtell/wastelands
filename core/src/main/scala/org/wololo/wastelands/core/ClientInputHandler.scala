@@ -38,8 +38,9 @@ trait ClientInputHandler {
     
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    for (unit <- units.values if unit.alive && unit.asInstanceOf[UnitClientState].screenBounds.contains(coordinate)) {
-      unitAction(unit.asInstanceOf[UnitClientState])
+    
+    for (unit <- units.values if unit.alive && unit.screenBounds.contains(coordinate)) {
+      unitAction(unit)
       clickedUnit = true
     }
 

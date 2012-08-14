@@ -6,18 +6,14 @@ import org.wololo.wastelands.core.unit.UnitTypes
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.event.Event
 
-trait Player extends Actor with ActorLogging {
-  this: GameState =>
-
+class Player(gameState: GamePlayerState) extends Actor {
   var game: ActorRef = null
-
-  def handlePlayerEvent(e: Event) = {
-    if (!e.isInstanceOf[event.Tick]) println("Player received " + e)
-    
-    e match {
-      case e: event.GameCreated =>
-        game = e.game
-        game ! event.Join()
+  
+  def receive = {
+    case e: event.Event =>
+      if (!e.isInstanceOf[event.Tick]) println("Player received " + e)
+      e match {
+      case e: event.GameCreated => join(e.game)
       case e: event.Joined =>
         if (self == e.player) {
           // TODO: create units from scenario definition
@@ -29,15 +25,20 @@ trait Player extends Actor with ActorLogging {
         // TODO: use map data...
         //gameState.map = e.map
       case e: event.UnitCreated =>
-        if (self == e.player) map.removeShadeAround(e.position)
-        var unitState = new UnitClientState(e.unit, e.player, this, e.unitType, e.position, e.direction)
-        units += (e.unit -> unitState)
+        if (self == e.player) gameState.map.removeShadeAround(e.position)
+        var unitState = new UnitClientState(e.unit, e.player, gameState, e.unitType, e.position, e.direction)
+        gameState.units += (e.unit -> unitState)
       case e: event.Action =>
-        units.get(sender).get.action(e)
+        gameState.units.get(sender).get.action(e)
       case e: event.Tick =>        
-        ticks += 1
-        units.values.foreach(_.tick())
+        gameState.ticks += 1
+        gameState.units.values.foreach(_.tick())
       case _ =>
     }
+  }
+  
+  def join(game: ActorRef) {
+    this.game = game 
+    game ! event.Join()
   }
 }

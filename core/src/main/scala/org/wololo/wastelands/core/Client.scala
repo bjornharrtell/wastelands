@@ -9,20 +9,23 @@ import akka.actor._
 import com.typesafe.config.ConfigFactory
 import org.wololo.wastelands.core.unit.UnitClientState
 
-class Client(val vmContext: VMContext) extends ClientInputHandler with Player with GameClientState {
+class Client(val vmContext: VMContext) extends Actor with ClientInputHandler with GamePlayerState {
   val screen = new Screen(this)
   var selectedUnit: Option[UnitClientState] = None
 
+  val player = context.actorOf(Props(new Player(this)))
+  
   // NOTE: local or remote server...
   val server = context.actorOf(Props[Server])
   //val server = context.actorFor("akka://server@192.168.0.100:9000/user/Server")
 
   server ! Connect()
 
-  override def receive = {
+  def receive = {
     case e: event.Connected =>
       // TODO: present user choices for creating/joining games
       server ! event.CreateGame("NewGame")
+    case e: event.GameCreated => player.forward(e)
     case e: event.Render =>
       screen.render()
       vmContext.render(screen.bitmap)
@@ -30,8 +33,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
     case e: event.Tick =>
       // NOTE: need to forward ticks to server if it's a local actor (actorOf above)
       server.forward(e)
-      handlePlayerEvent(e)
-    case e: Event => handlePlayerEvent(e)
+      player.forward(e)
   }
 
   /**
@@ -49,7 +51,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
    */
   def unitAction(unit: UnitClientState) {
     if (selectedUnit.isDefined) {
-      if (unit.player != self) {
+      if (unit.player != player) {
         selectedUnit.get.order = Attack(unit.self)
         selectedUnit.get.self ! event.Order(selectedUnit.get.order)
       } else {
@@ -57,7 +59,7 @@ class Client(val vmContext: VMContext) extends ClientInputHandler with Player wi
         unit.select()
         selectedUnit = Option(unit)
       }
-    } else if (unit.player == self) {
+    } else if (unit.player == player) {
       unit.select()
       selectedUnit = Option(unit)
     }

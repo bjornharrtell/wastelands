@@ -79,7 +79,7 @@ trait UnitState {
   }
 
   private def turn(action: Turn) {
-    direction = direction.turnTowards(action.target)
+    if (action.target != direction) direction = direction.turnTowards(action.target)
   }
 
   private def fire(action: Fire) {
