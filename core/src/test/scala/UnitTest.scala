@@ -27,8 +27,8 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
       testUnit1 ! event.Order(Move(2, 2))
 
       // tick three turn lengths + 1 to trigger MoveTileStep
-      // TODO: should read turn length from metadata
-      for (i <- 1 to (15 + 1) * 3) {
+      val cooldownlength = new Cooldown(Turn(new Direction(0,0)), 0).length
+      for (i <- 1 to (cooldownlength + 1) * 3) {
         game ! event.Tick()
         player ! event.Tick()
       }
