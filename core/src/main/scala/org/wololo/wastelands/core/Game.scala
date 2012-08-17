@@ -17,13 +17,13 @@ class Game() extends Actor with GameState {
       if (!e.isInstanceOf[event.Tick]) println("Game received " + e)
       e match {
         case e: event.Join =>
-          events.foreach(sender ! _)
-          events += e
+          //events.foreach(sender ! _)
+          //events += e
           //sender ! event.TileMapData(map)
           players += sender
           players.foreach(_ ! event.Joined(sender))
         case e: event.CreateUnit =>
-          events += e
+          //events += e
           var unit = e.unitType match {
             case UnitTypes.TestUnit1 => context.actorOf(Props(new TestUnit1(sender, this, e.position, e.direction)))
             case UnitTypes.TestUnit2 => context.actorOf(Props(new TestUnit2(sender, this, e.position, e.direction)))
