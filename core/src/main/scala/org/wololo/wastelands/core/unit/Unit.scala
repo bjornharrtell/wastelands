@@ -11,10 +11,12 @@ import akka.util.duration._
 import com.typesafe.config.ConfigFactory
 import akka.util.Timeout
 
-abstract class Unit(val state: ServerUnitState) extends Actor {
+abstract class Unit(val player: ActorRef, val game: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
+  
+  implicit val timeout = Timeout(1 second)
 
   /**
    * When events are received:
@@ -26,10 +28,10 @@ abstract class Unit(val state: ServerUnitState) extends Actor {
     case e: event.Event =>
       if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
       e match {
-        case e: event.Tick => if (state.tick()) triggerOrder(state.order)
-        case e: event.Order => state.order(e); triggerOrder(e.order)
-        case e: event.Action => state.action(e); state.game.players.foreach(_.forward(e))
-        case e: event.Locate => sender ! event.Position(state.position)
+        case e: event.Tick => if (tick()) triggerOrder(order)
+        case e: event.Order => order(e); triggerOrder(e.order)
+        case e: event.Action => action(e); game.players.foreach(_.forward(e))
+        case e: event.Locate => sender ! event.Position(position)
       }
   }
 
@@ -57,18 +59,18 @@ abstract class Unit(val state: ServerUnitState) extends Actor {
    * a turn or move action event.
    */
   def move(order: Move) = {
-    if (order.destination == state.position || state.game.map.tiles(order.destination).isOccupied) {
-      state.order = Guard()
+    if (order.destination == position || game.map.tiles(order.destination).isOccupied) {
+      this.order = Guard()
     } else {
-      if (state.action.isInstanceOf[Idle] &&
-        state.cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
-        state.cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+      if (action.isInstanceOf[Idle] &&
+        cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
+        cooldowns.forall(!_.action.isInstanceOf[Turn])) {
 
-        val target = state.game.map.calcDirection(state.position, order.destination)
+        val target = game.map.calcDirection(position, order.destination)
 
-        if (state.direction != target) {
+        if (direction != target) {
           self ! event.Action(Turn(target))
-        } else if (!state.game.map.tiles(state.position + state.direction).isOccupied) {
+        } else if (!game.map.tiles(position + direction).isOccupied) {
           self ! event.Action(MoveTileStep())
         }
       }
@@ -76,14 +78,12 @@ abstract class Unit(val state: ServerUnitState) extends Actor {
   }
   
   def attack(order: Attack) {
-    if (state.action.isInstanceOf[Idle] &&
-        state.cooldowns.forall(!_.action.isInstanceOf[Fire]) &&
-        state.cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+    if (action.isInstanceOf[Idle] &&
+        cooldowns.forall(!_.action.isInstanceOf[Fire]) &&
+        cooldowns.forall(!_.action.isInstanceOf[Turn])) {
     
-      implicit val timeout = Timeout(1 second)
-      (order.target ? event.Locate()).onSuccess({
-        case e:event.Position => self ! event.Action(Fire(e.position))
-        case _ => println("Unexpected")
+      order.target.ask(event.Locate()).onSuccess({
+        case e: event.Position => self ! event.Action(Fire(e.position))
       })
     }
   }

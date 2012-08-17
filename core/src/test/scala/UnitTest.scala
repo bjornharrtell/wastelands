@@ -33,7 +33,7 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
         player ! event.Tick()
       }
 
-      testUnit1.underlyingActor.state.position must_== new Coordinate(2, 2)
+      testUnit1.underlyingActor.position must_== new Coordinate(2, 2)
     }
   }
 
@@ -49,7 +49,7 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
         player ! event.Tick()
       }
 
-      testUnit1.underlyingActor.state.position must_== new Coordinate(1, 1)
+      testUnit1.underlyingActor.position must_== new Coordinate(1, 1)
     }
   }
 
@@ -62,7 +62,7 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
       testUnit1 ! event.Tick()
       testUnit1 ! event.Tick()
       
-      testUnit1.underlyingActor.state.direction must_== new Direction(1, -1)
+      testUnit1.underlyingActor.direction must_== new Direction(1, -1)
 
       testUnit1 ! event.Order(Move(5, 5))
 
@@ -70,7 +70,7 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
       testUnit1 ! event.Tick()
       testUnit1 ! event.Tick()
 
-      testUnit1.underlyingActor.state.direction must_== new Direction(1, -1)
+      testUnit1.underlyingActor.direction must_== new Direction(1, -1)
     }
   }
 
@@ -79,13 +79,11 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
     val testClient = new TestClient()
     val player = TestActorRef(new Player(testClient))
     player.underlyingActor.join(game)
-    val testUnit1State = new ServerUnitState(player, game.underlyingActor, UnitTypes.TestUnit1, (1, 1), (0, -1))
-    val testUnit1 = TestActorRef(new TestUnit1(testUnit1State))
-    game.underlyingActor.units += (testUnit1 -> testUnit1State)
-    player ! event.UnitCreated(testUnit1, game, testUnit1.underlyingActor.unitType, testUnit1State.position, testUnit1State.direction)
-    val testUnit2State = new ServerUnitState(player, game.underlyingActor, UnitTypes.TestUnit2, (1, 2), (0, -1))
-    val testUnit2 = TestActorRef(new TestUnit2(testUnit2State))
-    game.underlyingActor.units += (testUnit2 -> testUnit2State)
-    player ! event.UnitCreated(testUnit2, game, testUnit2.underlyingActor.unitType, testUnit2State.position, testUnit2State.direction)
+    val testUnit1 = TestActorRef(new TestUnit1(player, game.underlyingActor, (1, 1), (0, -1)))
+    game.underlyingActor.units += testUnit1
+    player ! event.UnitCreated(testUnit1, game, testUnit1.underlyingActor.unitType, testUnit1.underlyingActor.position, testUnit1.underlyingActor.direction)
+    val testUnit2 = TestActorRef(new TestUnit2(player, game.underlyingActor, (1, 2), (0, -1)))
+    game.underlyingActor.units += testUnit2
+    player ! event.UnitCreated(testUnit2, game, testUnit2.underlyingActor.unitType, testUnit2.underlyingActor.position, testUnit2.underlyingActor.direction)
   }
 }

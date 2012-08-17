@@ -40,6 +40,8 @@ class Client(val vmContext: VMContext) extends Actor with ClientInputHandler wit
   // The only way to avoid this is to make every interaction event driven?
   // And this means we should have a "client unit actor" aswell as the current serverside actor...?
   
+  // TODO: think about what the client needs to do with units...!
+  
   /**
    * Take action as a result of a chosen tile and current state
    */

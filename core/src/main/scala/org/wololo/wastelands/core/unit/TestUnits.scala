@@ -11,21 +11,21 @@ object UnitTypes {
   val Harvester = 2
 }
 
-class TestUnit1(state: ServerUnitState) extends Unit(state) {
+class TestUnit1(player: ActorRef, game: GameState, position: Coordinate, direction: Direction) extends Unit(player, game, position, direction) {
   val unitType = UnitTypes.TestUnit1
   override val Velocity = 0.02
   //override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
   //override val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
 }
 
-class TestUnit2(state: ServerUnitState) extends Unit(state) {
+class TestUnit2(player: ActorRef, game: GameState, position: Coordinate, direction: Direction) extends Unit(player, game, position, direction) {
   val unitType = UnitTypes.TestUnit2
   override val Velocity = 0.04
   //override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))
   //override val explodeSound = game.vmContext.soundFactory.create(new File("sounds/explosion.ogg"))
 }
 
-class Harvester(state: ServerUnitState) extends Unit(state) {
+class Harvester(player: ActorRef, game: GameState, position: Coordinate, direction: Direction) extends Unit(player, game, position, direction) {
   val unitType = UnitTypes.Harvester
   override val Velocity = 0.01
 }

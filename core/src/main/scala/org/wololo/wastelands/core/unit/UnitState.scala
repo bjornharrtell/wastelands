@@ -88,10 +88,6 @@ trait UnitState {
 
 }
 
-class ServerUnitState(val player: ActorRef, val game: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState {
-  
-}
-
 class UnitClientState(val player: ActorRef, val game: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false
