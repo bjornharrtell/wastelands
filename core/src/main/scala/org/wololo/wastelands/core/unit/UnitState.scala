@@ -24,22 +24,6 @@ trait UnitState {
   var cooldowns = ArrayBuffer[Cooldown]()
   
   gameState.map.tiles(position).unit = Option(this)
-  
-  def getActionLength(action: Action) : Int = action match {
-    case a: MoveTileStep => unitType match {
-      case UnitTypes.TestUnit1 => 30
-      case UnitTypes.TestUnit2 => 50
-      case UnitTypes.Harvester => 150
-    }
-    case a: Turn => 0
-    case a: Fire => 0
-  }
-  
-  def getCooldownLength(cooldown: Cooldown) : Int = cooldown.action match {
-    case a: MoveTileStep => 15
-    case a: Turn => 15
-    case a: Fire => 50
-  }
 
   def order(e: event.Order) {
     order = e.order
@@ -92,12 +76,12 @@ trait UnitState {
    * action has elapsed, remove cooldown if cooldown has elapsed.
    */
   def tick() = {
-    if (!action.isInstanceOf[Idle] && gameState.ticks - action.start >= getActionLength(action)) {
+    if (!action.isInstanceOf[Idle] && gameState.ticks - action.start >= action.length(unitType)) {
       cooldowns += new Cooldown(action, gameState.ticks)
       action = Idle()
     }
 
-    val cooldownsToRemove = cooldowns.filter(cooldown => gameState.ticks - cooldown.start >= getCooldownLength(cooldown))
+    val cooldownsToRemove = cooldowns.filter(cooldown => gameState.ticks - cooldown.start >= cooldown.length)
     cooldowns --= cooldownsToRemove
     cooldownsToRemove.length > 0
   }

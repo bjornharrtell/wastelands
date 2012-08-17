@@ -156,12 +156,12 @@ class TileMap() {
   /**
    * TODO: replace with real pathfinding
    */
-  def calcDirection(from: Coordinate, to: Coordinate): Option[Direction] = {
+  def calcDirection(from: Coordinate, to: Coordinate): Direction = {
     val delta = to - from
 
     val isDestinationReached = delta == (0, 0)
 
-    if (!isDestinationReached) {
+    if (delta != (0, 0)) {
       // calculate tile directions per axis
       val dx = math.signum(delta.x)
       val dy = math.signum(delta.y)
@@ -174,13 +174,13 @@ class TileMap() {
         if (tiles(from + direction).isOccupied) {
           direction = new Direction(dx, dy)
           direction = direction.rightOf
-          if (tiles(from + direction).isOccupied) return None
+          if (tiles(from + direction).isOccupied) return new Direction(0, 0)
         }
       }
 
-      return Option(direction)
+      return direction
     } else {
-      return None
+      return new Direction(delta.x, delta.y)
     }
   }
 

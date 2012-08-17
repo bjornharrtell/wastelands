@@ -48,21 +48,23 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
   /**
    * Action to take from move order
    *
-   * If there is no current active action and no cooldown for move or turn actions,
-   * try to generate a new action which can no (target reached), turn or move action event.
+   * Check order goal conditions, set to default order if met else if there is no current active
+   * action and no cooldown for move or turn actions, try to generate a new action which can be
+   * a turn or move action event.
    */
   def move(order: Move) = {
-    if (action.isInstanceOf[Idle] &&
-      cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
-      cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+    if (order.destination == position || gameState.map.tiles(order.destination).isOccupied) {
+      this.order = Guard()
+    } else {
+      if (action.isInstanceOf[Idle] &&
+        cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
+        cooldowns.forall(!_.action.isInstanceOf[Turn])) {
 
-      val target = gameState.map.calcDirection(position, order.destination)
+        val target = gameState.map.calcDirection(position, order.destination)
 
-      if (target.isDefined) {
-        if (direction != target.get) {
-
-          self ! event.Action(Turn(target.get))
-        } else if (!gameState.map.tiles(position+direction).isOccupied) {
+        if (direction != target) {
+          self ! event.Action(Turn(target))
+        } else if (!gameState.map.tiles(position + direction).isOccupied) {
           self ! event.Action(MoveTileStep())
         }
       }

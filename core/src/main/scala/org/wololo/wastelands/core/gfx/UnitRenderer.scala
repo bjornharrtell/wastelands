@@ -81,7 +81,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     // if unit is moving, add move distance as pixels to offset
     if (unit.action.isInstanceOf[MoveTileStep]) {
       // TODO: action length from unittype
-      var moveDistance = (unit.gameState.ticks - unit.action.start).toDouble / unit.getActionLength(unit.action)
+      var moveDistance = (unit.gameState.ticks - unit.action.start).toDouble / unit.action.length(unit.unitType)
       //println(unit.gameState.ticks +" " + unit.action.start +" " + moveDistance)
       x += (screen.TileSize * unit.direction.x * moveDistance).toInt
       y += (screen.TileSize * unit.direction.y * moveDistance).toInt
