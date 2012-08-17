@@ -8,7 +8,7 @@ import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 
-abstract class Unit(val player: ActorRef, val gameState: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
+abstract class Unit(val state: ServerUnitState) extends Actor {
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
@@ -23,9 +23,9 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
     case e: event.Event =>
       if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
       e match {
-        case e: event.Tick => if (tick()) triggerOrder(order)
-        case e: event.Order => order(e); triggerOrder(e.order)
-        case e: event.Action => action(e); gameState.players.foreach(_.forward(e))
+        case e: event.Tick => if (state.tick()) triggerOrder(state.order)
+        case e: event.Order => state.order(e); triggerOrder(e.order)
+        case e: event.Action => state.action(e); state.game.players.foreach(_.forward(e))
       }
   }
 
@@ -53,18 +53,18 @@ abstract class Unit(val player: ActorRef, val gameState: GameState, var position
    * a turn or move action event.
    */
   def move(order: Move) = {
-    if (order.destination == position || gameState.map.tiles(order.destination).isOccupied) {
-      this.order = Guard()
+    if (order.destination == state.position || state.game.map.tiles(order.destination).isOccupied) {
+      state.order = Guard()
     } else {
-      if (action.isInstanceOf[Idle] &&
-        cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
-        cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+      if (state.action.isInstanceOf[Idle] &&
+        state.cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
+        state.cooldowns.forall(!_.action.isInstanceOf[Turn])) {
 
-        val target = gameState.map.calcDirection(position, order.destination)
+        val target = state.game.map.calcDirection(state.position, order.destination)
 
-        if (direction != target) {
+        if (state.direction != target) {
           self ! event.Action(Turn(target))
-        } else if (!gameState.map.tiles(position + direction).isOccupied) {
+        } else if (!state.game.map.tiles(state.position + state.direction).isOccupied) {
           self ! event.Action(MoveTileStep())
         }
       }

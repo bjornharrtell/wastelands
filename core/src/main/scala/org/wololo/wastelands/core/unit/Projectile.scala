@@ -1,7 +1,7 @@
 package org.wololo.wastelands.core.unit
 import org.wololo.wastelands.core.Game
 
-class Projectile(game: Game, fromUnit: Unit, toUnit: Unit) {
+class Projectile(game: Game, fromUnit: UnitState, toUnit: UnitState) {
 
   val fromPos = fromUnit.position.copy
   val toPos = toUnit.position.copy

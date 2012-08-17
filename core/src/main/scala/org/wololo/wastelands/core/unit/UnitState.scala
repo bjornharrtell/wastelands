@@ -9,9 +9,9 @@ import org.wololo.wastelands.core.Rect
 import akka.event.LoggingAdapter
 
 trait UnitState {
-  val gameState: GameState
+  val game: GameState
 
-  val self: ActorRef
+  //val self: ActorRef
   val player: ActorRef
   val unitType: Int
   var position: Coordinate
@@ -23,7 +23,7 @@ trait UnitState {
   var action: Action = Idle()
   var cooldowns = ArrayBuffer[Cooldown]()
   
-  gameState.map.tiles(position).unit = Option(this)
+  game.map.tiles(position).unit = Option(this)
 
   def order(e: event.Order) {
     order = e.order
@@ -36,7 +36,7 @@ trait UnitState {
 
   def action(e: event.Action) {
     action = e.action
-    action.start = gameState.ticks
+    action.start = game.ticks
     action match {
       case a: MoveTileStep => moveTileStep(a)
       case a: Turn => turn(a)
@@ -54,11 +54,11 @@ trait UnitState {
   }
 
   private def moveTileStep(action: MoveTileStep) {
-    gameState.map.tiles(position).unit = None
+    game.map.tiles(position).unit = None
     position = position + direction
     // TODO: only remove shade if the unit belongs to the active player
-    gameState.map.removeShadeAround(position)
-    gameState.map.tiles(position).unit = Option(this)
+    game.map.removeShadeAround(position)
+    game.map.tiles(position).unit = Option(this)
     
   }
 
@@ -76,19 +76,23 @@ trait UnitState {
    * action has elapsed, remove cooldown if cooldown has elapsed.
    */
   def tick() = {
-    if (!action.isInstanceOf[Idle] && gameState.ticks - action.start >= action.length(unitType)) {
-      cooldowns += new Cooldown(action, gameState.ticks)
+    if (!action.isInstanceOf[Idle] && game.ticks - action.start >= action.length(unitType)) {
+      cooldowns += new Cooldown(action, game.ticks)
       action = Idle()
     }
 
-    val cooldownsToRemove = cooldowns.filter(cooldown => gameState.ticks - cooldown.start >= cooldown.length)
+    val cooldownsToRemove = cooldowns.filter(cooldown => game.ticks - cooldown.start >= cooldown.length)
     cooldowns --= cooldownsToRemove
     cooldownsToRemove.length > 0
   }
 
 }
 
-class UnitClientState(val self: ActorRef, val player: ActorRef, val gameState: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
+class ServerUnitState(val player: ActorRef, val game: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState {
+  
+}
+
+class UnitClientState(val player: ActorRef, val game: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false
   var exploding = false

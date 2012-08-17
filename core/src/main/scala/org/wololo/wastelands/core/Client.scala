@@ -11,7 +11,7 @@ import org.wololo.wastelands.core.unit.UnitClientState
 
 class Client(val vmContext: VMContext) extends Actor with ClientInputHandler with GamePlayerState {
   val screen = new Screen(this)
-  var selectedUnit: Option[UnitClientState] = None
+  var selectedUnit: Option[ActorRef] = None
 
   val player = context.actorOf(Props(new Player(this)))
   
@@ -36,31 +36,41 @@ class Client(val vmContext: VMContext) extends Actor with ClientInputHandler wit
       player.forward(e)
   }
 
+  // TODO: The below methods are ugly because actor is separated from state
+  // The only way to avoid this is to make every interaction event driven?
+  // And this means we should have a "client unit actor" aswell as the current serverside actor...?
+  
   /**
    * Take action as a result of a chosen tile and current state
    */
   def mapTileAction(coordinate: Coordinate) {
     if (selectedUnit.isDefined) {
-      selectedUnit.get.order = Move(coordinate)
-      selectedUnit.get.self ! event.Order(selectedUnit.get.order)
+      // TODO: syntax to get state sux      
+      val selectedUnitState = units.get(selectedUnit.get).get
+      // TODO: setting state should be more generic for orders
+      selectedUnitState.order = Move(coordinate)
+      selectedUnit.get ! event.Order(selectedUnitState.order)
     }
   }
 
   /**
    * Take action as a result of a chosen unit and current state
    */
-  def unitAction(unit: UnitClientState) {
+  def unitAction(unit: ActorRef) {
+    val unitState = units.get(unit).get
     if (selectedUnit.isDefined) {
-      if (unit.player != player) {
-        selectedUnit.get.order = Attack(unit.self)
-        selectedUnit.get.self ! event.Order(selectedUnit.get.order)
+      val selectedUnitState = units.get(selectedUnit.get).get
+      if (unitState.player != player) {
+        // TODO: setting state should be more generic for orders
+        selectedUnitState.order = Attack(unit)
+        selectedUnit.get ! event.Order(selectedUnitState.order)
       } else {
-        selectedUnit.get.unselect()
-        unit.select()
+        selectedUnitState.unselect()
+        unitState.select()
         selectedUnit = Option(unit)
       }
-    } else if (unit.player == player) {
-      unit.select()
+    } else if (unitState.player == player) {
+      unitState.select()
       selectedUnit = Option(unit)
     }
   }

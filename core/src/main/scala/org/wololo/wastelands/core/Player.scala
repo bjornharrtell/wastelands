@@ -26,7 +26,7 @@ class Player(gameState: GamePlayerState) extends Actor {
         //gameState.map = e.map
       case e: event.UnitCreated =>
         if (self == e.player) gameState.map.removeShadeAround(e.position)
-        var unitState = new UnitClientState(e.unit, e.player, gameState, e.unitType, e.position, e.direction)
+        var unitState = new UnitClientState(e.player, gameState, e.unitType, e.position, e.direction)
         gameState.units += (e.unit -> unitState)
       case e: event.Action =>
         gameState.units.get(sender).get.action(e)
