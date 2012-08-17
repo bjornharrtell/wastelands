@@ -6,7 +6,10 @@ import org.wololo.wastelands.core.event
 import org.wololo.wastelands.core.event.Event
 import scala.collection.mutable.ArrayBuffer
 import akka.actor._
+import akka.pattern.{ ask, pipe }
+import akka.util.duration._
 import com.typesafe.config.ConfigFactory
+import akka.util.Timeout
 
 abstract class Unit(val state: ServerUnitState) extends Actor {
   val Velocity = 0.04
@@ -26,6 +29,7 @@ abstract class Unit(val state: ServerUnitState) extends Actor {
         case e: event.Tick => if (state.tick()) triggerOrder(state.order)
         case e: event.Order => state.order(e); triggerOrder(e.order)
         case e: event.Action => state.action(e); state.game.players.foreach(_.forward(e))
+        case e: event.Locate => sender ! event.Position(state.position)
       }
   }
 
@@ -40,7 +44,7 @@ abstract class Unit(val state: ServerUnitState) extends Actor {
   def triggerOrder(order: Order) {
     order match {
       case o: Move => move(o)
-      case o: Attack =>
+      case o: Attack => attack(o)
       case o: Guard =>
     }
   }
@@ -68,6 +72,19 @@ abstract class Unit(val state: ServerUnitState) extends Actor {
           self ! event.Action(MoveTileStep())
         }
       }
+    }
+  }
+  
+  def attack(order: Attack) {
+    if (state.action.isInstanceOf[Idle] &&
+        state.cooldowns.forall(!_.action.isInstanceOf[Fire]) &&
+        state.cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+    
+      implicit val timeout = Timeout(1 second)
+      (order.target ? event.Locate()).onSuccess({
+        case e:event.Position => self ! event.Action(Fire(e.position))
+        case _ => println("Unexpected")
+      })
     }
   }
 

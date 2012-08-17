@@ -3,7 +3,7 @@ import akka.actor.ActorRef
 import org.wololo.wastelands.core.unit.UnitTypes
 import org.wololo.wastelands.core.unit.Direction
 
-class CpuPlayer(game:ActorRef, gameState: GamePlayerState) extends Player(gameState) {
+class CpuPlayer(game:ActorRef, gameState: GameCpuPlayerState) extends Player(gameState) {
 
   game ! event.Join()
 

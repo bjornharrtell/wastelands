@@ -20,3 +20,6 @@ trait GamePlayerState extends GameState {
   val units = HashMap[ActorRef, UnitClientState]()
   val projectiles = ArrayBuffer[Projectile]()
 }
+
+class GameCpuPlayerState extends GamePlayerState {
+}

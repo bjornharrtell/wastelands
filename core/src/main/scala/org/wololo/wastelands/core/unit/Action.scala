@@ -25,6 +25,7 @@ sealed trait Action {
 }
 
 @SerialVersionUID(4016L) case class MoveTileStep(actionType: Int = Action.MoveTileStep) extends Action
-@SerialVersionUID(4017L) case class Turn(target: Direction, actionType: Int = Action.Turn) extends Action
-@SerialVersionUID(4018L) case class Fire(actionType: Int = Action.Fire) extends Action
+@SerialVersionUID(4017L) case class Turn(target: (Int, Int), actionType: Int = Action.Turn) extends Action
+@SerialVersionUID(4018L) case class Fire(target: (Int, Int), actionType: Int = Action.Fire) extends Action
 @SerialVersionUID(4019L) case class Idle(actionType: Int = Action.Idle) extends Action
+

@@ -8,7 +8,7 @@ class Server extends Actor  {
   def receive = akka.event.LoggingReceive {
     case e: event.CreateGame =>
       val game = context.actorOf(Props[Game], e.name)
-      //val cpuPlayer = context.actorOf(Props(new CpuPlayer(game)), "CpuPlayer")
+      val cpuPlayer = context.actorOf(Props(new CpuPlayer(game, new GameCpuPlayerState())), "CpuPlayer")
       sender ! event.GameCreated(game)
     case e: event.Connect =>
       sender ! event.Connected()
