@@ -73,6 +73,23 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
       testUnit1.underlyingActor.direction must_== new Direction(1, -1)
     }
   }
+  
+  // TODO: seems that it works as intended here, but I do not understand how that can be
+  // since the complete state change involves several messages at the unit actor side
+  // and those could be executed before or after the move orders... (but it seems it's deterministic)
+  "Issuing multiple move orders directly after each other" should {
+    "not trigger more move order events than a single move order" in new testgame {
+
+      testUnit1 ! event.Order(Move(2, 2))
+      testUnit1 ! event.Order(Move(2, 2))
+      testUnit1 ! event.Order(Move(2, 2))
+      testUnit1 ! event.Order(Move(2, 2))
+      testUnit1 ! event.Order(Move(2, 2))
+      testUnit1 ! event.Order(Move(2, 2))
+      
+      // TODO: check that only a single turn event is received by the unit or player
+    }
+  }
 
   trait testgame extends Scope {
     val game = TestActorRef[Game]
