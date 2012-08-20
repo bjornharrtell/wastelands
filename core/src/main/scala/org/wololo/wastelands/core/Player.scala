@@ -33,6 +33,7 @@ class Player(gameState: GamePlayerState) extends Actor {
       case e: event.Tick =>        
         gameState.ticks += 1
         gameState.units.values.foreach(_.tick())
+        // TODO: remove elapsed projectiles
       case _ =>
     }
   }

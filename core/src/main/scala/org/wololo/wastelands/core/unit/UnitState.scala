@@ -7,6 +7,7 @@ import akka.actor._
 import org.wololo.wastelands.core.GameState
 import org.wololo.wastelands.core.Rect
 import akka.event.LoggingAdapter
+import org.wololo.wastelands.core.GamePlayerState
 
 trait UnitState {
   val game: GameState
@@ -27,11 +28,11 @@ trait UnitState {
 
   def order(e: event.Order) {
     order = e.order
-    order match {
+    /*order match {
       case o: Move => move(o)
       case o: Attack => attack(o)
       case o: Guard => guard(o)
-    }
+    }*/
   }
 
   def action(e: event.Action) {
@@ -44,16 +45,16 @@ trait UnitState {
     }
   }
 
-  private def move(order: Move) {
+  /*def move(order: Move) {
   }
 
-  private def attack(order: Attack) {
+  def attack(order: Attack) {
   }
 
-  private def guard(order: Guard) {
-  }
+  def guard(order: Guard) {
+  }*/
 
-  private def moveTileStep(action: MoveTileStep) {
+  def moveTileStep(action: MoveTileStep) {
     game.map.tiles(position).unit = None
     position = position + direction
     // TODO: only remove shade if the unit belongs to the active player
@@ -62,11 +63,11 @@ trait UnitState {
     
   }
 
-  private def turn(action: Turn) {
+  def turn(action: Turn) {
     if (action.target != direction) direction = direction.turnTowards(action.target)
   }
 
-  private def fire(action: Fire) {
+  def fire(action: Fire) {
   }
 
   /**
@@ -88,9 +89,14 @@ trait UnitState {
 
 }
 
-class UnitClientState(val player: ActorRef, val game: GameState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
+class UnitClientState(val player: ActorRef, val game: GamePlayerState, val unitType: Int, var position: Coordinate, var direction: Direction) extends UnitState with Selectable {
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false
   var exploding = false
   var explode = false
+  
+  override def fire(action: Fire) {
+    println("Create proj")
+    game.projectiles += new Projectile(game.ticks, position, action.target)
+  }
 }

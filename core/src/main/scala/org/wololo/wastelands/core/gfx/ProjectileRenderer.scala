@@ -8,25 +8,27 @@ import org.wololo.wastelands.core.Coordinate
 class ProjectileRenderer(val screen: Screen) extends TileReader {
   val id = fileToTiles(new File("tilesets/smallother.png"), BitmapTypes.Translucent, 1, 1, 4, 4 * screen.PixelSize)(0)
 
-  private var offset: Coordinate = (0, 0)
-
+  // offset to middle of tile
   val ro = screen.TileSize / 2 - 2
 
   def render(projectile: Projectile) {
-    var mapOffset = projectile.fromPos - screen.mapOffset
+    // get map offset coordinate
+    var mapOffset = projectile.from - screen.mapOffset
 
     // bail if unit not in current visible part of map
     if (!screen.MapBounds.contains(mapOffset)) {
       return
     }
 
-    offset = (mapOffset.x * screen.TileSize, mapOffset.y * screen.TileSize)
+    // get screen coordinate for projectile origin
+    val origin = new Coordinate(mapOffset.x * screen.TileSize + ro, mapOffset.y * screen.TileSize + ro) + screen.mapPixelOffset
 
-    offset = offset + screen.mapPixelOffset
-
-    val ox = ((projectile.toPos.x - projectile.fromPos.x) * (projectile.distance/projectile.targetDistance) * screen.TileSize).toInt
-    val oy = ((projectile.toPos.y - projectile.fromPos.y) * (projectile.distance/projectile.targetDistance) * screen.TileSize).toInt
-
-    screen.canvas.drawImage(id, offset.x + ox + ro, offset.y + oy + ro)
+    // calculate elapsed time factor
+    val elapsed = (screen.client.ticks - projectile.start).toFloat / 10
+    
+    // calculate offset pixel
+    val offset = origin + ((projectile.to-projectile.from) * screen.TileSize * elapsed)
+    
+    screen.canvas.drawImage(id, offset.x, offset.y)
   }
 }

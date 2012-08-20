@@ -7,7 +7,7 @@ import org.wololo.wastelands.core.unit.UnitClientState
 /**
  * Contains the state of the game screen.
  */
-class Screen(client: Client) {
+class Screen(val client: Client) {
 
   val vmContext = client.vmContext
   val bitmapFactory = vmContext.bitmapFactory
