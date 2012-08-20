@@ -32,6 +32,13 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
         case e: event.Order => order(e); triggerOrder(e.order)
         case e: event.Action => action(e); game.players.foreach(_.forward(e))
         case e: event.Locate => sender ! event.Position(position)
+        case e: event.Damage =>
+          hp = hp - e.hp
+          if (hp<0) {
+            alive = false
+            self ! event.UnitDestroyed
+          }
+        case e: event.UnitDestroyed => game.players.foreach(_.forward(e))
       }
   }
 
@@ -83,7 +90,9 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
         cooldowns.forall(!_.action.isInstanceOf[Turn])) {
     
       order.target.ask(event.Locate()).onSuccess({
-        case e: event.Position => self ! event.Action(Fire(e.position))
+        case e: event.Position =>
+          self ! event.Action(Fire(e.position))
+          self ! event.Damage(AttackStrength)
       })
     }
   }

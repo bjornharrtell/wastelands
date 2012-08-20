@@ -96,7 +96,6 @@ class UnitClientState(val player: ActorRef, val game: GamePlayerState, val unitT
   var explode = false
   
   override def fire(action: Fire) {
-    println("Create proj")
     game.projectiles += new Projectile(game.ticks, position, action.target)
   }
 }

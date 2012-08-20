@@ -24,7 +24,7 @@ class ProjectileRenderer(val screen: Screen) extends TileReader {
     val origin = new Coordinate(mapOffset.x * screen.TileSize + ro, mapOffset.y * screen.TileSize + ro) + screen.mapPixelOffset
 
     // calculate elapsed time factor
-    val elapsed = (screen.client.ticks - projectile.start).toFloat / 10
+    val elapsed: Float = (screen.client.ticks - projectile.start) / Projectile.Duration.toFloat
     
     // calculate offset pixel
     val offset = origin + ((projectile.to-projectile.from) * screen.TileSize * elapsed)

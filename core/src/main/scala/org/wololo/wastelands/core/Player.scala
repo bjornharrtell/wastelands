@@ -30,6 +30,8 @@ class Player(gameState: GamePlayerState) extends Actor {
         gameState.units += (e.unit -> unitState)
       case e: event.Action =>
         gameState.units.get(sender).get.action(e)
+      case e: event.UnitDestroyed =>
+        gameState.units.get(sender).get.explode = true
       case e: event.Tick =>        
         gameState.ticks += 1
         gameState.units.values.foreach(_.tick())
