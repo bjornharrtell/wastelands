@@ -36,7 +36,7 @@ object Touch {
 // Game initiated events
 @SerialVersionUID(1012L) case class Joined(player: ActorRef) extends Event
 @SerialVersionUID(1013L) case class UnitCreated(unit: ActorRef, player: ActorRef, unitType: Int, position: (Int, Int), direction: (Int, Int)) extends Event
-@SerialVersionUID(1014L) case class UnitDestroyed(unit: ActorRef) extends Event
+@SerialVersionUID(1014L) case class UnitDestroyed() extends Event
 @SerialVersionUID(1015L) case class TileMapData(map: TileMap) extends Event
 
 // Unit events

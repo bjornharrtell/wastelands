@@ -15,7 +15,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
-  
+
   implicit val timeout = Timeout(1 second)
 
   /**
@@ -34,9 +34,9 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
         case e: event.Locate => sender ! event.Position(position)
         case e: event.Damage =>
           hp = hp - e.hp
-          if (hp<0) {
+          if (hp < 0) {
             alive = false
-            self ! event.UnitDestroyed
+            self ! event.UnitDestroyed()
           }
         case e: event.UnitDestroyed => game.players.foreach(_.forward(e))
       }
@@ -73,28 +73,42 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
         cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
         cooldowns.forall(!_.action.isInstanceOf[Turn])) {
 
-        val target = game.map.calcDirection(position, order.destination)
-
-        if (direction != target) {
-          self ! event.Action(Turn(target))
-        } else if (!game.map.tiles(position + direction).isOccupied) {
-          self ! event.Action(MoveTileStep())
-        }
+        generateMoveAction(order.destination)
       }
     }
   }
-  
-  def attack(order: Attack) {
-    if (action.isInstanceOf[Idle] &&
-        cooldowns.forall(!_.action.isInstanceOf[Fire]) &&
-        cooldowns.forall(!_.action.isInstanceOf[Turn])) {
-    
-      order.target.ask(event.Locate()).onSuccess({
-        case e: event.Position =>
-          self ! event.Action(Fire(e.position))
-          self ! event.Damage(AttackStrength)
-      })
+
+  def generateMoveAction(destination: Coordinate) {
+    val target = game.map.calcDirection(position, destination)
+
+    if (direction != target) {
+      self ! event.Action(Turn(target))
+    } else if (!game.map.tiles(position + direction).isOccupied) {
+      self ! event.Action(MoveTileStep())
     }
+  }
+
+  def attack(order: Attack) {
+    // TODO: ask target if it's alive, if not set order to Guard
+
+    if (action.isInstanceOf[Idle] &&
+      cooldowns.forall(!_.action.isInstanceOf[Fire]) &&
+      cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+
+      generateAttackAction(order.target)
+    }
+  }
+
+  def generateAttackAction(target: ActorRef) {
+    target.ask(event.Locate()).onSuccess({
+      case e: event.Position =>
+        if (position.distance(e.position) <= Range) {
+          self ! event.Action(Fire(e.position))
+          target ! event.Damage(AttackStrength)
+        } else {
+          generateMoveAction(e.position)
+        }
+    })
   }
 
 }
