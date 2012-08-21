@@ -10,18 +10,8 @@ object Action {
 
 sealed trait Action {
   val actionType: Int
-  // NOTE: mutable start since it is reset on the clientside
+  // NOTE: mutable start to be able to reset after deserialized at clientside
   var start: Int = 0
-  def length(unitType: Int) = actionType match {
-    case Action.MoveTileStep => unitType match {
-      case UnitTypes.TestUnit1 => 30
-      case UnitTypes.TestUnit2 => 50
-      case UnitTypes.Harvester => 150
-    }
-    case Action.Turn => 0
-    case Action.Fire => 0
-    case Action.Idle => 0
-  }
 }
 
 @SerialVersionUID(4016L) case class MoveTileStep(actionType: Int = Action.MoveTileStep) extends Action

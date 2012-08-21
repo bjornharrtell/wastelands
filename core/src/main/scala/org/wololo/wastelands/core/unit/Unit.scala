@@ -13,6 +13,9 @@ import akka.util.Timeout
 
 case object Alive
 case object Dead
+case object Locate
+case class Position(position: (Int, Int))
+case class Damage(hp: Int)
 
 abstract class Unit(val player: ActorRef, val game: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
@@ -34,20 +37,15 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
         case e: event.Tick => if (tick()) triggerOrder(order)
         case e: event.Order => order(e); triggerOrder(e.order)
         case e: event.Action => action(e); game.players.foreach(_.forward(e))
-        case e: event.Locate => sender ! event.Position(position)
-        case e: event.Damage =>
-          hp = hp - e.hp
-          if (hp < 0) {
-            alive = false
-            self ! event.UnitDestroyed()
-          }
         case e: event.UnitDestroyed => game.players.foreach(_.forward(e))
       }
+    case Locate => sender ! position
+    case e: Damage => damage(e.hp)
     case Alive => sender ! (if (alive) Alive else Dead)
   }
 
   /**
-   * Trigger eventual action from order
+   * Execute order
    *
    * Should be run when:
    * 1. order is given
@@ -56,32 +54,35 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
    */
   def triggerOrder(order: Order) {
     order match {
-      case o: Move => move(o)
-      case o: Attack => attack(o)
+      case o: Move => executeMoveOrder(o)
+      case o: Attack => executeAttackOrder(o)
       case o: Guard =>
     }
   }
 
   /**
-   * Action to take from move order
+   * Execute move order
    *
    * Check order goal conditions, set to default order if met else if there is no current active
    * action and no cooldown for move or turn actions, try to generate a new action which can be
    * a turn or move action event.
    */
-  def move(order: Move) = {
+  def executeMoveOrder(order: Move) = {
     if (order.destination == position || game.map.tiles(order.destination).isOccupied) {
       this.order = Guard()
     } else {
       if (action.isInstanceOf[Idle] &&
-        !cooldowns.exists(_.action.isInstanceOf[MoveTileStep]) &&
-        !cooldowns.exists(_.action.isInstanceOf[Turn])) {
+        !cooldowns.keys.exists(_ == Action.MoveTileStep) &&
+        !cooldowns.keys.exists(_ == Action.Turn)) {
 
         generateMoveAction(order.destination)
       }
     }
   }
 
+  /**
+   * Generates actions to move this unit towards the destination
+   */
   def generateMoveAction(destination: Coordinate) {
     val target = game.map.calcDirection(position, destination)
 
@@ -92,12 +93,18 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
     }
   }
 
-  def attack(order: Attack) {
+  /**
+   * Executes attack order
+   *
+   * Ask target if alive if so check for active cooldowns if none generate appropriate action else do nothing.
+   * If target is dead, give order to guard.
+   */
+  def executeAttackOrder(order: Attack) {
     order.target.ask(Alive).onSuccess({
       case Alive =>
         if (action.isInstanceOf[Idle] &&
-          !cooldowns.exists(_.action.isInstanceOf[Fire]) &&
-          !cooldowns.exists(_.action.isInstanceOf[Turn])) {
+          !cooldowns.keys.exists(_ == Action.Fire) &&
+          !cooldowns.keys.exists(_ == Action.Turn)) {
 
           generateAttackAction(order.target)
         }
@@ -106,16 +113,27 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
     })
   }
 
+  /**
+   * Generates actions to fire at and damage target unit
+   */
   def generateAttackAction(target: ActorRef) {
-    target.ask(event.Locate()).onSuccess({
-      case e: event.Position =>
-        if (position.distance(e.position) <= Range) {
-          self ! event.Action(Fire(e.position))
-          target ! event.Damage(AttackStrength)
+    target.ask(Locate).onSuccess({
+      case targetPosition: Coordinate =>
+        if (position.distance(targetPosition) <= Range) {
+          self ! event.Action(Fire(targetPosition))
+          target ! Damage(AttackStrength)
         } else {
-          generateMoveAction(e.position)
+          generateMoveAction(targetPosition)
         }
     })
+  }
+
+  def damage(damage: Int) {
+    hp = hp - damage
+    if (hp < 0) {
+      alive = false
+      self ! event.UnitDestroyed()
+    }
   }
 
 }

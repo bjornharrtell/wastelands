@@ -42,6 +42,3 @@ object Touch {
 // Unit events
 @SerialVersionUID(1016L) case class Order(order: unit.Order) extends Event
 @SerialVersionUID(1017L) case class Action(action: unit.Action) extends Event
-@SerialVersionUID(1018L) case class Locate() extends Event
-@SerialVersionUID(1019L) case class Position(position: (Int, Int)) extends Event
-@SerialVersionUID(1020L) case class Damage(hp: Int) extends Event
