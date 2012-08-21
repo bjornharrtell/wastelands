@@ -11,6 +11,9 @@ import akka.util.duration._
 import com.typesafe.config.ConfigFactory
 import akka.util.Timeout
 
+case object Alive
+case object Dead
+
 abstract class Unit(val player: ActorRef, val game: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
   val Range = 2
@@ -40,6 +43,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
           }
         case e: event.UnitDestroyed => game.players.foreach(_.forward(e))
       }
+    case Alive => sender ! (if (alive) Alive else Dead)
   }
 
   /**
@@ -70,8 +74,8 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
       this.order = Guard()
     } else {
       if (action.isInstanceOf[Idle] &&
-        cooldowns.forall(!_.action.isInstanceOf[MoveTileStep]) &&
-        cooldowns.forall(!_.action.isInstanceOf[Turn])) {
+        !cooldowns.exists(_.action.isInstanceOf[MoveTileStep]) &&
+        !cooldowns.exists(_.action.isInstanceOf[Turn])) {
 
         generateMoveAction(order.destination)
       }
@@ -89,14 +93,17 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   }
 
   def attack(order: Attack) {
-    // TODO: ask target if it's alive, if not set order to Guard
+    order.target.ask(Alive).onSuccess({
+      case Alive =>
+        if (action.isInstanceOf[Idle] &&
+          !cooldowns.exists(_.action.isInstanceOf[Fire]) &&
+          !cooldowns.exists(_.action.isInstanceOf[Turn])) {
 
-    if (action.isInstanceOf[Idle] &&
-      cooldowns.forall(!_.action.isInstanceOf[Fire]) &&
-      cooldowns.forall(!_.action.isInstanceOf[Turn])) {
-
-      generateAttackAction(order.target)
-    }
+          generateAttackAction(order.target)
+        }
+      case Dead =>
+        this.order = Guard()
+    })
   }
 
   def generateAttackAction(target: ActorRef) {
