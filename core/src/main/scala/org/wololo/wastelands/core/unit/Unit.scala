@@ -37,7 +37,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
         case e: event.Tick => if (tick()) triggerOrder(order)
         case e: event.Order => order(e); triggerOrder(e.order)
         case e: event.Action => action(e); game.players.foreach(_.forward(e))
-        case e: event.UnitDestroyed => game.players.foreach(_.forward(e))
+        case e: event.UnitDestroyed => destroyed(sender, e)
       }
     case Locate => sender ! position
     case e: Damage => damage(e.hp)
@@ -134,6 +134,14 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
       alive = false
       self ! event.UnitDestroyed()
     }
+  }
+  
+  def destroyed(sender: ActorRef, e: event.UnitDestroyed) {
+    sender.ask(Locate).onSuccess({
+      case senderPosition: Coordinate =>
+        game.map.tiles(senderPosition).unit = None
+    })
+    game.players.foreach(_.forward(e))
   }
 
 }

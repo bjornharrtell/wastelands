@@ -25,7 +25,8 @@ class Client(val vmContext: VMContext) extends Actor with ClientInputHandler wit
     case e: event.Connected =>
       // TODO: present user choices for creating/joining games
       server ! event.CreateGame("NewGame")
-    case e: event.GameCreated => player.forward(e)
+    case e: event.GameCreated => 
+      player.forward(e)
     case e: event.Render =>
       screen.render()
       vmContext.render(screen.bitmap)

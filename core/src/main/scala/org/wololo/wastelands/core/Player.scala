@@ -20,6 +20,8 @@ class Player(gameState: GamePlayerState) extends Actor {
           game ! event.CreateUnit(UnitTypes.TestUnit2, (5, 4), Direction.random)
           game ! event.CreateUnit(UnitTypes.TestUnit2, (6, 6), Direction.random)
           game ! event.CreateUnit(UnitTypes.Harvester, (5, 6), Direction.random)
+        } else {
+          println(e.player + " joined the game.")
         }
       case e: event.TileMapData =>
         // TODO: use map data...
@@ -32,6 +34,7 @@ class Player(gameState: GamePlayerState) extends Actor {
         gameState.units.get(sender).get.action(e)
       case e: event.UnitDestroyed =>
         gameState.units.get(sender).get.explode = true
+        gameState.map.tiles(gameState.units.get(sender).get.position).unit = None
       case e: event.Tick =>        
         gameState.ticks += 1
         gameState.units.values.foreach(_.tick())
