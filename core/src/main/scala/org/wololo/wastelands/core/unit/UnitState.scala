@@ -13,17 +13,17 @@ import scala.collection.immutable.HashMap
 trait UnitState {
   val game: GameState
 
-  var unit: ActorRef = null
+  @volatile var unit: ActorRef = null
   val player: ActorRef
   val unitType: Int
-  var position: Coordinate
-  var direction: Direction
-  var alive = true
-  var hp = 10
+  @volatile var position: Coordinate
+  @volatile var direction: Direction
+  @volatile var alive = true
+  @volatile var hp = 10
 
-  var order: Order = Guard()
-  var action: Action = Idle()
-  var cooldowns = HashMap[Int, Cooldown]()
+  @volatile var order: Order = Guard()
+  @volatile var action: Action = Idle()
+  @volatile var cooldowns = HashMap[Int, Cooldown]()
   
   game.map.tiles(position).unit = Option(this)
 

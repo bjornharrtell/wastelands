@@ -15,7 +15,6 @@ import akka.dispatch.Await
 case object Alive
 case object Dead
 case object Locate
-case object Who
 case class Damage(hp: Int)
 
 abstract class Unit(val player: ActorRef, val game: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
@@ -24,16 +23,9 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   val AttackStrength = 2
 
   implicit val timeout = Timeout(1 second)
-
-  
-  println("Unit actor created, player: " + player)
   
   unit = self;
-  //self ! event.Order(Guard())
-
-  override def postStop() {
-    println("Unit actor stopped: " + self)
-  }
+  self ! event.Order(Guard())
   
   /**
    * When events are received:
@@ -52,7 +44,6 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
       }
     case Locate => sender ! position
     case e: Damage => damage(e.hp)
-    case Who => sender ! player;
     case Alive => sender ! (if (alive) Alive else Dead)
   }
 
@@ -159,12 +150,12 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   /**
    * Execute guard order
    */
-  def executeGuardOrder(order: Guard) = {
+  def executeGuardOrder(order: Guard) {
     for (tile <- game.map.surroundingTiles(position, Range)) {
       tile.unit match {
-        case Some(unit) =>
-          println("Guard from " + player + " on unit with player " + unit.player)
-          if (unit.player != player) self ! event.Order(Attack(unit.unit))
+        case Some(unit) if (unit.player != player) =>
+           self ! event.Order(Attack(unit.unit))
+           return
         case _ =>
       }
     }

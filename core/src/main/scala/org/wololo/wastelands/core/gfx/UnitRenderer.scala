@@ -50,12 +50,14 @@ class UnitRenderer(val screen: Screen) extends TileReader {
       explosions += new UnitExplosionRenderer(screen, unit, (x,y))
     }
 
+    val toBeRemoved = ArrayBuffer[UnitExplosionRenderer]()
     explosions.foreach(explosion => {
       if (!explosion.render) {
-        explosions -= explosion
+        toBeRemoved += explosion
         unit.exploding = false
       }
     })
+    explosions --= toBeRemoved
   }
 
   def calcOffset(unit: UnitClientState) {
