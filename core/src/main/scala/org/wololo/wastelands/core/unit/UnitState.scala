@@ -13,7 +13,7 @@ import scala.collection.immutable.HashMap
 trait UnitState {
   val game: GameState
 
-  //val self: ActorRef
+  var unit: ActorRef = null
   val player: ActorRef
   val unitType: Int
   var position: Coordinate

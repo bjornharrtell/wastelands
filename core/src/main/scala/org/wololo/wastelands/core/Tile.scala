@@ -1,6 +1,7 @@
 package org.wololo.wastelands.core
 
 import org.wololo.wastelands.core.unit._
+import akka.actor.ActorRef
 
 object Tile {
   val Size = 32

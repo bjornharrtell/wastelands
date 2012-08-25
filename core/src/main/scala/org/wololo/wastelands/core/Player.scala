@@ -9,6 +9,10 @@ import org.wololo.wastelands.core.event.Event
 class Player(gameState: GamePlayerState) extends Actor {
   var game: ActorRef = null
   
+  override def postStop() {
+    println("Unit actor stopped: " + self)
+  }
+  
   def receive = {
     case e: event.Event =>
       if (!e.isInstanceOf[event.Tick]) println("Player received " + e)

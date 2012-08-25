@@ -23,6 +23,7 @@ class Game() extends Actor with GameState {
           players += sender
           players.foreach(_ ! event.Joined(sender))
         case e: event.CreateUnit =>
+          println("Create unit from player: " + sender)
           //events += e
           var unit = e.unitType match {
             case UnitTypes.TestUnit1 => context.actorOf(Props(new TestUnit1(sender, this, e.position, e.direction)))

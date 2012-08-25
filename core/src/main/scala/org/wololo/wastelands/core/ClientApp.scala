@@ -18,7 +18,7 @@ trait ClientApp {
     }
     """)
 
-  val system = ActorSystem("client", ConfigFactory.load(config))
+  val system = ActorSystem("client")//, ConfigFactory.load(config))
   val client = system.actorOf(Props(new Client(this)), "Player")
 
   def run() = {
