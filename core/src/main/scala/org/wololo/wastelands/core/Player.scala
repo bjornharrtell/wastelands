@@ -5,6 +5,7 @@ import unit.UnitClientState
 import org.wololo.wastelands.core.unit.UnitTypes
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.event.Event
+import org.wololo.wastelands.core.unit.Projectile
 
 class Player(gameState: GamePlayerState) extends Actor {
   var game: ActorRef = null
@@ -42,7 +43,7 @@ class Player(gameState: GamePlayerState) extends Actor {
       case e: event.Tick =>        
         gameState.ticks += 1
         gameState.units.values.foreach(_.tick())
-        // TODO: remove elapsed projectiles
+        gameState.projectiles --= gameState.projectiles.filter(_.start+Projectile.Duration<gameState.ticks)
       case _ =>
     }
   }

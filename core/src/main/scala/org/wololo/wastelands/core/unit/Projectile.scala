@@ -3,7 +3,8 @@ import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.Coordinate
 
 object Projectile {
-  val Duration = 10
+  // TODO: shouldn't be constant, depends on range...
+  val Duration = 20
 }
 
 case class Projectile(start: Int, from: Coordinate, to: Coordinate) {
