@@ -4,7 +4,6 @@ import org.wololo.wastelands.core._
 import java.io.File
 import org.wololo.wastelands.core.event
 import org.wololo.wastelands.core.event.Event
-import scala.collection.mutable.ArrayBuffer
 import akka.actor._
 import akka.pattern.{ ask, pipe }
 import akka.util.duration._

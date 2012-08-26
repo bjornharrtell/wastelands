@@ -97,10 +97,10 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
     val player = TestActorRef(new Player(testClient))
     player.underlyingActor.join(game)
     val testUnit1 = TestActorRef(new TestUnit1(player, game.underlyingActor, (1, 1), (0, -1)))
-    game.underlyingActor.units += testUnit1
+    game.underlyingActor.units = game.underlyingActor.units :+ testUnit1
     player ! event.UnitCreated(testUnit1, game, testUnit1.underlyingActor.unitType, testUnit1.underlyingActor.position, testUnit1.underlyingActor.direction)
     val testUnit2 = TestActorRef(new TestUnit2(player, game.underlyingActor, (1, 2), (0, -1)))
-    game.underlyingActor.units += testUnit2
+    game.underlyingActor.units = game.underlyingActor.units :+ testUnit2
     player ! event.UnitCreated(testUnit2, game, testUnit2.underlyingActor.unitType, testUnit2.underlyingActor.position, testUnit2.underlyingActor.direction)
   }
 }

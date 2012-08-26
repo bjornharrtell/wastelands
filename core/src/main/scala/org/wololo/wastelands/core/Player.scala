@@ -1,11 +1,7 @@
 package org.wololo.wastelands.core
 
 import akka.actor._
-import unit.UnitClientState
-import org.wololo.wastelands.core.unit.UnitTypes
-import org.wololo.wastelands.core.unit.Direction
-import org.wololo.wastelands.core.event.Event
-import org.wololo.wastelands.core.unit.Projectile
+import org.wololo.wastelands.core.unit._
 
 class Player(gameState: GamePlayerState) extends Actor {
   var game: ActorRef = null
@@ -43,7 +39,7 @@ class Player(gameState: GamePlayerState) extends Actor {
       case e: event.Tick =>        
         gameState.ticks += 1
         gameState.units.values.foreach(_.tick())
-        gameState.projectiles --= gameState.projectiles.filter(_.start+Projectile.Duration<gameState.ticks)
+        gameState.projectiles = gameState.projectiles.filterNot(_.start+Projectile.Duration<gameState.ticks)
       case _ =>
     }
   }

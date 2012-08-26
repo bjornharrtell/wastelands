@@ -2,12 +2,10 @@ package org.wololo.wastelands.core
 
 import org.wololo.wastelands.core.event._
 import org.wololo.wastelands.vmlayer.VMContext
-import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx.Screen
 import akka.actor._
 import com.typesafe.config.ConfigFactory
-import org.wololo.wastelands.core.unit.UnitClientState
 
 class Client(val vmContext: VMContext) extends Actor with ClientInputHandler with GamePlayerState {
   val screen = new Screen(this)

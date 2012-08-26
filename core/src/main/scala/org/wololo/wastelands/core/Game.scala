@@ -1,16 +1,11 @@
 package org.wololo.wastelands.core
-import scala.collection.mutable.ArrayBuffer
-import org.wololo.wastelands.core.event.UnitCreated
-import org.wololo.wastelands.core.unit.TestUnit1
-import org.wololo.wastelands.core.unit.TestUnit2
-import org.wololo.wastelands.core.unit.Harvester
-import org.wololo.wastelands.core.unit.UnitTypes
+
+import org.wololo.wastelands.core.unit._
+
 import akka.actor._
-import scala.collection.mutable.HashMap
-import org.wololo.wastelands.core.unit.UnitState
 
 class Game() extends Actor with GameState {
-  val units = ArrayBuffer[ActorRef]()
+  var units = Vector[ActorRef]()
 
   def receive = {
     case e: event.Event =>
@@ -20,7 +15,7 @@ class Game() extends Actor with GameState {
           //events.foreach(sender ! _)
           //events += e
           //sender ! event.TileMapData(map)
-          players += sender
+          players = players :+ sender
           players.foreach(_ ! event.Joined(sender))
         case e: event.CreateUnit =>
           //events += e
@@ -30,9 +25,9 @@ class Game() extends Actor with GameState {
             case UnitTypes.TestUnit2 => context.actorOf(Props(new TestUnit2(player, this, e.position, e.direction)))
             case UnitTypes.Harvester => context.actorOf(Props(new Harvester(player, this, e.position, e.direction)))
           }
-          units += unit
+          units = units :+ unit
           // TODO: Send serializable unit state instance instead...
-          players.foreach(_ ! UnitCreated(unit, player, e.unitType, e.position, e.direction))
+          players.foreach(_ ! event.UnitCreated(unit, player, e.unitType, e.position, e.direction))
         case e: event.Tick =>
           ticks += 1
           units.foreach(_.forward(e))
