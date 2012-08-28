@@ -24,7 +24,7 @@ trait UnitState {
   var order: Order = Guard()
   var action: Action = Idle()
   var cooldowns = HashMap[Int, Cooldown]()
-  
+
   game.map.tiles(position).unit = Option(this)
 
   def onOrder(e: event.Order) {
@@ -61,7 +61,7 @@ trait UnitState {
     // TODO: only remove shade if the unit belongs to the active player
     game.map.removeShadeAround(position)
     game.map.tiles(position).unit = Option(this)
-    
+
   }
 
   def turn(action: Turn) {
@@ -82,14 +82,18 @@ trait UnitState {
       createCooldown(action.actionType)
       action = Idle()
     }
-    
-    cooldowns.filter((pair) => game.ticks - pair._2.start >= cooldownLength(pair._1)).keys.foreach(removeCooldown(_))
+
+    cooldowns.filter(elapsedCooldownFilter).keys.foreach(removeCooldown(_))
   }
-  
+
+  def elapsedCooldownFilter: PartialFunction[(Int, Cooldown), Boolean] = {
+    case (actionType, cooldown) => game.ticks - cooldown.start >= cooldownLength(actionType)
+  }
+
   def createCooldown(actionType: Int) {
     cooldowns = cooldowns + (action.actionType -> Cooldown(game.ticks))
   }
-  
+
   def removeCooldown(actionType: Int) {
     cooldowns = cooldowns - actionType
   }
@@ -104,7 +108,7 @@ trait UnitState {
     case Action.Fire => 0
     case Action.Idle => 0
   }
-  
+
   def cooldownLength(actionType: Int) = actionType match {
     case Action.MoveTileStep => 15
     case Action.Turn => 15
@@ -118,7 +122,7 @@ class UnitClientState(val player: ActorRef, val game: GamePlayerState, val unitT
   var isOnScreen = false
   var exploding = false
   var explode = false
-  
+
   override def fire(action: Fire) {
     game.projectiles = game.projectiles :+ new Projectile(game.ticks, position, action.target)
   }
