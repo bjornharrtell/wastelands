@@ -13,21 +13,21 @@ import scala.collection.immutable.HashMap
 trait UnitState {
   val game: GameState
 
-  @volatile var unit: ActorRef = null
+  var unit: ActorRef = null
   val player: ActorRef
   val unitType: Int
-  @volatile var position: Coordinate
-  @volatile var direction: Direction
-  @volatile var alive = true
-  @volatile var hp = 10
+  var position: Coordinate
+  var direction: Direction
+  var alive = true
+  var hp = 10
 
-  @volatile var order: Order = Guard()
-  @volatile var action: Action = Idle()
-  @volatile var cooldowns = HashMap[Int, Cooldown]()
+  var order: Order = Guard()
+  var action: Action = Idle()
+  var cooldowns = HashMap[Int, Cooldown]()
   
   game.map.tiles(position).unit = Option(this)
 
-  def order(e: event.Order) {
+  def onOrder(e: event.Order) {
     order = e.order
     /*order match {
       case o: Move => move(o)
@@ -36,13 +36,13 @@ trait UnitState {
     }*/
   }
 
-  def action(e: event.Action) {
+  def onAction(e: event.Action) {
     action = e.action
     action.start = game.ticks
     action match {
-      case a: MoveTileStep => moveTileStep(a)
-      case a: Turn => turn(a)
-      case a: Fire => fire(a)
+      case action: MoveTileStep => moveTileStep(action)
+      case action: Turn => turn(action)
+      case action: Fire => fire(action)
     }
   }
 
@@ -77,22 +77,28 @@ trait UnitState {
    * Check if duration has elapsed for actions and cooldowns. Create cooldown if
    * action has elapsed, remove cooldown if cooldown has elapsed.
    */
-  def tick() = {
+  def onTick() {
     if (!action.isInstanceOf[Idle] && game.ticks - action.start >= actionLength(action.actionType)) {
-      cooldowns = cooldowns + (action.actionType -> Cooldown(game.ticks))
+      createCooldown(action.actionType)
       action = Idle()
     }
-
-    val cooldownsToRemove = cooldowns.filter((pair) => game.ticks - pair._2.start >= cooldownLength(pair._1))
-    cooldowns = cooldowns -- cooldownsToRemove.keys
-    cooldownsToRemove.size > 0
+    
+    cooldowns.filter((pair) => game.ticks - pair._2.start >= cooldownLength(pair._1)).keys.foreach(removeCooldown(_))
+  }
+  
+  def createCooldown(actionType: Int) {
+    cooldowns = cooldowns + (action.actionType -> Cooldown(game.ticks))
+  }
+  
+  def removeCooldown(actionType: Int) {
+    cooldowns = cooldowns - actionType
   }
 
   def actionLength(actionType: Int) = actionType match {
     case Action.MoveTileStep => unitType match {
-      case UnitTypes.TestUnit1 => 30
-      case UnitTypes.TestUnit2 => 50
-      case UnitTypes.Harvester => 150
+      case Unit.TestUnit1 => 30
+      case Unit.TestUnit2 => 50
+      case Unit.Harvester => 150
     }
     case Action.Turn => 0
     case Action.Fire => 0

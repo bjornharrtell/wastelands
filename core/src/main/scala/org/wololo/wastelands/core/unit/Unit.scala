@@ -11,10 +11,17 @@ import com.typesafe.config.ConfigFactory
 import akka.util.Timeout
 import akka.dispatch.Await
 
+object Unit {
+  val TestUnit1 = 0
+  val TestUnit2 = 1
+  val Harvester = 2
+}
+
 case object Alive
 case object Dead
 case object Locate
 case class Damage(hp: Int)
+case class UnitSpotted(unitState: UnitState)
 
 abstract class Unit(val player: ActorRef, val game: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
   val Velocity = 0.04
@@ -22,30 +29,59 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   val AttackStrength = 2
 
   implicit val timeout = Timeout(1 second)
-  
+
+  game.map.tiles(position).unit = Option(this);
+
   unit = self;
   self ! event.Order(Guard())
-  
-  /**
-   * When events are received:
-   * 1. mutate state
-   * 2. trigger any events as a result of the state change
-   * 3. forward event to other players
-   */
+
   def receive = {
     case e: event.Event =>
-      if (!e.isInstanceOf[event.Tick]) println("Unit received " + e)
+      if (!e.isInstanceOf[event.Tick]) println("Unit " + self + " received " + e)
       e match {
-        case e: event.Tick => if (tick()) triggerOrder(order)
-        case e: event.Order => order(e); triggerOrder(e.order)
-        case e: event.Action => action(e); game.players.foreach(_.forward(e))
-        case e: event.UnitDestroyed => destroyed(sender, e)
+        case e: event.Tick => onTick()
+        case e: event.Order => onOrder(e)
+        case e: event.Action => onAction(e)
+        case e: event.UnitDestroyed => onDestroyed(sender, e)
       }
     case Locate => sender ! position
-    case e: Damage => damage(e.hp)
+    case e: Damage => onDamage(e.hp)
     case Alive => sender ! (if (alive) Alive else Dead)
+    case e: UnitSpotted => onUnitSpotted(e)
+    case _ =>
+  }
+  
+  override def onTick() {
+    val count = cooldowns.size
+    super.onTick()
+    if (count!=cooldowns.size) executeOrder(order)
   }
 
+  override def createCooldown(actionType: Int) {
+    super.createCooldown(actionType)
+    if (actionType == Action.MoveTileStep) {
+      game.map.surroundingTiles(position, 3).foreach(tile => {
+        if (tile.isOccupied) tile.unit.get.unit ! UnitSpotted(this)
+      })
+    }
+  }
+  
+  override def onAction(e: event.Action) {
+    super.onAction(e)
+    game.players.foreach(_.forward(e))
+  }
+
+  def onUnitSpotted(e: UnitSpotted) {
+    if (order.isInstanceOf[Guard] && player != e.unitState.player && position.distance(e.unitState.position) <= Range) {
+      self ! event.Order(Attack(e.unitState.unit))
+    }
+  }
+  
+  override def onOrder(e: event.Order) {
+    super.onOrder(e)
+    executeOrder(e.order)
+  }
+  
   /**
    * Execute order
    *
@@ -54,7 +90,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
    * 2. action is complete without cooldown
    * 3. when cooldown is complete
    */
-  def triggerOrder(order: Order) {
+  def executeOrder(order: Order) {
     order match {
       case o: Move => executeMoveOrder(o)
       case o: Attack => executeAttackOrder(o)
@@ -72,18 +108,17 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   def executeMoveOrder(order: Move) = {
     if (order.destination == position || game.map.tiles(order.destination).isOccupied) {
       self ! event.Order(Guard())
-    } else {
-      if (action.isInstanceOf[Idle] &&
-        !cooldowns.keys.exists(_ == Action.MoveTileStep) &&
-        !cooldowns.keys.exists(_ == Action.Turn)) {
+    } else if (action.isInstanceOf[Idle] &&
+      !cooldowns.keys.exists(_ == Action.MoveTileStep) &&
+      !cooldowns.keys.exists(_ == Action.Turn)) {
 
-        generateMoveAction(order.destination)
-      }
+      generateMoveAction(order.destination)
     }
+
   }
 
   /**
-   * Generates actions to move this unit towards the destination
+   * Generate action to move this unit towards the destination
    */
   def generateMoveAction(destination: Coordinate) {
     val target = game.map.calcDirection(position, destination)
@@ -110,8 +145,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
 
           generateAttackAction(order.target)
         }
-      case Dead =>
-        self ! event.Order(Guard())
+      case Dead => self ! event.Order(Guard())
     })
   }
 
@@ -130,7 +164,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
     })
   }
 
-  def damage(damage: Int) {
+  def onDamage(damage: Int) {
     hp = hp - damage
     if (hp < 0) {
       alive = false
@@ -138,10 +172,9 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
     }
   }
 
-  def destroyed(sender: ActorRef, e: event.UnitDestroyed) {
+  def onDestroyed(sender: ActorRef, e: event.UnitDestroyed) {
     sender.ask(Locate).onSuccess({
-      case senderPosition: Coordinate =>
-        game.map.tiles(senderPosition).unit = None
+      case senderPosition: Coordinate => game.map.tiles(senderPosition).unit = None
     })
     game.players.foreach(_.forward(e))
   }
@@ -152,9 +185,7 @@ abstract class Unit(val player: ActorRef, val game: GameState, var position: Coo
   def executeGuardOrder(order: Guard) {
     for (tile <- game.map.surroundingTiles(position, Range)) {
       tile.unit match {
-        case Some(unit) if (unit.player != player) =>
-           self ! event.Order(Attack(unit.unit))
-           return
+        case Some(unit) if (unit.player != player) => return self ! event.Order(Attack(unit.unit))
         case _ =>
       }
     }

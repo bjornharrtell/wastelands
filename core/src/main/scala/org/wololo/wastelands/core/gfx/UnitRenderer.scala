@@ -32,9 +32,9 @@ class UnitRenderer(val screen: Screen) extends TileReader {
 
     // TODO: should probably define all unit subtypes as int constants to use here instead
     val tileSet = unit.unitType match {
-      case UnitTypes.TestUnit1 => tileSetTestUnit1
-      case UnitTypes.TestUnit2 => tileSetTestUnit2
-      case UnitTypes.Harvester => tileSetHarvester
+      case Unit.TestUnit1 => tileSetTestUnit1
+      case Unit.TestUnit2 => tileSetTestUnit2
+      case Unit.Harvester => tileSetHarvester
     }
 
     if (unit.isOnScreen && unit.alive) {

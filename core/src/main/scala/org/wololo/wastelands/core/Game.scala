@@ -21,9 +21,9 @@ class Game() extends Actor with GameState {
           //events += e
           val player = sender
           var unit = e.unitType match {
-            case UnitTypes.TestUnit1 => context.actorOf(Props(new TestUnit1(player, this, e.position, e.direction)))
-            case UnitTypes.TestUnit2 => context.actorOf(Props(new TestUnit2(player, this, e.position, e.direction)))
-            case UnitTypes.Harvester => context.actorOf(Props(new Harvester(player, this, e.position, e.direction)))
+            case Unit.TestUnit1 => context.actorOf(Props(new TestUnit1(player, this, e.position, e.direction)))
+            case Unit.TestUnit2 => context.actorOf(Props(new TestUnit2(player, this, e.position, e.direction)))
+            case Unit.Harvester => context.actorOf(Props(new Harvester(player, this, e.position, e.direction)))
           }
           units = units :+ unit
           // TODO: Send serializable unit state instance instead...

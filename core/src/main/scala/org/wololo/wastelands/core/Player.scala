@@ -12,15 +12,15 @@ class Player(gameState: GamePlayerState) extends Actor {
   
   def receive = {
     case e: event.Event =>
-      if (!e.isInstanceOf[event.Tick]) println("Player received " + e)
+      if (!e.isInstanceOf[event.Tick]) println("Player " + self + " received " + e)
       e match {
       case e: event.GameCreated => join(e.game)
       case e: event.Joined =>
         if (self == e.player) {
           // TODO: create units from scenario definition
-          game ! event.CreateUnit(UnitTypes.TestUnit2, (5, 4), Direction.random)
-          game ! event.CreateUnit(UnitTypes.TestUnit2, (6, 6), Direction.random)
-          game ! event.CreateUnit(UnitTypes.Harvester, (5, 6), Direction.random)
+          game ! event.CreateUnit(Unit.TestUnit2, (5, 4), Direction.random)
+          game ! event.CreateUnit(Unit.TestUnit2, (6, 6), Direction.random)
+          game ! event.CreateUnit(Unit.Harvester, (5, 6), Direction.random)
         } else {
           println(e.player + " joined the game.")
         }
@@ -32,13 +32,13 @@ class Player(gameState: GamePlayerState) extends Actor {
         var unitState = new UnitClientState(e.player, gameState, e.unitType, e.position, e.direction)
         gameState.units += (e.unit -> unitState)
       case e: event.Action =>
-        gameState.units.get(sender).get.action(e)
+        gameState.units.get(sender).get.onAction(e)
       case e: event.UnitDestroyed =>
         gameState.units.get(sender).get.explode = true
         gameState.map.tiles(gameState.units.get(sender).get.position).unit = None
       case e: event.Tick =>        
         gameState.ticks += 1
-        gameState.units.values.foreach(_.tick())
+        gameState.units.values.foreach(_.onTick())
         gameState.projectiles = gameState.projectiles.filterNot(_.start+Projectile.Duration<gameState.ticks)
       case _ =>
     }
