@@ -1,8 +1,10 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.client
 
 import akka.actor._
 import org.wololo.wastelands.vmlayer.VMContext
 import com.typesafe.config.ConfigFactory
+import org.wololo.wastelands.core.event
+import org.wololo.wastelands.core.server.Server
 
 trait ClientApp {
   this: VMContext =>
@@ -19,7 +21,12 @@ trait ClientApp {
     """)
 
   val system = ActorSystem("client", ConfigFactory.load(config))
-  val client = system.actorOf(Props(new Client(this)), "Player")
+  
+  // NOTE: local or remote server...
+  val server = system.actorOf(Props[Server])
+  //val server = system.actorFor("akka://server@192.168.0.100:9000/user/Server")
+  
+  val client = system.actorOf(Props(new Client(this, server)), "Player")
 
   def run() = {
     running = true
@@ -37,6 +44,8 @@ trait ClientApp {
       var shouldRender = false
       while (unprocessed >= 1.0) {
         client ! event.Tick()
+        // NOTE: need to tick server if it's local
+        server ! event.Tick()
         unprocessed -= 1
         shouldRender = true
       }

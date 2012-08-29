@@ -1,9 +1,8 @@
 package org.wololo.wastelands.android
 
 import org.wololo.wastelands.core.event.Touch
-import org.wololo.wastelands.core.ClientApp
+import org.wololo.wastelands.core.client.ClientApp
 import org.wololo.wastelands.core.Coordinate
-import org.wololo.wastelands.core.Game
 
 import android.content.Context
 import android.view.MotionEvent
@@ -13,8 +12,6 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
   val bitmapFactory = new AndroidBitmapFactory(context)
   val soundFactory = new AndroidSoundFactory(context)
   val resourceFactory = new AndroidResourceFactory(context)
-
-  var game: Game = null
 
   var surfaceHolder: SurfaceHolder = null
 

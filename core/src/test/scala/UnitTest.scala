@@ -1,8 +1,7 @@
 import org.junit.Test
 import org.wololo.wastelands.core.unit._
-import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.Coordinate
-import org.wololo.wastelands.core.GameState
+import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.Player
 import org.wololo.wastelands.core.event
 import akka.actor.ActorSystem
@@ -11,12 +10,10 @@ import akka.testkit.TestKit
 import org.specs2.mutable._
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
-import org.wololo.wastelands.core.GamePlayerState
 import org.specs2.specification.Scope
-
-class TestClient extends GamePlayerState {
-
-}
+import org.wololo.wastelands.core.server.GameActor
+import org.wololo.wastelands.core.server.TestUnit1
+import org.wololo.wastelands.core.server.TestUnit2
 
 @RunWith(classOf[JUnitRunner])
 class UnitTest extends TestKit(ActorSystem("test")) with Specification {
@@ -92,9 +89,8 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
   }
 
   trait testgame extends Scope {
-    val game = TestActorRef[Game]
-    val testClient = new TestClient()
-    val player = TestActorRef(new Player(testClient))
+    val game = TestActorRef[GameActor]
+    val player = TestActorRef[Player]
     player.underlyingActor.join(game)
     val testUnit1 = TestActorRef(new TestUnit1(player, game.underlyingActor, (1, 1), (0, -1)))
     game.underlyingActor.units = game.underlyingActor.units :+ testUnit1

@@ -3,14 +3,16 @@ package org.wololo.wastelands.core
 import akka.actor._
 import org.wololo.wastelands.core.unit._
 
-class Player(gameState: GamePlayerState) extends Actor {
+trait Player extends PlayerGame with Actor {
   var game: ActorRef = null
   
   override def postStop() {
     println("Unit actor stopped: " + self)
   }
   
-  def receive = {
+  def receive = playerReceive
+  
+  def playerReceive: Receive = {
     case e: event.Event =>
       if (!e.isInstanceOf[event.Tick]) println("Player " + self + " received " + e)
       e match {
@@ -27,21 +29,24 @@ class Player(gameState: GamePlayerState) extends Actor {
       case e: event.TileMapData =>
         // TODO: use map data...
         //gameState.map = e.map
-      case e: event.UnitCreated =>
-        if (self == e.player) gameState.map.removeShadeAround(e.position)
-        var unitState = new UnitClientState(e.player, gameState, e.unitType, e.position, e.direction)
-        gameState.units += (e.unit -> unitState)
+      case e: event.UnitCreated => onUnitCreated(e)
       case e: event.Action =>
-        gameState.units.get(sender).get.onAction(e)
+        units.get(sender).get.onAction(e)
       case e: event.UnitDestroyed =>
-        gameState.units.get(sender).get.explode = true
-        gameState.map.tiles(gameState.units.get(sender).get.position).unit = None
+        //units.get(sender).get.explode = true
+        map.tiles(units.get(sender).get.position).unit = None
       case e: event.Tick =>        
-        gameState.ticks += 1
-        gameState.units.values.foreach(_.onTick())
-        gameState.projectiles = gameState.projectiles.filterNot(_.start+Projectile.Duration<gameState.ticks)
+        ticks += 1
+        units.values.foreach(_.onTick())
+        //projectiles = gameState.projectiles.filterNot(_.start+Projectile.Duration<gameState.ticks)
       case _ =>
     }
+  }
+  
+  def onUnitCreated(e: event.UnitCreated) {
+    if (self == e.player) map.removeShadeAround(e.position)
+    var unitState = new Unit(e.player, this, e.unitType, e.position, e.direction)
+    units += (e.unit -> unitState)
   }
   
   def join(game: ActorRef) {

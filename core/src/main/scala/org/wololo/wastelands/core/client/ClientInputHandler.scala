@@ -1,9 +1,9 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.client
 
 import org.wololo.wastelands.core.event.Touch
 import org.wololo.wastelands.core.event.Event
-import org.wololo.wastelands.core.unit.Unit
-import org.wololo.wastelands.core.unit.UnitClientState
+import org.wololo.wastelands.core.unit.UnitActor
+import org.wololo.wastelands.core.Coordinate
 
 object KeyCode {
   val KEY_1: Int = 0
@@ -16,13 +16,13 @@ object KeyCode {
 }
 
 trait ClientInputHandler {
-  self : Client =>
-  
+  self: Client =>
+
   val tolerance = 5
   var previous: Coordinate = (0, 0)
   var downAt: Coordinate = (0, 0)
   var hasScrolled = false
-  
+
   def touch(e: Touch) {
     e.action match {
       case Touch.DOWN => touchDown(e.coordinate)
@@ -33,15 +33,18 @@ trait ClientInputHandler {
 
   private def touchUp(coordinate: Coordinate) {
     if (hasScrolled) return
-    
+
     var clickedUnit = false
-    
+
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
-    
-    for (unit <- units if unit._2.alive && unit._2.screenBounds.contains(coordinate)) {
-      unitAction(unit._1)
-      clickedUnit = true
+
+    for (unit <- units) {
+      val clientUnit: ClientUnit = unit._2.asInstanceOf[ClientUnit]
+      if (clientUnit.alive && clientUnit.screenBounds.contains(coordinate)) {
+        unitAction(unit._1)
+        clickedUnit = true
+      }
     }
 
     // no unit was clicked
@@ -51,24 +54,24 @@ trait ClientInputHandler {
       mapTileAction((mx, my))
     }
   }
-  
+
   def touchMove(coordinate: Coordinate) {
-    if (coordinate.distance(downAt)>tolerance) {
-      screen.scroll(previous-coordinate)
+    if (coordinate.distance(downAt) > tolerance) {
+      screen.scroll(previous - coordinate)
       hasScrolled = true
     }
-    
+
     previous = coordinate
   }
 
   private def touchDown(coordinate: Coordinate) {
     hasScrolled = false
-    
+
     downAt = coordinate
     previous = coordinate
   }
-  
+
   def keyDown(keyCode: Int) {
-    
+
   }
 }

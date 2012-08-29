@@ -5,6 +5,7 @@ import org.wololo.wastelands.core._
 import org.wololo.wastelands.core.unit._
 import scala.collection.mutable.ArrayBuffer
 import java.io.File
+import org.wololo.wastelands.core.client.ClientUnit
 
 class UnitRenderer(val screen: Screen) extends TileReader {
 
@@ -27,7 +28,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
 
   private var explosions = new ArrayBuffer[UnitExplosionRenderer]
 
-  def render(unit: UnitClientState) {
+  def render(unit: ClientUnit) {
     calcOffset(unit)
 
     // TODO: should probably define all unit subtypes as int constants to use here instead
@@ -60,7 +61,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     explosions --= toBeRemoved
   }
 
-  def calcOffset(unit: UnitClientState) {
+  def calcOffset(unit: ClientUnit) {
     var mx = unit.position.x - screen.mapOffset.x
     var my = unit.position.y - screen.mapOffset.y
 

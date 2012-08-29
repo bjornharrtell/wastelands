@@ -1,46 +1,40 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.client
 
-import org.wololo.wastelands.core.event._
+import org.wololo.wastelands.core.event
 import org.wololo.wastelands.vmlayer.VMContext
 import org.wololo.wastelands.core.unit._
 import org.wololo.wastelands.core.gfx.Screen
 import akka.actor._
 import com.typesafe.config.ConfigFactory
+import org.wololo.wastelands.core.Player
+import org.wololo.wastelands.core.server.Server
+import org.wololo.wastelands.core.event
+import org.wololo.wastelands.core.Coordinate
 
-class Client(val vmContext: VMContext) extends Actor with ClientInputHandler with GamePlayerState {
+class Client(val vmContext: VMContext, val server: ActorRef) extends Player with ClientGame with ClientInputHandler {
   val screen = new Screen(this)
   var selectedUnit: Option[ActorRef] = None
-
-  val player = context.actorOf(Props(new Player(this)))
   
-  // NOTE: local or remote server...
-  val server = context.actorOf(Props[Server])
-  //val server = context.actorFor("akka://server@192.168.0.100:9000/user/Server")
+  server ! event.Connect()
 
-  server ! Connect()
-
-  def receive = {
+  def clientReceive: Receive = {
     case e: event.Connected =>
       // TODO: present user choices for creating/joining games
       server ! event.CreateGame("NewGame")
-    case e: event.GameCreated => 
-      player.forward(e)
     case e: event.Render =>
       screen.render()
       vmContext.render(screen.bitmap)
     case e: event.Touch => touch(e)
-    case e: event.Tick =>
-      // NOTE: need to forward ticks to server if it's a local actor (actorOf above)
-      server.forward(e)
-      player.forward(e)
+  }
+  
+  override def receive = clientReceive orElse playerReceive
+  
+  override def onUnitCreated(e: event.UnitCreated) {
+    if (self == e.player) map.removeShadeAround(e.position)
+    var unitState = new ClientUnit(e.player, this, e.unitType, e.position, e.direction)
+    units += (e.unit -> unitState)
   }
 
-  // TODO: The below methods are ugly because actor is separated from state
-  // The only way to avoid this is to make every interaction event driven?
-  // And this means we should have a "client unit actor" aswell as the current serverside actor...?
-  
-  // TODO: think about what the client needs to do with units...!
-  
   /**
    * Take action as a result of a chosen tile and current state
    */
@@ -58,10 +52,10 @@ class Client(val vmContext: VMContext) extends Actor with ClientInputHandler wit
    * Take action as a result of a chosen unit and current state
    */
   def unitAction(unit: ActorRef) {
-    val unitState = units.get(unit).get
+    val unitState = units.get(unit).get.asInstanceOf[ClientUnit]
     if (selectedUnit.isDefined) {
-      val selectedUnitState = units.get(selectedUnit.get).get
-      if (unitState.player != player) {
+      val selectedUnitState = units.get(selectedUnit.get).get.asInstanceOf[ClientUnit]
+      if (unitState.player != self) {
         // TODO: setting state should be more generic for orders
         selectedUnitState.order = Attack(unit)
         selectedUnit.get ! event.Order(selectedUnitState.order)
@@ -70,7 +64,7 @@ class Client(val vmContext: VMContext) extends Actor with ClientInputHandler wit
         unitState.select()
         selectedUnit = Option(unit)
       }
-    } else if (unitState.player == player) {
+    } else if (unitState.player == self) {
       unitState.select()
       selectedUnit = Option(unit)
     }

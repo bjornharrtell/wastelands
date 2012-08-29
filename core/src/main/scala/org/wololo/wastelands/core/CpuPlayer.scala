@@ -1,9 +1,11 @@
 package org.wololo.wastelands.core
-import akka.actor.ActorRef
-import org.wololo.wastelands.core.unit.Unit
 import org.wololo.wastelands.core.unit.Direction
+import org.wololo.wastelands.core.unit.Unit
+import org.wololo.wastelands.core.Player
 
-class CpuPlayer(game: ActorRef, gameState: GameCpuPlayerState) extends Player(gameState) {
+import akka.actor.ActorRef
+
+class CpuPlayer(game: ActorRef) extends Player {
 
   game ! event.Join()
 
@@ -16,9 +18,9 @@ class CpuPlayer(game: ActorRef, gameState: GameCpuPlayerState) extends Player(ga
         game ! event.CreateUnit(Unit.TestUnit1, (10, 11), Direction.random)
       }
     case e: event.TileMapData =>
-    //gameState.map = e.map
+      //gameState.map = e.map
     case e: event.UnitCreated =>
-      gameState.map.removeShadeAround(e.position)
+      map.removeShadeAround(e.position)
     case e: event.Order =>
   }
 }

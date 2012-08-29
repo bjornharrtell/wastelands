@@ -5,8 +5,11 @@ import org.wololo.wastelands.core.gfx._
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event
 import org.wololo.wastelands.core.event.Touch
+import org.wololo.wastelands.core.client.Client
+import org.wololo.wastelands.core.client.KeyCode
+import akka.actor.ActorRef
 
-class GameMapEditor(vmContext: VMContext) extends Client(vmContext) {
+class GameMapEditor(vmContext: VMContext, server: ActorRef) extends Client(vmContext, server) {
   
   var tileType: Option[Int] = None
   

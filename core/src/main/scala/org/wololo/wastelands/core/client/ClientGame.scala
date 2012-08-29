@@ -1,0 +1,9 @@
+package org.wololo.wastelands.core.client
+import org.wololo.wastelands.core.PlayerGame
+import akka.actor.ActorRef
+import org.wololo.wastelands.core.unit.Projectile
+import org.wololo.wastelands.core.Game
+
+trait ClientGame extends PlayerGame {
+  var projectiles = Vector[Projectile]()
+}

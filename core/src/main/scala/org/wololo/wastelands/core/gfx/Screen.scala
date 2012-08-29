@@ -2,7 +2,8 @@ package org.wololo.wastelands.core.gfx
 
 import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
-import org.wololo.wastelands.core.unit.UnitClientState
+import org.wololo.wastelands.core.client.Client
+import org.wololo.wastelands.core.client.ClientUnit
 
 /**
  * Contains the state of the game screen.
@@ -82,7 +83,7 @@ class Screen(val client: Client) {
     mapPixelOffset = (calculateTilePixelOffset(screenOffset.x, mapOffset.x), calculateTilePixelOffset(screenOffset.y, mapOffset.y))
 
     tileRenderer.render(false)
-    client.units.values.foreach(unitState => unitRenderer.render(unitState.asInstanceOf[UnitClientState]))
+    client.units.values.foreach(unitState => unitRenderer.render(unitState.asInstanceOf[ClientUnit]))
     client.projectiles.foreach(projectileRenderer.render(_))
     tileRenderer.render(true)
   }

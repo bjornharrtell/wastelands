@@ -1,5 +1,5 @@
 package org.wololo.wastelands.core
-import org.wololo.wastelands.core.unit.Unit
+import org.wololo.wastelands.core.unit.UnitActor
 import org.wololo.wastelands.core.unit.Direction
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event

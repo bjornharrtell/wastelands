@@ -1,15 +1,13 @@
 package org.wololo.wastelands.core.unit
-
-import org.wololo.wastelands.core._
-import java.io.File
-import org.wololo.wastelands.core.event
+import org.wololo.wastelands.core.Coordinate
+import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.event.Event
+import org.wololo.wastelands.core.event
 import akka.actor._
-import akka.pattern.{ ask, pipe }
-import akka.util.duration._
-import com.typesafe.config.ConfigFactory
-import akka.util.Timeout
-import akka.dispatch.Await
+import org.wololo.wastelands.core.Rect
+import akka.event.LoggingAdapter
+import scala.collection.immutable.HashMap
+import org.wololo.wastelands.core.Game
 
 object Unit {
   val TestUnit1 = 0
@@ -17,178 +15,103 @@ object Unit {
   val Harvester = 2
 }
 
-case object Alive
-case object Dead
-case object Locate
-case class Damage(hp: Int)
-case class UnitSpotted(unitState: UnitState)
+class Unit(val player: ActorRef, val game: Game, val unitType: Int, var position: Coordinate, var direction: Direction) {
+  var unit: ActorRef = null
+  var alive = true
+  var hp = 10
 
-abstract class Unit(val player: ActorRef, val game: GameState, var position: Coordinate, var direction: Direction) extends Actor with UnitState {
-  val Velocity = 0.04
-  val Range = 2
-  val AttackStrength = 2
+  var order: Order = Guard()
+  var action: Action = Idle()
+  var cooldowns = HashMap[Int, Cooldown]()
 
-  implicit val timeout = Timeout(1 second)
+  game.map.tiles(position).unit = Option(this)
 
-  game.map.tiles(position).unit = Option(this);
-
-  unit = self;
-  self ! event.Order(Guard())
-
-  def receive = {
-    case e: event.Event =>
-      if (!e.isInstanceOf[event.Tick]) println("Unit " + self + " received " + e)
-      e match {
-        case e: event.Tick => onTick()
-        case e: event.Order => onOrder(e)
-        case e: event.Action => onAction(e)
-        case e: event.UnitDestroyed => onDestroyed(sender, e)
-      }
-    case Locate => sender ! position
-    case e: Damage => onDamage(e.hp)
-    case Alive => sender ! (if (alive) Alive else Dead)
-    case e: UnitSpotted => onUnitSpotted(e)
-    case _ =>
-  }
-  
-  override def onTick() {
-    val count = cooldowns.size
-    super.onTick()
-    if (count!=cooldowns.size) executeOrder(order)
+  def onOrder(e: event.Order) {
+    order = e.order
+    /*order match {
+      case o: Move => move(o)
+      case o: Attack => attack(o)
+      case o: Guard => guard(o)
+    }*/
   }
 
-  override def createCooldown(actionType: Int) {
-    super.createCooldown(actionType)
-    if (actionType == Action.MoveTileStep) {
-      game.map.surroundingTiles(position, 3).foreach(tile => {
-        if (tile.isOccupied) tile.unit.get.unit ! UnitSpotted(this)
-      })
+  def onAction(e: event.Action) {
+    action = e.action
+    action.start = game.ticks
+    action match {
+      case action: MoveTileStep => moveTileStep(action)
+      case action: Turn => turn(action)
+      case action: Fire => fire(action)
     }
   }
-  
-  override def onAction(e: event.Action) {
-    super.onAction(e)
-    game.players.foreach(_.forward(e))
+
+  /*def move(order: Move) {
   }
 
-  def onUnitSpotted(e: UnitSpotted) {
-    if (order.isInstanceOf[Guard] && player != e.unitState.player && position.distance(e.unitState.position) <= Range) {
-      self ! event.Order(Attack(e.unitState.unit))
-    }
+  def attack(order: Attack) {
   }
-  
-  override def onOrder(e: event.Order) {
-    super.onOrder(e)
-    executeOrder(e.order)
+
+  def guard(order: Guard) {
+  }*/
+
+  def moveTileStep(action: MoveTileStep) {
+    game.map.tiles(position).unit = None
+    position = position + direction
+    // TODO: only remove shade if the unit belongs to the active player
+    game.map.removeShadeAround(position)
+    game.map.tiles(position).unit = Option(this)
+
   }
-  
+
+  def turn(action: Turn) {
+    if (action.target != direction) direction = direction.turnTowards(action.target)
+  }
+
+  def fire(action: Fire) {
+  }
+
   /**
-   * Execute order
+   * Tick
    *
-   * Should be run when:
-   * 1. order is given
-   * 2. action is complete without cooldown
-   * 3. when cooldown is complete
+   * Check if duration has elapsed for actions and cooldowns. Create cooldown if
+   * action has elapsed, remove cooldown if cooldown has elapsed.
    */
-  def executeOrder(order: Order) {
-    order match {
-      case o: Move => executeMoveOrder(o)
-      case o: Attack => executeAttackOrder(o)
-      case o: Guard => executeGuardOrder(o)
-    }
-  }
-
-  /**
-   * Execute move order
-   *
-   * Check order goal conditions, set to default order if met else if there is no current active
-   * action and no cooldown for move or turn actions, try to generate a new action which can be
-   * a turn or move action event.
-   */
-  def executeMoveOrder(order: Move) = {
-    if (order.destination == position || game.map.tiles(order.destination).isOccupied) {
-      self ! event.Order(Guard())
-    } else if (action.isInstanceOf[Idle] &&
-      !cooldowns.keys.exists(_ == Action.MoveTileStep) &&
-      !cooldowns.keys.exists(_ == Action.Turn)) {
-
-      generateMoveAction(order.destination)
+  def onTick() {
+    if (!action.isInstanceOf[Idle] && game.ticks - action.start >= actionLength(action.actionType)) {
+      createCooldown(action.actionType)
+      action = Idle()
     }
 
+    cooldowns.filter(elapsedCooldownFilter).keys.foreach(removeCooldown(_))
   }
 
-  /**
-   * Generate action to move this unit towards the destination
-   */
-  def generateMoveAction(destination: Coordinate) {
-    val target = game.map.calcDirection(position, destination)
+  def elapsedCooldownFilter: PartialFunction[(Int, Cooldown), Boolean] = {
+    case (actionType, cooldown) => game.ticks - cooldown.start >= cooldownLength(actionType)
+  }
 
-    if (direction != target) {
-      self ! event.Action(Turn(target))
-    } else if (!game.map.tiles(position + direction).isOccupied) {
-      self ! event.Action(MoveTileStep())
+  def createCooldown(actionType: Int) {
+    cooldowns = cooldowns + (action.actionType -> Cooldown(game.ticks))
+  }
+
+  def removeCooldown(actionType: Int) {
+    cooldowns = cooldowns - actionType
+  }
+
+  def actionLength(actionType: Int) = actionType match {
+    case Action.MoveTileStep => unitType match {
+      case Unit.TestUnit1 => 30
+      case Unit.TestUnit2 => 50
+      case Unit.Harvester => 150
     }
+    case Action.Turn => 0
+    case Action.Fire => 0
+    case Action.Idle => 0
   }
 
-  /**
-   * Executes attack order
-   *
-   * Ask target if alive if so check for active cooldowns if none generate appropriate action else do nothing.
-   * If target is dead, give order to guard.
-   */
-  def executeAttackOrder(order: Attack) {
-    order.target.ask(Alive).onSuccess({
-      case Alive =>
-        if (action.isInstanceOf[Idle] &&
-          !cooldowns.keys.exists(_ == Action.Fire) &&
-          !cooldowns.keys.exists(_ == Action.Turn)) {
-
-          generateAttackAction(order.target)
-        }
-      case Dead => self ! event.Order(Guard())
-    })
+  def cooldownLength(actionType: Int) = actionType match {
+    case Action.MoveTileStep => 15
+    case Action.Turn => 15
+    case Action.Fire => 50
+    case Action.Idle => 0
   }
-
-  /**
-   * Generates actions to fire at and damage target unit
-   */
-  def generateAttackAction(target: ActorRef) {
-    target.ask(Locate).onSuccess({
-      case targetPosition: Coordinate =>
-        if (position.distance(targetPosition) <= Range) {
-          self ! event.Action(Fire(targetPosition))
-          target ! Damage(AttackStrength)
-        } else {
-          generateMoveAction(targetPosition)
-        }
-    })
-  }
-
-  def onDamage(damage: Int) {
-    hp = hp - damage
-    if (hp < 0) {
-      alive = false
-      self ! event.UnitDestroyed()
-    }
-  }
-
-  def onDestroyed(sender: ActorRef, e: event.UnitDestroyed) {
-    sender.ask(Locate).onSuccess({
-      case senderPosition: Coordinate => game.map.tiles(senderPosition).unit = None
-    })
-    game.players.foreach(_.forward(e))
-  }
-
-  /**
-   * Execute guard order
-   */
-  def executeGuardOrder(order: Guard) {
-    for (tile <- game.map.surroundingTiles(position, Range)) {
-      tile.unit match {
-        case Some(unit) if (unit.player != player) => return self ! event.Order(Attack(unit.unit))
-        case _ =>
-      }
-    }
-  }
-
 }

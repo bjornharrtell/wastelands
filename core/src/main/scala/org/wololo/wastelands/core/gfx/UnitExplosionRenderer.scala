@@ -4,11 +4,11 @@ import org.wololo.wastelands.vmlayer._
 import scala.collection.mutable.ArrayBuffer
 import org.wololo.wastelands.core.TileReader
 import org.wololo.wastelands.core.Coordinate
-import org.wololo.wastelands.core.unit.Unit
+import org.wololo.wastelands.core.unit.UnitActor
 import java.io.File
-import org.wololo.wastelands.core.unit.UnitClientState
+import org.wololo.wastelands.core.client.ClientUnit
 
-class UnitExplosionRenderer(val screen: Screen, unit: UnitClientState, offset: Coordinate) extends TileReader {
+class UnitExplosionRenderer(val screen: Screen, unit: ClientUnit, offset: Coordinate) extends TileReader {
   private val Size = 32 * screen.PixelSize
   private val SizeOffset = -Size / 4
   private val ExplosionOffsetY = -7 * screen.PixelSize

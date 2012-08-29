@@ -15,10 +15,10 @@ import org.wololo.wastelands.core.Game
 import org.wololo.wastelands.core.GameMapEditor
 import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.event.Touch
-import org.wololo.wastelands.core.KeyCode
-import org.wololo.wastelands.core.Client
+import org.wololo.wastelands.core.client.KeyCode
+import org.wololo.wastelands.core.client.Client
 import akka.actor._
-import org.wololo.wastelands.core.ClientApp
+import org.wololo.wastelands.core.client.ClientApp
 
 object JVMClient extends JVMContext with ClientApp with WindowListener with MouseListener with MouseMotionListener with KeyListener {
   val device = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice

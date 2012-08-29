@@ -1,6 +1,7 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.server
 import akka.actor._
 import com.typesafe.config.ConfigFactory
+import org.wololo.wastelands.core.event
 
 object ServerApp extends App {
   override def main(args: Array[String]): Unit = {

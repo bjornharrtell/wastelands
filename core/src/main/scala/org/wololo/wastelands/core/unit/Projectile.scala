@@ -1,5 +1,5 @@
 package org.wololo.wastelands.core.unit
-import org.wololo.wastelands.core.Game
+import org.wololo.wastelands.core.GameActor
 import org.wololo.wastelands.core.Coordinate
 
 object Projectile {
