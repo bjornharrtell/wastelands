@@ -2,7 +2,7 @@ package org.wololo.wastelands.core.client
 
 import org.wololo.wastelands.core.event.Touch
 import org.wololo.wastelands.core.event.Event
-import org.wololo.wastelands.core.unit.UnitActor
+import org.wololo.wastelands.core.server.UnitActor
 import org.wololo.wastelands.core.Coordinate
 
 object KeyCode {

@@ -5,7 +5,7 @@ import akka.actor.ActorRef
 
 trait Game {
   //val events = ArrayBuffer[Event]()
-  var players= Vector[ActorRef]()
+  var players = Vector[ActorRef]()
   val map: TileMap = new TileMap()
   var ticks = 0
 }

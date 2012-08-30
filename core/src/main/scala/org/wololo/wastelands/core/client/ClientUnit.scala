@@ -8,7 +8,7 @@ import org.wololo.wastelands.core.unit.Selectable
 import org.wololo.wastelands.core.unit.Fire
 import org.wololo.wastelands.core.unit.Projectile
 
-class ClientUnit(player: ActorRef, game: ClientGame, unitType: Int, position: Coordinate, direction: Direction) extends Unit(player, game, unitType, position, direction) with Selectable {
+class ClientUnit(val player: ActorRef, val game: ClientGame, val unitType: Int, var position: Coordinate, var direction: Direction) extends Unit with Selectable {
   val screenBounds = new Rect(10, 10, 10, 10)
   var isOnScreen = false
   var exploding = false

@@ -15,7 +15,13 @@ object Unit {
   val Harvester = 2
 }
 
-class Unit(val player: ActorRef, val game: Game, val unitType: Int, var position: Coordinate, var direction: Direction) {
+trait Unit {
+  val player: ActorRef
+  val game: Game
+  val unitType: Int
+  var position: Coordinate
+  var direction: Direction
+  
   var unit: ActorRef = null
   var alive = true
   var hp = 10
@@ -64,7 +70,9 @@ class Unit(val player: ActorRef, val game: Game, val unitType: Int, var position
   }
 
   def turn(action: Turn) {
+    println("Turn mutate! Current:" + direction + " Target:" +  action.target)
     if (action.target != direction) direction = direction.turnTowards(action.target)
+    println("Turn mutated! To: " + direction) 
   }
 
   def fire(action: Fire) {

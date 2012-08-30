@@ -28,7 +28,7 @@ case object Locate
 case class Damage(hp: Int)
 case class UnitSpotted(unitState: Unit)
 
-abstract class UnitActor(player: ActorRef, game: Game, unitType: Int, position: Coordinate, direction: Direction) extends Unit(player, game, unitType, position, direction) with Actor {
+abstract class UnitActor(val player: ActorRef, val game: Game, val unitType: Int, var position: Coordinate, var direction: Direction) extends Unit with Actor {
   val Velocity = 0.04
   val Range = 2
   val AttackStrength = 2
@@ -41,14 +41,10 @@ abstract class UnitActor(player: ActorRef, game: Game, unitType: Int, position: 
   self ! event.Order(Guard())
 
   def receive = {
-    case e: event.Event =>
-      if (!e.isInstanceOf[event.Tick]) println("Unit " + self + " received " + e)
-      e match {
-        case e: event.Tick => onTick()
-        case e: event.Order => onOrder(e)
-        case e: event.Action => onAction(e)
-        case e: event.UnitDestroyed => onDestroyed(sender, e)
-      }
+    case e: event.Tick => onTick()
+    case e: event.Order => onOrder(e)
+    case e: event.Action => onAction(e)
+    case e: event.UnitDestroyed => onDestroyed(sender, e)
     case Locate => sender ! position
     case e: Damage => onDamage(e.hp)
     case Alive => sender ! (if (alive) Alive else Dead)
