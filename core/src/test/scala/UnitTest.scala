@@ -15,6 +15,8 @@ import org.wololo.wastelands.core.server.GameActor
 import org.wololo.wastelands.core.server.TestUnit1
 import org.wololo.wastelands.core.server.TestUnit2
 
+class TestClient extends Player
+
 @RunWith(classOf[JUnitRunner])
 class UnitTest extends TestKit(ActorSystem("test")) with Specification {
 
@@ -27,7 +29,7 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
       val cooldownlength = testUnit1.underlyingActor.cooldownLength(Action.Turn)
       for (i <- 1 to (cooldownlength + 1) * 3) {
         game ! event.Tick()
-        player ! event.Tick()
+        testClient ! event.Tick()
       }
 
       testUnit1.underlyingActor.position must_== new Coordinate(2, 2)
@@ -43,7 +45,7 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
       // TODO: should read turn/move length from metadata
       for (i <- 1 to (15 * 100 + 1) * 3) {
         game ! event.Tick()
-        player ! event.Tick()
+        testClient ! event.Tick()
       }
 
       testUnit1.underlyingActor.position must_== new Coordinate(1, 1)
@@ -90,13 +92,13 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
 
   trait testgame extends Scope {
     val game = TestActorRef[GameActor]
-    val player = TestActorRef[Player]
-    player.underlyingActor.join(game)
-    val testUnit1 = TestActorRef(new TestUnit1(player, game.underlyingActor, (1, 1), (0, -1)))
+    val testClient = TestActorRef[TestClient]
+    testClient.underlyingActor.join(game)
+    val testUnit1 = TestActorRef(new TestUnit1(testClient, game.underlyingActor, (1, 1), (0, -1)))
     game.underlyingActor.units = game.underlyingActor.units :+ testUnit1
-    player ! event.UnitCreated(testUnit1, game, testUnit1.underlyingActor.unitType, testUnit1.underlyingActor.position, testUnit1.underlyingActor.direction)
-    val testUnit2 = TestActorRef(new TestUnit2(player, game.underlyingActor, (1, 2), (0, -1)))
+    testClient ! event.UnitCreated(testUnit1, game, testUnit1.underlyingActor.unitType, testUnit1.underlyingActor.position, testUnit1.underlyingActor.direction)
+    val testUnit2 = TestActorRef(new TestUnit2(testClient, game.underlyingActor, (1, 2), (0, -1)))
     game.underlyingActor.units = game.underlyingActor.units :+ testUnit2
-    player ! event.UnitCreated(testUnit2, game, testUnit2.underlyingActor.unitType, testUnit2.underlyingActor.position, testUnit2.underlyingActor.direction)
+    testClient ! event.UnitCreated(testUnit2, game, testUnit2.underlyingActor.unitType, testUnit2.underlyingActor.position, testUnit2.underlyingActor.direction)
   }
 }
