@@ -3,6 +3,11 @@ package org.wololo.wastelands.core
 import akka.actor._
 import org.wololo.wastelands.core.unit._
 
+/**
+ * Basic player logic
+ * 
+ * Intended to be implemented and controlled by a graphical client or an AI.
+ */
 trait Player extends PlayerGame with Actor {
   var game: ActorRef = null
 
@@ -25,20 +30,29 @@ trait Player extends PlayerGame with Actor {
     case e: event.UnitCreated => onUnitCreated(e)
     case e: event.Action =>
       units.get(sender).get.onAction(e)
-    case e: event.UnitDestroyed =>
-      //units.get(sender).get.explode = true
-      map.tiles(units.get(sender).get.position).unit = None
-    case e: event.Tick =>
-      ticks += 1
-      units.values.foreach(_.onTick())
-    //projectiles = gameState.projectiles.filterNot(_.start+Projectile.Duration<gameState.ticks)
+    case e: event.UnitDestroyed => onUnitDestroyed(e)
+    case e: event.Tick => onTick()
     case _ => println(self + " received unknown event")
   }
 
+  /**
+   * Handler for UnitCreated events
+   * 
+   * TODO: Generic unit state should probably be abstract since it needs implementation for both PCs and NPCs? 
+   */
   def onUnitCreated(e: event.UnitCreated) {
     if (self == e.player) map.removeShadeAround(e.position)
     var unitState = new PlayerUnit(e.player, this, e.unitType, e.position, e.direction)
     units += (e.unit -> unitState)
+  }
+  
+  def onUnitDestroyed(e: event.UnitDestroyed) {
+    map.tiles(units.get(sender).get.position).unit = None
+  }
+  
+  def onTick() {
+     ticks += 1
+      units.values.foreach(_.onTick())
   }
 
   def join(game: ActorRef) {

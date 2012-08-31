@@ -6,7 +6,7 @@ import org.wololo.wastelands.core.event
 import org.wololo.wastelands.core.CpuPlayer
 import org.wololo.wastelands.core.event
 
-class Server extends Actor  {
+class ServerActor extends Actor  {
   def receive = {
     case e: event.CreateGame =>
       val game = context.actorOf(Props[GameActor], e.name)

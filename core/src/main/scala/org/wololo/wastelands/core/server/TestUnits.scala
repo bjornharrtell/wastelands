@@ -5,9 +5,6 @@ import java.io.File
 import akka.actor.ActorRef
 import org.wololo.wastelands.core.unit._
 
-// TODO: have types be traits to be mixed into both unit actors and unit state...?
-
-
 class TestUnit1(player: ActorRef, game: Game, position: Coordinate, direction: Direction) extends UnitActor(player, game, Unit.TestUnit1, position, direction) {
   override val Velocity = 0.02
   //override val fireSound = game.vmContext.soundFactory.create(new File("sounds/laser.ogg"))

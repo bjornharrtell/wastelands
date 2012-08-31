@@ -15,6 +15,9 @@ object Unit {
   val Harvester = 2
 }
 
+/**
+ * Generic Unit state and behaviour
+ */
 trait Unit {
   val player: ActorRef
   val game: Game
@@ -70,17 +73,13 @@ trait Unit {
   }
 
   def turn(action: Turn) {
-    println("Turn mutate! Current:" + direction + " Target:" +  action.target)
     if (action.target != direction) direction = direction.turnTowards(action.target)
-    println("Turn mutated! To: " + direction) 
   }
 
   def fire(action: Fire) {
   }
 
   /**
-   * Tick
-   *
    * Check if duration has elapsed for actions and cooldowns. Create cooldown if
    * action has elapsed, remove cooldown if cooldown has elapsed.
    */

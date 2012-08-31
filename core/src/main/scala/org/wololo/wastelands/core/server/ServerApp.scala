@@ -3,12 +3,15 @@ import akka.actor._
 import com.typesafe.config.ConfigFactory
 import org.wololo.wastelands.core.event
 
+/**
+ * Server application
+ */
 object ServerApp extends App {
   override def main(args: Array[String]): Unit = {
     val system = ActorSystem("server", ConfigFactory.load.getConfig("server"))
     //system.registerOnTermination(System.exit(1))
 
-    val server = system.actorOf(Props[Server], "Server")
+    val server = system.actorOf(Props[ServerActor], "Server")
     
     var lastTime = System.nanoTime
     var unprocessed = 0.0
@@ -16,7 +19,7 @@ object ServerApp extends App {
     var frames = 0
     var lastTimer1 = System.currentTimeMillis
 
-    // TODO: make simple loop... does not have to account for render delays
+    // TODO: make simple loop... does not have to account for render delays (hmm perhaps it still can make sense, will "handle" server overloads?
     while (true) {
       val now = System.nanoTime
       unprocessed += (now - lastTime) / nsPerTick

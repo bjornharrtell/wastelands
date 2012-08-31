@@ -7,10 +7,15 @@ import org.wololo.wastelands.core.gfx.Screen
 import akka.actor._
 import com.typesafe.config.ConfigFactory
 import org.wololo.wastelands.core.Player
-import org.wololo.wastelands.core.server.Server
+import org.wololo.wastelands.core.server.ServerActor
 import org.wololo.wastelands.core.event
 import org.wololo.wastelands.core.Coordinate
 
+/**
+ * PC controlled basic client
+ * 
+ * Platform agnostic via VMContext
+ */
 class Client(val vmContext: VMContext, val server: ActorRef) extends Player with ClientGame with ClientInputHandler {
   val screen = new Screen(this)
   var selectedUnit: Option[ActorRef] = None
@@ -33,6 +38,16 @@ class Client(val vmContext: VMContext, val server: ActorRef) extends Player with
     if (self == e.player) map.removeShadeAround(e.position)
     var unitState = new ClientUnit(e.player, this, e.unitType, e.position, e.direction)
     units += (e.unit -> unitState)
+  }
+  
+  override def onUnitDestroyed(e: event.UnitDestroyed) {
+    super.onUnitDestroyed(e)
+    units.get(sender).get.asInstanceOf[ClientUnit].explode = true
+  }
+  
+  override def onTick() {
+    super.onTick()
+    projectiles = projectiles.filterNot(_.start+Projectile.Duration<ticks)
   }
 
   /**

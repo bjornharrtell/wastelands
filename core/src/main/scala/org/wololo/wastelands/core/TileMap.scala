@@ -72,7 +72,7 @@ class TileMap() {
 
     val tile = tiles(coordinate)
 
-    if (tile.baseType != TileTypes.Base) tile.subType = calcSubType(coordinate, tile.baseType)
+    if (tile.baseType != Tile.Base) tile.subType = calcSubType(coordinate, tile.baseType)
   }
 
   def makeBorderAround(coordinate: Coordinate) {

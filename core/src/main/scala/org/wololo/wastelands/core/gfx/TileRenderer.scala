@@ -6,10 +6,10 @@ import java.io.File
 class TileRenderer(val screen: Screen) extends TileReader {
   val shadeSet = fileToTiles(new File("tilesets/shade.png"), BitmapTypes.Bitmask, 18, 5, 16, screen.TileSize)
   val tileSets = Array.ofDim[Int](4, 5 * 18)
-  tileSets(TileTypes.Base)(0) = fileToTiles(new File("tilesets/desert.png"), BitmapTypes.Opague, 1, 1, 16, screen.TileSize)(0)
-  tileSets(TileTypes.Dunes) = fileToTiles(new File("tilesets/dunes.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
-  tileSets(TileTypes.Rock) = fileToTiles(new File("tilesets/rock.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
-  tileSets(TileTypes.Spice) = fileToTiles(new File("tilesets/spice.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
+  tileSets(Tile.Base)(0) = fileToTiles(new File("tilesets/desert.png"), BitmapTypes.Opague, 1, 1, 16, screen.TileSize)(0)
+  tileSets(Tile.Dunes) = fileToTiles(new File("tilesets/dunes.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
+  tileSets(Tile.Rock) = fileToTiles(new File("tilesets/rock.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
+  tileSets(Tile.Spice) = fileToTiles(new File("tilesets/spice.png"), BitmapTypes.Opague, 18, 5, 16, screen.TileSize).toArray
 
   /**
    * Main tile render loop.

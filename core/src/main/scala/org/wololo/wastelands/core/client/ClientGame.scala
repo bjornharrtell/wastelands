@@ -4,6 +4,9 @@ import akka.actor.ActorRef
 import org.wololo.wastelands.core.unit.Projectile
 import org.wololo.wastelands.core.Game
 
+/**
+ * Additional game state for graphical clients
+ */
 trait ClientGame extends PlayerGame {
   var projectiles = Vector[Projectile]()
 }

@@ -5,6 +5,9 @@ import org.wololo.wastelands.core.Player
 
 import akka.actor.ActorRef
 
+/**
+ * CPU controlled Player
+ */
 class CpuPlayer(game: ActorRef) extends Player {
 
   game ! event.Join()

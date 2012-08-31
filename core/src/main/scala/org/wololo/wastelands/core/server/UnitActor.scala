@@ -28,6 +28,9 @@ case object Locate
 case class Damage(hp: Int)
 case class UnitSpotted(unitState: Unit)
 
+/**
+ * Basic abstract unit actor with state and generic behaviour
+ */
 abstract class UnitActor(val player: ActorRef, val game: Game, val unitType: Int, var position: Coordinate, var direction: Direction) extends Unit with Actor {
   val Velocity = 0.04
   val Range = 2

@@ -38,10 +38,10 @@ class GameMapEditor(vmContext: VMContext, server: ActorRef) extends Client(vmCon
   override def keyDown(keyCode: Int) {
     keyCode match {
       case KeyCode.KEY_1 => tileType = None
-      case KeyCode.KEY_2 => tileType = Option(TileTypes.Base)
-      case KeyCode.KEY_3 => tileType = Option(TileTypes.Dunes)
-      case KeyCode.KEY_4 => tileType = Option(TileTypes.Rock)
-      case KeyCode.KEY_5 => tileType = Option(TileTypes.Spice)
+      case KeyCode.KEY_2 => tileType = Option(Tile.Base)
+      case KeyCode.KEY_3 => tileType = Option(Tile.Dunes)
+      case KeyCode.KEY_4 => tileType = Option(Tile.Rock)
+      case KeyCode.KEY_5 => tileType = Option(Tile.Spice)
       //case KeyCode.KEY_9 => map.save()
       //case KeyCode.KEY_0 => map.load()
       case _ =>

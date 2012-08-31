@@ -5,6 +5,11 @@ import akka.actor.ActorRef
 
 object Tile {
   val Size = 32
+  
+  val Base = 0
+  val Dunes = 1
+  val Rock = 2
+  val Spice = 3
 }
 
 @SerialVersionUID(1034565814679710344L)
@@ -12,7 +17,7 @@ class Tile() extends Serializable {
   /**
    * The tileset this tile belongs to.
    */
-  var baseType = TileTypes.Base
+  var baseType = Tile.Base
 
   /**
    * Subtype for tileset borders or specific tile from the base
