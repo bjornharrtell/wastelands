@@ -48,6 +48,7 @@ trait Player extends PlayerGame with Actor {
   
   def onUnitDestroyed(e: event.UnitDestroyed) {
     map.tiles(units.get(sender).get.position).unit = None
+    //units = units - sender
   }
   
   def onTick() {

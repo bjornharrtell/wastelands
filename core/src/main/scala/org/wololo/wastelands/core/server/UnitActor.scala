@@ -95,6 +95,8 @@ abstract class UnitActor(val player: ActorRef, val game: Game, val unitType: Int
    * 3. when cooldown is complete
    */
   def executeOrder(order: Order) {
+    if (!alive) return
+    
     order match {
       case o: Move => executeMoveOrder(o)
       case o: Attack => executeAttackOrder(o)
