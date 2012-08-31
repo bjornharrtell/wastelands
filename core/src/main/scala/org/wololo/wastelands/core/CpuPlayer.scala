@@ -1,18 +1,21 @@
 package org.wololo.wastelands.core
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.unit.Unit
-import org.wololo.wastelands.core.Player
 
 import akka.actor.ActorRef
 
 /**
  * CPU controlled Player
  */
-class CpuPlayer(game: ActorRef) extends Player {
+class CpuPlayer(gametojoin: ActorRef) extends Player {
 
+  game = gametojoin
+  
   game ! event.Join()
 
-  override def receive = {
+  override def receive: Receive = cpuPlayerReceive orElse playerReceive
+  
+  def cpuPlayerReceive: Receive = {
     case e: event.Joined =>
       if (self == e.player) {
         // TODO: create units from scenario definition
@@ -20,10 +23,5 @@ class CpuPlayer(game: ActorRef) extends Player {
         game ! event.CreateUnit(Unit.TestUnit1, (9, 9), Direction.random)
         game ! event.CreateUnit(Unit.TestUnit1, (10, 11), Direction.random)
       }
-    case e: event.TileMapData =>
-      //gameState.map = e.map
-    case e: event.UnitCreated =>
-      map.removeShadeAround(e.position)
-    case e: event.Order =>
   }
 }

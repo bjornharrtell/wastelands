@@ -8,7 +8,7 @@ import org.wololo.wastelands.core.unit._
  * 
  * Intended to be implemented and controlled by a graphical client or an AI.
  */
-trait Player extends PlayerGame with Actor {
+trait Player extends PlayerGame with Actor {  
   var game: ActorRef = null
 
   def receive = playerReceive
