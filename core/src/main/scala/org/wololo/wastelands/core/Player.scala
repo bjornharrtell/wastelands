@@ -52,8 +52,8 @@ trait Player extends PlayerGame with Actor {
   }
   
   def onTick() {
-     ticks += 1
-      units.values.foreach(_.onTick())
+    ticks += 1
+    units.values.foreach(_.onTick())
   }
 
   def join(game: ActorRef) {

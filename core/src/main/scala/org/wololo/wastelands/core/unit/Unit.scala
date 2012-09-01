@@ -69,7 +69,6 @@ trait Unit {
     // TODO: only remove shade if the unit belongs to the active player
     game.map.removeShadeAround(position)
     game.map.tiles(position).unit = Option(this)
-
   }
 
   def turn(action: Turn) {
