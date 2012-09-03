@@ -42,6 +42,7 @@ trait Player[T <: Unit] extends PlayerGame[T] with Actor {
    * TODO: Generic unit state should probably be abstract since it needs implementation for both PCs and NPCs? 
    */
   def onUnitCreated(e: event.UnitCreated) {
+    //println(self + " onUnitCreated " + e)
     if (self == e.player) map.removeShadeAround(e.position)
     // TODO: why is cast needed here T should be bounded to include PlayerUnit...
     var unitState = new PlayerUnit(e.player, this, e.unitType, e.position, e.direction).asInstanceOf[T]

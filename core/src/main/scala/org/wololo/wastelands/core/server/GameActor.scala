@@ -7,16 +7,20 @@ import org.wololo.wastelands.core.Game
 
 class GameActor extends Game with Actor {
   var units = Vector[ActorRef]()
+  var events = Vector[event.Event]()
 
   def receive = {
     case e: event.Join =>
-      //events.foreach(sender ! _)
+      //println(self + " received Join from " + sender)
+      if (events.size>0) println(events.size + " queued events sent to joined player")
+      events.foreach(sender ! _)
       //events += e
       //sender ! event.TileMapData(map)
       players = players :+ sender
       players.foreach(_ ! event.Joined(sender))
     case e: event.CreateUnit =>
-      //events += e
+      //println(self + " received CreateUnit from " + sender)
+      events = events :+ e
       val player = sender
       var unit = e.unitType match {
         case Unit.TestUnit1 => context.actorOf(Props(new TestUnit1(player, this, e.position, e.direction)))
@@ -26,6 +30,7 @@ class GameActor extends Game with Actor {
       units = units :+ unit
       // TODO: Send serializable unit state instance instead...
       players.foreach(_ ! event.UnitCreated(unit, player, e.unitType, e.position, e.direction))
+      
     case e: event.Tick =>
       ticks += 1
       units.foreach(_.forward(e))

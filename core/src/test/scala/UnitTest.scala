@@ -92,6 +92,8 @@ class UnitTest extends TestKit(ActorSystem("test")) with Specification {
   }
 
   trait testgame extends Scope {
+    // TODO: create units the standard way... and still be able to test them?
+    
     val game = TestActorRef[GameActor]
     val testClient = TestActorRef[TestClient]
     testClient.underlyingActor.join(game)

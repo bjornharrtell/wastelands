@@ -64,7 +64,7 @@ trait ClientApp {
 
       if (System.currentTimeMillis - lastTimer1 > 1000) {
         lastTimer1 += 1000
-        println(frames + " fps")
+        //println(frames + " fps")
         frames = 0
       }
     }
