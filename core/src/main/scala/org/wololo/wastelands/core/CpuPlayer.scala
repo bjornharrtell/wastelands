@@ -7,7 +7,7 @@ import akka.actor.ActorRef
 /**
  * CPU controlled Player
  */
-class CpuPlayer(gametojoin: ActorRef) extends Player {
+class CpuPlayer(gametojoin: ActorRef) extends Player[PlayerUnit] {
 
   game = gametojoin
   

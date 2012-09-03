@@ -14,8 +14,9 @@ import org.specs2.specification.Scope
 import org.wololo.wastelands.core.server.GameActor
 import org.wololo.wastelands.core.server.TestUnit1
 import org.wololo.wastelands.core.server.TestUnit2
+import org.wololo.wastelands.core.PlayerUnit
 
-class TestClient extends Player
+class TestClient extends Player[PlayerUnit]
 
 @RunWith(classOf[JUnitRunner])
 class UnitTest extends TestKit(ActorSystem("test")) with Specification {

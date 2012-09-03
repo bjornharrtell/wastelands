@@ -8,7 +8,7 @@ import org.wololo.wastelands.core.unit._
  * 
  * Intended to be implemented and controlled by a graphical client or an AI.
  */
-trait Player extends PlayerGame with Actor {  
+trait Player[T <: Unit] extends PlayerGame[T] with Actor {  
   var game: ActorRef = null
 
   def receive = playerReceive
@@ -42,7 +42,7 @@ trait Player extends PlayerGame with Actor {
    */
   def onUnitCreated(e: event.UnitCreated) {
     if (self == e.player) map.removeShadeAround(e.position)
-    var unitState = new PlayerUnit(e.player, this, e.unitType, e.position, e.direction)
+    var unitState = new PlayerUnit(e.player, this, e.unitType, e.position, e.direction).asInstanceOf[T]
     units += (e.unit -> unitState)
   }
   

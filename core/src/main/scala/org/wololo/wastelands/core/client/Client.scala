@@ -16,7 +16,7 @@ import org.wololo.wastelands.core.Coordinate
  * 
  * Platform agnostic via VMContext
  */
-class Client(val vmContext: VMContext, val server: ActorRef) extends Player with ClientGame with ClientInputHandler {
+class Client(val vmContext: VMContext, val server: ActorRef) extends Player[ClientUnit] with ClientGame with ClientInputHandler {
   val screen = new Screen(this)
   var selectedUnit: Option[ActorRef] = None
   
@@ -67,9 +67,9 @@ class Client(val vmContext: VMContext, val server: ActorRef) extends Player with
    * Take action as a result of a chosen unit and current state
    */
   def unitAction(unit: ActorRef) {
-    val unitState = units.get(unit).get.asInstanceOf[ClientUnit]
+    val unitState = units.get(unit).get
     if (selectedUnit.isDefined) {
-      val selectedUnitState = units.get(selectedUnit.get).get.asInstanceOf[ClientUnit]
+      val selectedUnitState = units.get(selectedUnit.get).get
       if (unitState.player != self) {
         // TODO: setting state should be more generic for orders
         selectedUnitState.order = Attack(unit)

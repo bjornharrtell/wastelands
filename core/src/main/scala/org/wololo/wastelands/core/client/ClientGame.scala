@@ -7,6 +7,6 @@ import org.wololo.wastelands.core.Game
 /**
  * Additional game state for graphical clients
  */
-trait ClientGame extends PlayerGame {
+trait ClientGame extends PlayerGame[ClientUnit] {
   var projectiles = Vector[Projectile]()
 }

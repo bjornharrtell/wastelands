@@ -83,8 +83,8 @@ class Screen(val client: Client) {
     mapPixelOffset = (calculateTilePixelOffset(screenOffset.x, mapOffset.x), calculateTilePixelOffset(screenOffset.y, mapOffset.y))
 
     tileRenderer.render(false)
-    client.units.values.foreach(unitState => unitRenderer.render(unitState.asInstanceOf[ClientUnit]))
-    client.projectiles.foreach(projectileRenderer.render(_))
+    client.units.values.foreach(unitRenderer.render)
+    client.projectiles.foreach(projectileRenderer.render)
     tileRenderer.render(true)
   }
 
