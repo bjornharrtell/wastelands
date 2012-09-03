@@ -53,7 +53,8 @@ trait ClientApp {
         shouldRender = true
       }
 
-      Thread.sleep(2)
+      // NOTE: sleeping thread seem to disturb akka...
+      //Thread.sleep(2)
 
       if (shouldRender) {
         frames += 1
@@ -63,7 +64,7 @@ trait ClientApp {
 
       if (System.currentTimeMillis - lastTimer1 > 1000) {
         lastTimer1 += 1000
-        //println(ticks + " ticks, " + frames + " fps")
+        println(frames + " fps")
         frames = 0
       }
     }

@@ -72,7 +72,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     }
     
     // need to "move" unit back to previous location if moving since the unit position is changed before animating the move 
-    // TODO: should be able to refactor this to not check for move action twice...
+    // TODO: should be able to refactor this to not check for move action twice... and use pattern match instead of instanceof probably
     if (unit.action.isInstanceOf[MoveTileStep]) {
       mx -= unit.direction.x
       my -= unit.direction.y
@@ -85,7 +85,7 @@ class UnitRenderer(val screen: Screen) extends TileReader {
     if (unit.action.isInstanceOf[MoveTileStep]) {
       // TODO: action length from unittype
       var moveDistance = (unit.game.ticks - unit.action.start).toDouble / unit.actionLength(unit.action.actionType)
-      //println(unit.gameState.ticks +" " + unit.action.start +" " + moveDistance)
+      //println(unit.game.ticks + " " + unit.action.start + " " + moveDistance)
       x += (screen.TileSize * unit.direction.x * moveDistance).toInt
       y += (screen.TileSize * unit.direction.y * moveDistance).toInt
     }

@@ -22,6 +22,8 @@ class Client(val vmContext: VMContext, val server: ActorRef) extends Player[Clie
   
   server ! event.Connect()
 
+  override def receive = clientReceive orElse playerReceive
+  
   def clientReceive: Receive = {
     case e: event.Connected =>
       // TODO: present user choices for creating/joining games
@@ -31,8 +33,6 @@ class Client(val vmContext: VMContext, val server: ActorRef) extends Player[Clie
       vmContext.render(screen.bitmap)
     case e: event.Touch => touch(e)
   }
-  
-  override def receive = clientReceive orElse playerReceive
   
   override def onUnitCreated(e: event.UnitCreated) {
     if (self == e.player) map.removeShadeAround(e.position)

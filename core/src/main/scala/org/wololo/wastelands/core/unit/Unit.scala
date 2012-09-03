@@ -65,7 +65,7 @@ trait Unit {
 
   def moveTileStep(action: MoveTileStep) {
     game.map.tiles(position).unit = None
-    position = position + direction
+    position += direction
     // TODO: only remove shade if the unit belongs to the active player
     game.map.removeShadeAround(position)
     game.map.tiles(position).unit = Option(this)

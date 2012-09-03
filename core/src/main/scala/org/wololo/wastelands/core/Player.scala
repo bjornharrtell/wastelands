@@ -29,6 +29,7 @@ trait Player[T <: Unit] extends PlayerGame[T] with Actor {
     //gameState.map = e.map
     case e: event.UnitCreated => onUnitCreated(e)
     case e: event.Action =>
+      //println(ticks + " " + self + " received " +e+ ", will now mutate")
       units.get(sender).get.onAction(e)
     case e: event.UnitDestroyed => onUnitDestroyed(e)
     case e: event.Tick => onTick()
@@ -42,6 +43,7 @@ trait Player[T <: Unit] extends PlayerGame[T] with Actor {
    */
   def onUnitCreated(e: event.UnitCreated) {
     if (self == e.player) map.removeShadeAround(e.position)
+    // TODO: why is cast needed here T should be bounded to include PlayerUnit...
     var unitState = new PlayerUnit(e.player, this, e.unitType, e.position, e.direction).asInstanceOf[T]
     units += (e.unit -> unitState)
   }

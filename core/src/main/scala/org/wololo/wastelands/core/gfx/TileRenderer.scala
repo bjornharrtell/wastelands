@@ -51,13 +51,11 @@ class TileRenderer(val screen: Screen) extends TileReader {
 
     if (!shade && (!tile.shade || tile.shadeSubType > 0)) {
       screen.canvas.drawImage(tileSets(tile.baseType)(tile.subType), sx, sy)
-    } else {
-      if (tile.shade) {
-        if (tile.shadeSubType == 0) {
-          screen.canvas.clearRect(sx, sy, sx + screen.TileSize, sy + screen.TileSize)
-        } else {
-          screen.canvas.drawImage(shadeSet(tile.shadeSubType), sx, sy)
-        }
+    } else if (tile.shade) {
+      if (tile.shadeSubType == 0) {
+        screen.canvas.clearRect(sx, sy, sx + screen.TileSize, sy + screen.TileSize)
+      } else {
+        screen.canvas.drawImage(shadeSet(tile.shadeSubType), sx, sy)
       }
     }
 

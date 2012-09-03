@@ -39,12 +39,12 @@ trait ClientInputHandler {
     // process out visible and clicked units
     // TODO: need to handle case where units have overlapping bounds i.e multiple hits here
 
-    for (unit <- units) {
-      val clientUnit: ClientUnit = unit._2.asInstanceOf[ClientUnit]
-      if (clientUnit.alive && clientUnit.screenBounds.contains(coordinate)) {
-        unitAction(unit._1)
-        clickedUnit = true
-      }
+    for (unit <- units) unit match {
+      case (unit, state) =>
+        if (state.alive && state.screenBounds.contains(coordinate)) {
+          unitAction(unit)
+          clickedUnit = true
+        }
     }
 
     // no unit was clicked
