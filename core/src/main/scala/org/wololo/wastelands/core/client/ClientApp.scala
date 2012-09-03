@@ -36,7 +36,7 @@ trait ClientApp {
 
     var lastTime = System.nanoTime
     var unprocessed = 0.0
-    val nsPerTick = 1000000000.0 / 60.0
+    val nsPerTick = 1000000000.0 / 30.0
     var frames = 0
     var lastTimer1 = System.currentTimeMillis
 

@@ -18,7 +18,7 @@ class Screen(val client: Client) {
   val Height = vmContext.screenHeight
   val Bounds: Rect = (0, 0, Width, Height)
 
-  System.out.println("Width:" + Width + " Height:" + Height)
+  //println("Width:" + Width + " Height:" + Height)
 
   var tileSizeCalcIterations = 0
   // recursive calc from 2^f until less than 21 tiles fits in largest screen dim
@@ -37,7 +37,7 @@ class Screen(val client: Client) {
 
   val MapBounds: Rect = (-1, -1, TilesWidth, TilesHeight)
 
-  System.out.println("TileSize:" + TileSize + " PixelSize:" + PixelSize)
+  //println("TileSize:" + TileSize + " PixelSize:" + PixelSize)
 
   val map = client.map
 

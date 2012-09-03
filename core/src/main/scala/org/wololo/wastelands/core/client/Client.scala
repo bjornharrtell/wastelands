@@ -47,7 +47,7 @@ class Client(val vmContext: VMContext, val server: ActorRef) extends Player[Clie
   
   override def onTick() {
     super.onTick()
-    projectiles = projectiles.filterNot(_.start+Projectile.Duration<ticks)
+    projectiles = projectiles.filterNot(projectile => projectile.start+projectile.duration<ticks)
   }
 
   /**

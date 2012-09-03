@@ -22,7 +22,7 @@ trait Player[T <: Unit] extends PlayerGame[T] with Actor {
         game ! event.CreateUnit(Unit.TestUnit2, (6, 6), Direction.random)
         game ! event.CreateUnit(Unit.Harvester, (5, 6), Direction.random)
       } else {
-        println(e.player + " joined the game.")
+        //println(e.player + " joined the game.")
       }
     case e: event.TileMapData =>
     // TODO: use map data...
