@@ -36,12 +36,59 @@ class TileMap() {
 
   //load("maps/0.data")
 
+  val seed = math.random * 1000
+  val seed2 = math.random * 1000
+  val seed3 = math.random * 1000
+  val seed4 = math.random * 1000
+  
+  // TODO: make better reusable code...
+  // TODO: make it possible to process temp buffer to combine with final result
+  // TODO: generate rock layer
+  
+  for {
+    y <- 0 until Height;
+    x <- 0 until Width
+  } {
+    val noise = SimplexNoise.noise((x.toDouble / Width / 0.2) + seed, (y.toDouble / Width / 0.2) + seed)
+    if (noise > (-0.2)) tiles(x, y).baseType = Tile.Spice
+  }
+  
+  for {
+    y <- 0 until Height;
+    x <- 0 until Width
+  } {
+    val noise = SimplexNoise.noise((x.toDouble / Width / 0.2) + seed2, (y.toDouble / Width / 0.2) + seed2)
+    if (noise > (-0.1)) tiles(x, y).baseType = Tile.Base
+  }
+  
+  // TODO: remove small spice deposits
+    
+  for {
+    y <- 0 until Height;
+    x <- 0 until Width
+  } {
+    val noise = SimplexNoise.noise((x.toDouble / Width / 0.1) + seed3, (y.toDouble / Width / 0.2) + seed3)
+    if (noise > (-0.2)) tiles(x, y).baseType = Tile.Dunes
+  }
+
+  for {
+    y <- 0 until Height;
+    x <- 0 until Width
+  } {
+    val noise = SimplexNoise.noise((x.toDouble / Width / 0.2) + seed4, (y.toDouble / Width / 0.2) + seed4)
+    if (noise > (-0.2)) tiles(x, y).baseType = Tile.Base
+  }
+  
+  
+  
+
   for {
     y <- 0 until Height;
     x <- 0 until Width
   } {
     makeBorder(x, y)
-    tiles(x, y).shade = true
+
+    tiles(x, y).shade = false
   }
 
   def tiles(coordinate: Coordinate): Tile = {
@@ -200,5 +247,20 @@ class TileMap() {
 
   def surroundingTiles(position: Coordinate, range: Int = 1): ArrayBuffer[Tile] = {
     surroundingCoordinates(position, range).map((coordinate: Coordinate) => tiles(coordinate))
+  }
+
+  def starterArea(number: Int): Rect = {
+    if (number == 0) {
+      return new Rect(0, 0, Width / 4, Height / 4)
+    } else {
+      return new Rect(Width - (Width / 4), Height - (Height / 4), Width - 1, Height - 1)
+    }
+  }
+
+  def randomPosition(area: Rect): Coordinate = {
+    val x = (Math.random * area.width).toInt + area.x1
+    val y = (Math.random * area.height).toInt + area.y1
+
+    return new Coordinate(x, y)
   }
 }

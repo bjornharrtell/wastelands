@@ -20,7 +20,6 @@ class GameActor extends Game with Actor {
       players.foreach(_ ! event.Joined(sender))
     case e: event.CreateUnit =>
       //println(self + " received CreateUnit from " + sender)
-      events = events :+ e
       val player = sender
       var unit = e.unitType match {
         case Unit.TestUnit1 => context.actorOf(Props(new TestUnit1(player, this, e.position, e.direction)))
@@ -29,8 +28,9 @@ class GameActor extends Game with Actor {
       }
       units = units :+ unit
       // TODO: Send serializable unit state instance instead...
-      players.foreach(_ ! event.UnitCreated(unit, player, e.unitType, e.position, e.direction))
-      
+      var unitCreated = event.UnitCreated(unit, player, e.unitType, e.position, e.direction)
+      players.foreach(_ ! unitCreated)
+      events = events :+ unitCreated
     case e: event.Tick =>
       ticks += 1
       units.foreach(_.forward(e))
