@@ -43,46 +43,7 @@ class TileMap() {
   val seed3 = math.random * 1000
   val seed4 = math.random * 1000
   
-  // TODO: make better reusable code...
-  // TODO: make it possible to process temp buffer to combine with final result
-  // TODO: generate rock layer
-  
-  for {
-    y <- 0 until Height;
-    x <- 0 until Width
-  } {
-    val noise = SimplexNoise.noise((x.toDouble / Width / 0.2) + seed, (y.toDouble / Width / 0.2) + seed)
-    if (noise > (-0.2)) tiles(x, y).baseType = Tile.Spice
-  }
-  
-  for {
-    y <- 0 until Height;
-    x <- 0 until Width
-  } {
-    val noise = SimplexNoise.noise((x.toDouble / Width / 0.2) + seed2, (y.toDouble / Width / 0.2) + seed2)
-    if (noise > (-0.1)) tiles(x, y).baseType = Tile.Base
-  }
-  
-  // TODO: remove small spice deposits
-    
-  for {
-    y <- 0 until Height;
-    x <- 0 until Width
-  } {
-    val noise = SimplexNoise.noise((x.toDouble / Width / 0.1) + seed3, (y.toDouble / Width / 0.2) + seed3)
-    if (noise > (-0.2)) tiles(x, y).baseType = Tile.Dunes
-  }
-
-  for {
-    y <- 0 until Height;
-    x <- 0 until Width
-  } {
-    val noise = SimplexNoise.noise((x.toDouble / Width / 0.2) + seed4, (y.toDouble / Width / 0.2) + seed4)
-    if (noise > (-0.2)) tiles(x, y).baseType = Tile.Base
-  }
-  
-  
-  
+  new MapGenerator(Width, Height).generate(tiles)
 
   for {
     y <- 0 until Height;

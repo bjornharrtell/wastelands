@@ -88,7 +88,7 @@ trait Unit {
       action = Idle()
     }
 
-    cooldowns.filter(elapsedCooldownFilter).keys.foreach(removeCooldown(_))
+    cooldowns.filter(elapsedCooldownFilter).keys.foreach(removeCooldown)
   }
 
   def elapsedCooldownFilter: PartialFunction[(Int, Cooldown), Boolean] = {
