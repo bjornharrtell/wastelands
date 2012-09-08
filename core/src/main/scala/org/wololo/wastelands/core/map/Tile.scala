@@ -1,4 +1,4 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.map
 
 import org.wololo.wastelands.core.unit._
 import akka.actor.ActorRef

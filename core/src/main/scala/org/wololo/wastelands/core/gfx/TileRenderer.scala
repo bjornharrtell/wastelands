@@ -2,6 +2,7 @@ package org.wololo.wastelands.core.gfx
 import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 import java.io.File
+import org.wololo.wastelands.core.map.Tile
 
 class TileRenderer(val screen: Screen) extends TileReader {
   val shadeSet = fileToTiles(new File("tilesets/shade.png"), BitmapTypes.Bitmask, 18, 5, 16, screen.TileSize)

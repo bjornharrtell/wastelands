@@ -1,4 +1,4 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.gfx
 import java.io.File
 
 import scala.collection.mutable.ArrayBuffer

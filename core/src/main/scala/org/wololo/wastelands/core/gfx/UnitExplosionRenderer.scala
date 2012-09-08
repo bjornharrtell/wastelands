@@ -2,7 +2,6 @@ package org.wololo.wastelands.core.gfx
 
 import org.wololo.wastelands.vmlayer._
 import scala.collection.mutable.ArrayBuffer
-import org.wololo.wastelands.core.TileReader
 import org.wololo.wastelands.core.Coordinate
 import org.wololo.wastelands.core.server.UnitActor
 import java.io.File

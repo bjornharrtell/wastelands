@@ -1,4 +1,4 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.map
 import org.wololo.wastelands.core.server.UnitActor
 import org.wololo.wastelands.core.unit.Direction
 import scala.collection.mutable.ArrayBuffer
@@ -9,6 +9,8 @@ import java.io.ObjectInputStream
 import java.io.FileInputStream
 import java.io.File
 import org.wololo.wastelands.vmlayer.VMContext
+import org.wololo.wastelands.core.Rect
+import org.wololo.wastelands.core.Coordinate
 
 class TileMap() {
   val Width = 64

@@ -2,6 +2,7 @@ package org.wololo.wastelands.core
 
 import org.wololo.wastelands.core.unit._
 import akka.actor.ActorRef
+import org.wololo.wastelands.core.map.TileMap
 
 /**
  * Basic Game state

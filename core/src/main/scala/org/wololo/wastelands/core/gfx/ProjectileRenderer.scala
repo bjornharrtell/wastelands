@@ -1,6 +1,5 @@
 package org.wololo.wastelands.core.gfx
 import org.wololo.wastelands.core.unit.Projectile
-import org.wololo.wastelands.core.TileReader
 import java.io.File
 import org.wololo.wastelands.vmlayer.BitmapTypes
 import org.wololo.wastelands.core.Coordinate

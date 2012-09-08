@@ -1,4 +1,4 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.scenario
 
 /*class RandomScenario(playerCount: Int, unitCount: Int) extends Scenario {
 

@@ -1,4 +1,6 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.scenario
+import org.wololo.wastelands.core.Coordinate
+import org.wololo.wastelands.core.map.TileMap
 
 class Scenario(var players: Int) {
   val tileMap = new TileMap()

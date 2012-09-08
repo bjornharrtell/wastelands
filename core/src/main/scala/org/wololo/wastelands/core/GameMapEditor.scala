@@ -8,6 +8,7 @@ import org.wololo.wastelands.core.event.Touch
 import org.wololo.wastelands.core.client.Client
 import org.wololo.wastelands.core.client.KeyCode
 import akka.actor.ActorRef
+import org.wololo.wastelands.core.map.Tile
 
 class GameMapEditor(vmContext: VMContext, server: ActorRef) extends Client(vmContext, server) {
   

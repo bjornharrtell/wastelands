@@ -1,6 +1,5 @@
-package org.wololo.wastelands.core
+package org.wololo.wastelands.core.gfx
 
-import gfx.Screen
 import java.io.InputStream
 import collection.mutable.ArrayBuffer
 import java.io.File

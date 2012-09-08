@@ -1,4 +1,4 @@
-package org.wololo.wastelands.core;
+package org.wololo.wastelands.core.map;
 /*
  *   __               .__       .__  ._____.           
  * _/  |_  _______  __|__| ____ |  | |__\_ |__   ______
