@@ -147,11 +147,11 @@ object JVMClient extends JVMContext with ClientApp with WindowListener with Mous
 
   def keyReleased(e: KeyEvent) {}
   def keyTyped(e: KeyEvent) {}
-  def mouseDragged(e: MouseEvent) = client ! Touch((e.getX, e.getY), Touch.MOVE)
+  def mouseDragged(e: MouseEvent) = client ! Touch(e.getX, e.getY, Touch.MOVE)
   def mouseMoved(e: MouseEvent) {}
   def mouseClicked(e: MouseEvent) {}
   def mouseEntered(e: MouseEvent) {}
   def mouseExited(e: MouseEvent) {}
-  def mousePressed(e: MouseEvent) = client ! Touch((e.getX, e.getY), Touch.DOWN)
-  def mouseReleased(e: MouseEvent) = client ! Touch((e.getX, e.getY), Touch.UP)
+  def mousePressed(e: MouseEvent) = client ! Touch(e.getX, e.getY, Touch.DOWN)
+  def mouseReleased(e: MouseEvent) = client ! Touch(e.getX, e.getY, Touch.UP)
 }

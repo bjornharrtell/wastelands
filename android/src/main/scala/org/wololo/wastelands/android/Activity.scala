@@ -44,12 +44,12 @@ class Activity extends android.app.Activity with OnTouchListener {
     for (h <- 0 until historySize) {
       val x = motionEvent.getHistoricalX(p, h).toInt
       val y = motionEvent.getHistoricalY(p, h).toInt
-      gameThread.handleAction(action, (x, y))
+      gameThread.handleAction(action, x, y)
     }
 
     val x = motionEvent.getX(p).toInt
     val y = motionEvent.getY(p).toInt
-    gameThread.handleAction(action, (x, y))
+    gameThread.handleAction(action, x, y)
 
     // sleep 16 milliseconds to avoid too much input CPU processing
     // goal is to get slightly more input events than target FPS which is 60

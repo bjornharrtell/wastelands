@@ -50,11 +50,11 @@ class GameThread(context: Context) extends Thread with SurfaceHolder.Callback wi
     }
   }
   
-  def handleAction(action:Int, coordinate: Coordinate) {
+  def handleAction(action: Int, x: Int, y: Int) {
     action match {
-      case MotionEvent.ACTION_DOWN => client ! Touch(coordinate, Touch.DOWN)
-      case MotionEvent.ACTION_UP => client ! Touch(coordinate, Touch.UP)
-      case MotionEvent.ACTION_MOVE => client ! Touch(coordinate, Touch.MOVE)
+      case MotionEvent.ACTION_DOWN => client ! Touch(x, y, Touch.DOWN)
+      case MotionEvent.ACTION_UP => client ! Touch(x, y, Touch.UP)
+      case MotionEvent.ACTION_MOVE => client ! Touch(x, y, Touch.MOVE)
     }
   }
 }

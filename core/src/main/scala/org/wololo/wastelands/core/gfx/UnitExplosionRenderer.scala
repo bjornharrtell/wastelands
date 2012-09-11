@@ -1,13 +1,12 @@
 package org.wololo.wastelands.core.gfx
 
-import org.wololo.wastelands.vmlayer._
-import scala.collection.mutable.ArrayBuffer
-import org.wololo.wastelands.core.Coordinate
-import org.wololo.wastelands.core.server.UnitActor
 import java.io.File
-import org.wololo.wastelands.core.client.ClientUnit
 
-class UnitExplosionRenderer(val screen: Screen, unit: ClientUnit, offset: Coordinate) extends TileReader {
+import org.wololo.wastelands.core.client.ClientUnit
+import org.wololo.wastelands.core.mutable
+import org.wololo.wastelands.vmlayer.BitmapTypes
+
+class UnitExplosionRenderer(val screen: Screen, unit: ClientUnit) extends TileReader {
   private val Size = 32 * screen.PixelSize
   private val SizeOffset = -Size / 4
   private val ExplosionOffsetY = -7 * screen.PixelSize
@@ -18,7 +17,11 @@ class UnitExplosionRenderer(val screen: Screen, unit: ClientUnit, offset: Coordi
   private var frame = 0
   private var stepCounter = 0
 
+  val offset = new mutable.Coordinate()
+
   def render(): Boolean = {
+    screen.calcOffset(unit, offset)
+
     screen.canvas.drawImage(Explosion(frame), offset.x + SizeOffset, offset.y + ExplosionOffsetY + SizeOffset)
 
     stepCounter += 1

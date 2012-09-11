@@ -13,7 +13,7 @@ object Touch {
   val UP = 1
   val MOVE = 2
 }
-@SerialVersionUID(1001L) case class Touch(val coordinate: Coordinate, val action: Int) extends Event
+@SerialVersionUID(1001L) case class Touch(x: Int, y: Int, action: Int) extends Event
 
 // Client/Server local events
 @SerialVersionUID(1002L) case class Tick() extends Event

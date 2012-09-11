@@ -11,23 +11,26 @@ class ProjectileRenderer(val screen: Screen) extends TileReader {
   val ro = screen.TileSize / 2 - 2
 
   def render(projectile: Projectile) {
-    // get map offset coordinate
-    var mapOffset = projectile.from - screen.mapOffset
+    // calc map offset coordinate
+    var x = projectile.from.x - screen.mapOffset.x
+    var y = projectile.from.y - screen.mapOffset.y
 
     // bail if unit not in current visible part of map
-    if (!screen.MapBounds.contains(mapOffset)) {
+    if (!screen.MapBounds.contains(x, y)) {
       return
     }
-
-    // get screen coordinate for projectile origin
-    val origin = new Coordinate(mapOffset.x * screen.TileSize + ro, mapOffset.y * screen.TileSize + ro) + screen.mapPixelOffset
+    
+    // calc screen coordinate for projectile origin
+    x = x * screen.TileSize + ro + screen.mapPixelOffset.x
+    y = y * screen.TileSize + ro + screen.mapPixelOffset.y
 
     // calculate elapsed time factor
     val elapsed: Float = (screen.client.ticks - projectile.start) / projectile.duration.toFloat
     
     // calculate offset pixel
-    val offset = origin + ((projectile.to-projectile.from) * screen.TileSize * elapsed)
+    x = x + ((projectile.to.x-projectile.from.x) * screen.TileSize * elapsed).toInt
+    y = y + ((projectile.to.y-projectile.from.y) * screen.TileSize * elapsed).toInt
     
-    screen.canvas.drawImage(id, offset.x, offset.y)
+    screen.canvas.drawImage(id, x, y)
   }
 }

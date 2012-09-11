@@ -4,6 +4,7 @@ import org.wololo.wastelands.vmlayer._
 import org.wololo.wastelands.core._
 import org.wololo.wastelands.core.client.Client
 import org.wololo.wastelands.core.client.ClientUnit
+import org.wololo.wastelands.core.unit.MoveTileStep
 
 /**
  * Contains the state of the game screen.
@@ -54,22 +55,22 @@ class Screen(val client: Client) {
   private var projectileRenderer = new ProjectileRenderer(this)
   
   // screen pixel scroll offset
-  var screenOffset: Coordinate = (0, 0)
+  var screenOffset = new mutable.Coordinate()
 
   // map tile scroll offset
-  var mapOffset: Coordinate = (0, 0)
+  var mapOffset = new mutable.Coordinate()
 
   // map tile pixel scroll offset
-  var mapPixelOffset: Coordinate = (0, 0)
+  var mapPixelOffset = new mutable.Coordinate()
 
-  def scroll(delta: Coordinate) {
-    screenOffset += delta
+  def scroll(x: Int, y: Int) {
+    screenOffset.setTo(screenOffset.x+x, screenOffset.y+y)
 
     val maxx = MapScreenWidth - ((TilesWidth + 1) * TileSize)
     val maxy = MapScreenHeight - ((TilesHeight + 1) * TileSize)
     // TODO: must be able to write this bounds logic in a more sane way...
-    screenOffset = (if (screenOffset.x < 0) 0 else screenOffset.x, if (screenOffset.y < 0) 0 else screenOffset.y)
-    screenOffset = (if (screenOffset.x > maxx) maxx else screenOffset.x, if (screenOffset.y > maxy) maxy else screenOffset.y)
+    screenOffset.setTo(if (screenOffset.x < 0) 0 else screenOffset.x, if (screenOffset.y < 0) 0 else screenOffset.y)
+    screenOffset.setTo(if (screenOffset.x > maxx) maxx else screenOffset.x, if (screenOffset.y > maxy) maxy else screenOffset.y)
   }
 
   /**
@@ -77,10 +78,10 @@ class Screen(val client: Client) {
    */
   def render() {
     //calculate the tile index for x and y axis
-    mapOffset = (calculateTileIndex(screenOffset.x), calculateTileIndex(screenOffset.y))
+    mapOffset.setTo(calculateTileIndex(screenOffset.x), calculateTileIndex(screenOffset.y))
 
     //calculate the tile pixel offset for x and y axis
-    mapPixelOffset = (calculateTilePixelOffset(screenOffset.x, mapOffset.x), calculateTilePixelOffset(screenOffset.y, mapOffset.y))
+    mapPixelOffset.setTo(calculateTilePixelOffset(screenOffset.x, mapOffset.x), calculateTilePixelOffset(screenOffset.y, mapOffset.y))
 
     tileRenderer.render(false)
     client.units.values.foreach(unitRenderer.render)
@@ -114,5 +115,49 @@ class Screen(val client: Client) {
     } else {
       (tileIndex * TileSize) - screenPixelCoord
     }
+  }
+  
+  /**
+   * calc screen offset for a client unit
+   * optimized (prematurely?) with offset to be calced passed in as a mutable coord
+   */
+  def calcOffset(unit: ClientUnit, offset: mutable.Coordinate) {
+    var x = unit.position.x - mapOffset.x
+    var y = unit.position.y - mapOffset.y
+
+    // bail if unit not in current visible part of map
+    if (!MapBounds.contains(x, y)) {
+      // TODO: remove isOnScreen, just return bool?
+      unit.isOnScreen = false
+      return
+    }
+    
+    // need to "move" unit back to previous location if moving since the unit position is changed before animating the move 
+    // TODO: should be able to refactor this to not check for move action twice... and use pattern match instead of instanceof probably
+    if (unit.action.isInstanceOf[MoveTileStep]) {
+      x -= unit.direction.x
+      y -= unit.direction.y
+    }
+
+    x = x * TileSize
+    y = y * TileSize
+
+    // if unit is moving, add move distance as pixels to offset
+    if (unit.action.isInstanceOf[MoveTileStep]) {
+      // TODO: action length from unittype
+      var moveDistance = (unit.game.ticks - unit.action.start).toDouble / unit.actionLength(unit.action.actionType)
+      //println(unit.game.ticks + " " + unit.action.start + " " + moveDistance)
+      x += (TileSize * unit.direction.x * moveDistance).toInt
+      y += (TileSize * unit.direction.y * moveDistance).toInt
+    }
+    
+    x += mapPixelOffset.x
+    y += mapPixelOffset.y
+
+    // TODO: remove isOnScreen, just return bool?
+    unit.isOnScreen = true
+    unit.screenBounds.setTo(x, y, x + TileSize, y + TileSize)
+    
+    offset.setTo(x,y)
   }
 }

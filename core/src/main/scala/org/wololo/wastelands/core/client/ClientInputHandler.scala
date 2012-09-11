@@ -20,14 +20,17 @@ trait ClientInputHandler {
 
   val tolerance = 5
   var previous: Coordinate = (0, 0)
-  var downAt: Coordinate = (0, 0)
+  var px = 0
+  var py = 0
+  var downAtX = 0
+  var downAtY = 0
   var hasScrolled = false
 
   def touch(e: Touch) {
     e.action match {
-      case Touch.DOWN => touchDown(e.coordinate)
-      case Touch.MOVE => touchMove(e.coordinate)
-      case Touch.UP => touchUp(e.coordinate)
+      case Touch.DOWN => touchDown(e.x, e.y)
+      case Touch.MOVE => touchMove(e.x, e.y)
+      case Touch.UP => touchUp(e.x, e.y)
     }
   }
 
@@ -55,20 +58,23 @@ trait ClientInputHandler {
     }
   }
 
-  def touchMove(coordinate: Coordinate) {
-    if (coordinate.distance(downAt) > tolerance) {
-      screen.scroll(previous - coordinate)
+  def touchMove(x: Int, y: Int) {
+    if (math.sqrt(math.pow(x - downAtX, 2) + math.pow(y - downAtY, 2)).toInt > tolerance) {
+      screen.scroll(px-x, py-y)
       hasScrolled = true
     }
 
-    previous = coordinate
+    px = x
+    py = y
   }
 
-  private def touchDown(coordinate: Coordinate) {
+  private def touchDown(x: Int, y: Int) {
     hasScrolled = false
 
-    downAt = coordinate
-    previous = coordinate
+    downAtX = x
+    downAtX = y
+    px = x
+    py = y
   }
 
   def keyDown(keyCode: Int) {

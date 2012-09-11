@@ -23,16 +23,16 @@ class GameMapEditor(vmContext: VMContext, server: ActorRef) extends Client(vmCon
    */
   //override def mapTileAction(coordinate: Coordinate) { }
   
-  override def touchMove(coordinate: Coordinate) {
+  override def touchMove(x: Int, y: Int) {
     tileType match {
-      case x: Some[Int] => {
-        val mx = screen.calculateTileIndex(screen.screenOffset.x + coordinate.x)
-        val my = screen.calculateTileIndex(screen.screenOffset.y + coordinate.y)
-        map.tiles(mx, my).baseType = x.get
+      case Some(tileType) => {
+        val mx = screen.calculateTileIndex(screen.screenOffset.x + x)
+        val my = screen.calculateTileIndex(screen.screenOffset.y + y)
+        map.tiles(mx, my).baseType = tileType
         map.tiles(mx, my).subType = 0
         map.makeBorderAround((mx, my))
       }
-      case None => super.touchMove(coordinate)
+      case None => super.touchMove(x, y)
     }
   }
   
