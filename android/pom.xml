@@ -129,7 +129,7 @@
 								<artifactItem>
 									<groupId>io.netty</groupId>
 									<artifactId>netty</artifactId>
-									<version>3.5.3.Final</version>
+									<version>3.5.7.Final</version>
 									<type>jar</type>
 									<overWrite>false</overWrite>
 								</artifactItem>
