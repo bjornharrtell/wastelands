@@ -12,16 +12,8 @@
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<encoding>UTF-8</encoding>
-		<scala.version>2.9.2</scala.version>
+		<scala.version>2.10.0</scala.version>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>typesafe</id>
-			<name>Typesafe Repository</name>
-			<url>http://repo.typesafe.com/typesafe/releases/</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -32,7 +24,7 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>2.2.1</version>
+			<version>4.1.1.4</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -43,14 +35,14 @@
 		<!-- Akka is put in test scope because it is pulled in by hack below... -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor</artifactId>
-			<version>2.0.4</version>
+			<artifactId>akka-actor_2.10</artifactId>
+			<version>2.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-remote</artifactId>
-			<version>2.0.4</version>
+			<artifactId>akka-remote_2.10</artifactId>
+			<version>2.1.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -107,29 +99,29 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>com.typesafe.akka</groupId>
-									<artifactId>akka-actor</artifactId>
-									<version>2.0.4</version>
+									<artifactId>akka-actor_2.10</artifactId>
+									<version>2.1.0</version>
 									<type>jar</type>
 									<overWrite>false</overWrite>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.typesafe</groupId>
 									<artifactId>config</artifactId>
-									<version>0.3.1</version>
+									<version>1.0.0</version>
 									<type>jar</type>
 									<overWrite>false</overWrite>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.typesafe.akka</groupId>
-									<artifactId>akka-remote</artifactId>
-									<version>2.0.4</version>
+									<artifactId>akka-remote_2.10</artifactId>
+									<version>2.1.0</version>
 									<type>jar</type>
 									<overWrite>false</overWrite>
 								</artifactItem>
 								<artifactItem>
 									<groupId>io.netty</groupId>
 									<artifactId>netty</artifactId>
-									<version>3.5.4.Final</version>
+									<version>3.5.8.Final</version>
 									<type>jar</type>
 									<overWrite>false</overWrite>
 								</artifactItem>
@@ -140,6 +132,14 @@
 									<type>jar</type>
 									<overWrite>false</overWrite>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.uncommons.maths</groupId>
+									<artifactId>uncommons-maths</artifactId>
+									<version>1.2.2a</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+								</artifactItem>
+								<!--
 								<artifactItem>
 									<groupId>net.debasishg</groupId>
 									<artifactId>sjson_2.9.1</artifactId>
@@ -167,7 +167,7 @@
 									<version>1.2</version>
 									<type>jar</type>
 									<overWrite>false</overWrite>
-								</artifactItem>
+								</artifactItem>-->
 							</artifactItems>
 							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
@@ -179,10 +179,10 @@
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.5.0</version>
 				<configuration>
 					<sdk>
-						<platform>10</platform>
+						<platform>17</platform>
 					</sdk>
 					<lazyLibraryUnpack>true</lazyLibraryUnpack>
 					<emulator>

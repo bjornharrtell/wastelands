@@ -7,10 +7,10 @@ import org.wololo.wastelands.core.event.Event
 import org.wololo.wastelands.core.unit.Unit
 import akka.actor._
 import akka.pattern.{ ask, pipe }
-import akka.util.duration._
+import scala.concurrent.duration._
 import com.typesafe.config.ConfigFactory
 import akka.util.Timeout
-import akka.dispatch.Await
+import scala.concurrent.Await
 import org.wololo.wastelands.core.unit.Direction
 import org.wololo.wastelands.core.unit.Action
 import org.wololo.wastelands.core.unit.Guard
@@ -143,6 +143,7 @@ abstract class UnitActor(val player: ActorRef, val game: Game, val unitType: Int
    * If target is dead, give order to guard.
    */
   def executeAttackOrder(order: Attack) {
+    import context.dispatcher
     order.target.ask(Alive).onSuccess({
       case Alive =>
         if (action.isInstanceOf[Idle] &&
@@ -159,6 +160,7 @@ abstract class UnitActor(val player: ActorRef, val game: Game, val unitType: Int
    * Generates actions to fire at and damage target unit
    */
   def generateAttackAction(target: ActorRef) {
+    import context.dispatcher
     target.ask(Locate).onSuccess({
       case targetPosition: Coordinate =>
         if (position.distance(targetPosition) <= Range) {
@@ -179,6 +181,7 @@ abstract class UnitActor(val player: ActorRef, val game: Game, val unitType: Int
   }
 
   def onDestroyed(sender: ActorRef, e: event.UnitDestroyed) {
+    import context.dispatcher
     sender.ask(Locate).onSuccess({
       case senderPosition: Coordinate => game.map.tiles(senderPosition).unit = None
     })
