@@ -1,6 +1,13 @@
 Wastelands
 ==========
 
+Running JVM version
+-----------------
+
+Run from jvm/target/classes:
+
+> java -Djava.library.path=../natives -jar ../jvm-1.0-SNAPSHOT.jar
+
 Eclipse requirements
 --------------------
 
