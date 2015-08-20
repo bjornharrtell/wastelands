@@ -9,7 +9,7 @@
 	<inceptionYear>2011</inceptionYear>
 
 	<properties>
-		<scala.version>2.9.2</scala.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>
